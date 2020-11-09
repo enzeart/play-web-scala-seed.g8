@@ -1,0 +1,6 @@
+# See the following documentation for more information on routing
+# https://www.playframework.com/documentation/latest/ScalaRouting
+GET     /auth/callback  @org.pac4j.play.CallbackController.callback(request: Request)
+
+GET     /               controllers.Assets.at(file = "index.html")
+GET     /*file          controllers.Assets.at(file)
