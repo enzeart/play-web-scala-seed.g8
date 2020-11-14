@@ -12,7 +12,6 @@ import org.pac4j.play.{CallbackController, LogoutController}
 import play.libs.concurrent.HttpExecutionContext
 import javax.inject.Singleton
 
-
 class AuthModule extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
