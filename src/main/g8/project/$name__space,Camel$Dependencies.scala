@@ -1,7 +1,7 @@
 import play.sbt.PlayImport._
 import sbt._
 
-object Dependencies {
+object $name;format="space,Camel"$Dependencies {
 
   lazy val playPac4jVersion: String = "$playPac4jVersion$"
 
