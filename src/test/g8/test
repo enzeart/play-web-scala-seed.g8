@@ -1,0 +1,21 @@
+# Ensure that all initial project files are created
+$ exists app/config/AppConfig.scala
+$ exists app/config/AuthConfig.scala
+$ exists app/config/ConfigPaths.scala
+$ exists app/error_handlers/AppHttpErrorHandler.scala
+$ exists app/modules/AuthModule.scala
+$ exists app/modules/ConfigModule.scala
+$ exists conf/application.conf
+$ exists conf/routes
+$ exists project/ExampleDependencies.scala
+$ exists project/ExamplePlugin.scala
+$ exists project/build.properties
+$ exists project/plugins.sbt
+$ exists public/index.html
+$ exists .gitignore
+$ exists .scalafmt.conf
+$ exists build.sbt
+$ exists .g8/controller
+$ exists .g8/model
+$ exists .g8/module
+> compile
