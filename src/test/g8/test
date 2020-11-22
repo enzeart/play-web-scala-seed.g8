@@ -1,4 +1,4 @@
-# Ensure that all initial project files are created
+# Ensure all initial project files are created
 $ exists app/config/AppConfig.scala
 $ exists app/config/AuthConfig.scala
 $ exists app/config/ConfigPaths.scala
@@ -18,4 +18,11 @@ $ exists build.sbt
 $ exists .g8/controller
 $ exists .g8/model
 $ exists .g8/module
+
+# Ensure the project will compile out-of-the-box
 > compile
+
+# Verify the app-specific plugin tasks can be invoked
+> exampleController lol
+> exampleModel lol
+> exampleModule lol
