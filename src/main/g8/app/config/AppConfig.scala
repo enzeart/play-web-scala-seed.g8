@@ -2,9 +2,17 @@ package config
 
 import com.typesafe.config.Config
 import play.api.ConfigLoader
-import ConfigPaths._
+import AppConfig.Paths._
 
 object AppConfig {
+
+  object Paths {
+    val Root                 = "app"
+    val AuthClientName       = "auth.client-name"
+    val AuthCallbackUrl      = "auth.callback-url"
+    val AuthDefaultLoginUrl  = "auth.default-login-url"
+    val AuthDefaultLogoutUrl = "auth.default-logout-url"
+  }
 
   implicit val configLoader: ConfigLoader[AppConfig] = (rootConfig: Config, path: String) => {
     val config = rootConfig.getConfig(path)

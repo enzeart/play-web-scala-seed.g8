@@ -4,7 +4,6 @@ import com.google.inject.{AbstractModule, Provides}
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import config.AppConfig
-import config.ConfigPaths.Root
 import javax.inject.Singleton
 
 class ConfigModule extends AbstractModule with ScalaModule {
@@ -13,5 +12,5 @@ class ConfigModule extends AbstractModule with ScalaModule {
 
   @Singleton
   @Provides
-  def provideAppConfig(configuration: Configuration): AppConfig = configuration.get[AppConfig](Root)
+  def provideAppConfig(configuration: Configuration): AppConfig = configuration.get[AppConfig](AppConfig.Paths.Root)
 }
