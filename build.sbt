@@ -4,7 +4,7 @@
 lazy val root = (project in file("."))
   .enablePlugins(ScriptedPlugin)
   .settings(
-    name := "play-scala-seed.g8",
+    name := "play-web-scala-seed.g8",
     test in Test := {
       val _ = (g8Test in Test).toTask("").value
     },
