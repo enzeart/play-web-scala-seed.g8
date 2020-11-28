@@ -1,5 +1,6 @@
 package controllers
 
+import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import models.graphql.{GraphQLContext, SchemaDefinition}
 import org.pac4j.core.profile.CommonProfile
@@ -17,30 +18,39 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 @Singleton
-class GraphQLController @Inject() (val controllerComponents: SecurityComponents, graphQLContext: GraphQLContext)(
-  implicit ec: ExecutionContext
+class GraphQLController @Inject() (
+    val controllerComponents: SecurityComponents,
+    graphQLContext: GraphQLContext,
+    appConfig: AppConfig
+)(
+    implicit ec: ExecutionContext
 ) extends BaseController
-  with Security[CommonProfile] {
+    with Security[CommonProfile] {
 
-  def graphql(query: String, variables: Option[String], operation: Option[String]): Action[AnyContent] = Action.async {
-    _ => executeQuery(query, variables map parseVariables, operation)
-  }
-
-  def graphqlBody: Action[JsValue] = Action.async(parse.json) { request =>
-    val query     = (request.body \ GraphQLConstants.Query).as[String]
-    val operation = (request.body \ GraphQLConstants.Operation).asOpt[String]
-
-    val variables = (request.body \ GraphQLConstants.Variables).toOption.flatMap {
-      case JsString(vars) => Option(parseVariables(vars))
-      case obj: JsObject  => Option(obj)
-      case _              => None
+  def graphql(query: String, variables: Option[String], operation: Option[String]): Action[AnyContent] =
+    Secure(appConfig.auth.clientName) {
+      Action.async { _ => executeQuery(query, variables map parseVariables, operation) }
     }
 
-    executeQuery(query, variables, operation)
+  def graphqlBody: Action[JsValue] = Secure(appConfig.auth.clientName) {
+    Action.async(parse.json) { request =>
+      val query     = (request.body \ GraphQLConstants.Query).as[String]
+      val operation = (request.body \ GraphQLConstants.Operation).asOpt[String]
+
+      val variables = (request.body \ GraphQLConstants.Variables).toOption.flatMap {
+        case JsString(vars) => Option(parseVariables(vars))
+        case obj: JsObject  => Option(obj)
+        case _              => None
+      }
+
+      executeQuery(query, variables, operation)
+    }
   }
 
-  def renderSchema: Action[AnyContent] = Action {
-    Ok(SchemaRenderer.renderSchema(SchemaDefinition.Root))
+  def renderSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
+    Action {
+      Ok(SchemaRenderer.renderSchema(SchemaDefinition.Root))
+    }
   }
 
   private def parseVariables(variables: String): JsObject = {
