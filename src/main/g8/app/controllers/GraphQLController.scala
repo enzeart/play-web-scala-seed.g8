@@ -86,6 +86,8 @@ class GraphQLController @Inject() (
             )
           )
         )
+      case Failure(exception) =>
+        Future.successful(InternalServerError(exception.getMessage))
     }
   }
 }
