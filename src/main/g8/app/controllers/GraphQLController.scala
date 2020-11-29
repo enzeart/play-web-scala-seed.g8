@@ -2,7 +2,7 @@ package controllers
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import graphql.{GraphQLContext, SchemaDefinition}
+import graphql.{GraphQLContext, GraphQLSchemaDefinition}
 import org.pac4j.core.profile.CommonProfile
 import play.api.mvc.{Action, AnyContent, BaseController, Result}
 import org.pac4j.play.scala.{Security, SecurityComponents}
@@ -49,7 +49,7 @@ class GraphQLController @Inject() (
 
   def renderSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
     Action {
-      Ok(SchemaRenderer.renderSchema(SchemaDefinition.Root))
+      Ok(SchemaRenderer.renderSchema(GraphQLSchemaDefinition.AppSchema))
     }
   }
 
@@ -63,7 +63,7 @@ class GraphQLController @Inject() (
       case Success(queryAst) =>
         Executor
           .execute(
-            schema = SchemaDefinition.Root,
+            schema = GraphQLSchemaDefinition.AppSchema,
             queryAst = queryAst,
             userContext = graphQLContext,
             operationName = operation,
@@ -79,7 +79,7 @@ class GraphQLController @Inject() (
           BadRequest(
             Json.obj(
               GraphQLConstants.SyntaxError -> error.getMessage(),
-              GraphQLConstants.Locations -> Json.arr(
+              GraphQLConstants.Location -> Json.arr(
                 Json.obj(GraphQLConstants.Line -> error.originalError.position.line),
                 GraphQLConstants.Column -> error.originalError.position.column
               )
