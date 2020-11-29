@@ -28,29 +28,25 @@ class GraphQLController @Inject() (
     with Security[CommonProfile] {
 
   def graphql(query: String, variables: Option[String], operation: Option[String]): Action[AnyContent] =
-    Secure(appConfig.auth.clientName) {
-      Action.async { _ => executeQuery(query, variables map parseVariables, operation) }
+    Secure(appConfig.auth.clientName).async { request =>
+      executeQuery(request, query, variables map parseVariables, operation)
     }
 
-  def graphqlBody: Action[JsValue] = Secure(appConfig.auth.clientName) {
-    Action.async(parse.json) { request =>
-      val query     = (request.body \ GraphQLConstants.Query).as[String]
-      val operation = (request.body \ GraphQLConstants.Operation).asOpt[String]
+  def graphqlBody: Action[JsValue] = Secure(appConfig.auth.clientName).async(parse.json) { request =>
+    val query     = (request.body \ GraphQLConstants.Query).as[String]
+    val operation = (request.body \ GraphQLConstants.Operation).asOpt[String]
 
-      val variables = (request.body \ GraphQLConstants.Variables).toOption.flatMap {
-        case JsString(vars) => Option(parseVariables(vars))
-        case obj: JsObject  => Option(obj)
-        case _              => None
-      }
-
-      executeQuery(query, variables, operation)
+    val variables = (request.body \ GraphQLConstants.Variables).toOption.flatMap {
+      case JsString(vars) => Option(parseVariables(vars))
+      case obj: JsObject  => Option(obj)
+      case _              => None
     }
+
+    executeQuery(request, query, variables, operation)
   }
 
   def renderSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
-    Action {
-      Ok(SchemaRenderer.renderSchema(GraphQLSchemaDefinition.AppSchema))
-    }
+    Ok(SchemaRenderer.renderSchema(GraphQLSchemaDefinition.AppSchema))
   }
 
   private def parseVariables(variables: String): JsObject = {
@@ -58,7 +54,12 @@ class GraphQLController @Inject() (
     else Json.parse(variables).as[JsObject]
   }
 
-  private def executeQuery(query: String, variables: Option[JsObject], operation: Option[String]): Future[Result] = {
+  private def executeQuery(
+      request: AuthenticatedRequest[_],
+      query: String,
+      variables: Option[JsObject],
+      operation: Option[String]
+  ): Future[Result] = {
     QueryParser.parse(query) match {
       case Success(queryAst) =>
         Executor
