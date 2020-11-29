@@ -2,7 +2,7 @@ package controllers
 
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import models.graphql.{GraphQLContext, SchemaDefinition}
+import graphql.{GraphQLContext, SchemaDefinition}
 import org.pac4j.core.profile.CommonProfile
 import play.api.mvc.{Action, AnyContent, BaseController, Result}
 import org.pac4j.play.scala.{Security, SecurityComponents}
@@ -11,7 +11,7 @@ import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.parser.{QueryParser, SyntaxError}
 import sangria.marshalling.playJson._
 import sangria.renderer.SchemaRenderer
-import models.graphql.GraphQLConstants
+import graphql.GraphQLConstants
 import utils.StringConstants
 
 import scala.concurrent.{ExecutionContext, Future}

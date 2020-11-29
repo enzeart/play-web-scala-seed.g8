@@ -1,4 +1,4 @@
-package models.graphql
+package graphql
 
 import javax.inject.{Inject, Singleton}
 
