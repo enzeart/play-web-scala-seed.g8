@@ -1,12 +1,12 @@
-package modules;
+package modules
 
-import org.pac4j.core.client.direct.AnonymousClient;
-import com.google.inject.{AbstractModule, Provides};
-import org.pac4j.core.client.Clients;
-import play.Environment;
-import config.{AppConfig, AuthConfig};
-import org.pac4j.core.config.Config;
-import net.codingwell.scalaguice.ScalaModule;
+import org.pac4j.core.client.direct.AnonymousClient
+import com.google.inject.{AbstractModule, Provides}
+import org.pac4j.core.client.Clients
+import play.Environment
+import config.{AppConfig, AuthConfig}
+import org.pac4j.core.config.Config
+import net.codingwell.scalaguice.ScalaModule
 import org.pac4j.play.store.{PlaySessionStore, PlayCacheSessionStore}
 import org.pac4j.play.{CallbackController, LogoutController}
 import play.libs.concurrent.HttpExecutionContext
