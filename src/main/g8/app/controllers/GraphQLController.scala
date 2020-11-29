@@ -1,17 +1,16 @@
 package controllers
 
 import config.AppConfig
+import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchemaDefinition}
 import javax.inject.{Inject, Singleton}
-import graphql.{GraphQLContext, GraphQLSchemaDefinition}
 import org.pac4j.core.profile.CommonProfile
-import play.api.mvc.{Action, AnyContent, BaseController, Result}
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
+import play.api.mvc.{Action, AnyContent, BaseController, Result}
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
-import sangria.parser.{QueryParser, SyntaxError}
 import sangria.marshalling.playJson._
+import sangria.parser.{QueryParser, SyntaxError}
 import sangria.renderer.SchemaRenderer
-import graphql.GraphQLConstants
 import utils.StringConstants
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -20,7 +19,7 @@ import scala.util.{Failure, Success}
 @Singleton
 class GraphQLController @Inject() (
     val controllerComponents: SecurityComponents,
-    graphQLContext: GraphQLContext,
+    graphQLContextFactory: GraphQLContextFactory,
     appConfig: AppConfig
 )(
     implicit ec: ExecutionContext
@@ -66,7 +65,7 @@ class GraphQLController @Inject() (
           .execute(
             schema = GraphQLSchemaDefinition.AppSchema,
             queryAst = queryAst,
-            userContext = graphQLContext,
+            userContext = graphQLContextFactory.create(request),
             operationName = operation,
             variables = variables getOrElse Json.obj()
           )

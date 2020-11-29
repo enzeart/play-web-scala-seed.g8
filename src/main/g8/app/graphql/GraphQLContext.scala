@@ -1,6 +1,5 @@
 package graphql
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 
-@Singleton
 class GraphQLContext @Inject() () {}
