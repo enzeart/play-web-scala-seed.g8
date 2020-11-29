@@ -7,15 +7,17 @@ import play.Environment
 import config.{AppConfig, AuthConfig}
 import org.pac4j.core.config.Config
 import net.codingwell.scalaguice.ScalaModule
-import org.pac4j.play.store.{PlaySessionStore, PlayCacheSessionStore}
+import org.pac4j.play.store.{PlayCacheSessionStore, PlaySessionStore}
 import org.pac4j.play.{CallbackController, LogoutController}
 import play.libs.concurrent.HttpExecutionContext
 import javax.inject.Singleton
+import org.pac4j.play.scala.{DefaultSecurityComponents, SecurityComponents}
 
 class AuthModule extends AbstractModule with ScalaModule {
 
   override def configure(): Unit = {
     bind[PlaySessionStore].to[PlayCacheSessionStore]
+    bind[SecurityComponents].to[DefaultSecurityComponents]
   }
 
   @Singleton
@@ -25,10 +27,10 @@ class AuthModule extends AbstractModule with ScalaModule {
   @Singleton
   @Provides
   def provideCallbackController(
-    executionContext: HttpExecutionContext,
-    sessionStore: PlaySessionStore,
-    config: Config,
-    authConfig: AuthConfig
+      executionContext: HttpExecutionContext,
+      sessionStore: PlaySessionStore,
+      config: Config,
+      authConfig: AuthConfig
   ): CallbackController = {
     val callbackController = new CallbackController {
       ec = executionContext
@@ -44,10 +46,10 @@ class AuthModule extends AbstractModule with ScalaModule {
   @Singleton
   @Provides
   def provideLogoutController(
-    executionContext: HttpExecutionContext,
-    sessionStore: PlaySessionStore,
-    config: Config,
-    authConfig: AuthConfig
+      executionContext: HttpExecutionContext,
+      sessionStore: PlaySessionStore,
+      config: Config,
+      authConfig: AuthConfig
   ): LogoutController = {
     val logoutController = new LogoutController {
       ec = executionContext
