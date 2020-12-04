@@ -1,7 +1,7 @@
 package controllers
 
 import config.AppConfig
-import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchemaDefinition}
+import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchema}
 import javax.inject.{Inject, Singleton}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
@@ -45,7 +45,7 @@ class GraphQLController @Inject() (
   }
 
   def renderSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
-    Ok(SchemaRenderer.renderSchema(GraphQLSchemaDefinition.AppSchema))
+    Ok(SchemaRenderer.renderSchema(GraphQLSchema.Root))
   }
 
   private def parseVariables(variables: String): JsObject = {
@@ -63,7 +63,7 @@ class GraphQLController @Inject() (
       case Success(queryAst) =>
         Executor
           .execute(
-            schema = GraphQLSchemaDefinition.AppSchema,
+            schema = GraphQLSchema.Root,
             queryAst = queryAst,
             userContext = graphQLContextFactory.create(request),
             operationName = operation,
