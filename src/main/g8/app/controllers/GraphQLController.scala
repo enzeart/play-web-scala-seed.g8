@@ -44,6 +44,8 @@ class GraphQLController @Inject() (
     executeQuery(request, query, variables, operation)
   }
 
+  def graphiql: Action[AnyContent] = Secure(Ok(views.html.graphiql()))
+
   def renderSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
     Ok(SchemaRenderer.renderSchema(GraphQLSchema.Root))
   }

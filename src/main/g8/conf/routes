@@ -1,5 +1,7 @@
 # See the following documentation for more information on routing
 # https://www.playframework.com/documentation/latest/ScalaRouting
+GET     /debug/graphiql controllers.GraphQLController.graphiql
+
 GET     /auth/callback  @org.pac4j.play.CallbackController.callback(request: Request)
 GET     /api/graphql    controllers.GraphQLController.graphql(query: String, variables: Option[String], operation: Option[String])
 POST    /api/graphql    controllers.GraphQLController.graphqlBody
