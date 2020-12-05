@@ -5,6 +5,7 @@ import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchema}
 import javax.inject.{Inject, Singleton}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
+import play.Environment
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, Result}
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
@@ -20,7 +21,8 @@ import scala.util.{Failure, Success}
 class GraphQLController @Inject() (
     val controllerComponents: SecurityComponents,
     graphQLContextFactory: GraphQLContextFactory,
-    appConfig: AppConfig
+    appConfig: AppConfig,
+    environment: Environment
 )(
     implicit ec: ExecutionContext
 ) extends BaseController
@@ -44,10 +46,12 @@ class GraphQLController @Inject() (
     executeQuery(request, query, variables, operation)
   }
 
-  def graphiql: Action[AnyContent] = Secure(Ok(views.html.graphiql()))
-
-  def renderSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
-    Ok(SchemaRenderer.renderSchema(GraphQLSchema.Root))
+  def graphiql: Action[AnyContent] = Secure{
+    if (environment.isProd) {
+      NotFound
+    } else {
+      Ok(views.html.graphiql())
+    }
   }
 
   private def parseVariables(variables: String): JsObject = {
