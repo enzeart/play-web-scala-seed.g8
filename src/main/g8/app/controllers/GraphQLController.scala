@@ -34,10 +34,10 @@ class GraphQLController @Inject() (
     }
 
   def graphqlBody: Action[JsValue] = Secure(appConfig.auth.clientName).async(parse.json) { request =>
-    val query     = (request.body \ GraphQLConstants.Query).as[String]
-    val operation = (request.body \ GraphQLConstants.Operation).asOpt[String]
+    val query     = (request.body \ GraphQLConstants.QueryFieldQuery).as[String]
+    val operation = (request.body \ GraphQLConstants.QueryFieldOperation).asOpt[String]
 
-    val variables = (request.body \ GraphQLConstants.Variables).toOption.flatMap {
+    val variables = (request.body \ GraphQLConstants.QueryFieldVariables).toOption.flatMap {
       case JsString(vars) => Option(parseVariables(vars))
       case obj: JsObject  => Option(obj)
       case _              => None
@@ -46,7 +46,7 @@ class GraphQLController @Inject() (
     executeQuery(request, query, variables, operation)
   }
 
-  def graphiql: Action[AnyContent] = Secure{
+  def graphiql: Action[AnyContent] = Secure {
     if (environment.isProd) {
       NotFound
     } else {
