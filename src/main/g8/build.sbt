@@ -1,4 +1,4 @@
-import  $name;format="space,Camel"$Dependencies._
+import $name;format="space,Camel"$Dependencies._
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
