@@ -1,8 +1,7 @@
 package controllers
 
 import config.AppConfig
-import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchema}
-import javax.inject.{Inject, Singleton}
+import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchema, MutationApiFactory, QueryApiFactory}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.Environment
@@ -11,9 +10,9 @@ import play.api.mvc.{Action, AnyContent, BaseController, Result}
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.{QueryParser, SyntaxError}
-import sangria.renderer.SchemaRenderer
 import utils.StringConstants
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
@@ -21,6 +20,8 @@ import scala.util.{Failure, Success}
 class GraphQLController @Inject() (
     val controllerComponents: SecurityComponents,
     graphQLContextFactory: GraphQLContextFactory,
+    queryApiFactory: QueryApiFactory,
+    mutationApiFactory: MutationApiFactory,
     appConfig: AppConfig,
     environment: Environment
 )(
@@ -65,13 +66,16 @@ class GraphQLController @Inject() (
       variables: Option[JsObject],
       operation: Option[String]
   ): Future[Result] = {
+    val queryApi    = queryApiFactory.create(request)
+    val mutationApi = mutationApiFactory.create(request)
+
     QueryParser.parse(query) match {
       case Success(queryAst) =>
         Executor
           .execute(
             schema = GraphQLSchema.Root,
             queryAst = queryAst,
-            userContext = graphQLContextFactory.create(request),
+            userContext = graphQLContextFactory.create(queryApi, mutationApi),
             operationName = operation,
             variables = variables getOrElse Json.obj(),
             deferredResolver = GraphQLSchema.Resolver

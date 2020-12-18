@@ -13,7 +13,7 @@ object AuthSchema {
   private val DisplayNameFieldDescription = "The user's publicly displayed name"
   private val RolesFieldDescription       = "The user's account roles"
 
-  val UserProfile: InterfaceType[Unit, UserProfile] = InterfaceType(
+  implicit val UserProfile: InterfaceType[Unit, UserProfile] = InterfaceType(
     "UserProfile",
     "The profile of an authenticated user",
     fields[Unit, UserProfile](
@@ -44,7 +44,7 @@ object AuthSchema {
   )
 
   val UserProfilesField: Field[GraphQLContext, Unit] =
-    Field("userProfiles", ListType(UserProfile), resolve = _.ctx.userProfiles)
+    Field("userProfiles", ListType(UserProfile), resolve = _.ctx.query.userProfiles)
 
   val Types: List[Type with Named] = UserProfile :: CommonProfile :: Nil
 }
