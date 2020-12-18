@@ -73,7 +73,8 @@ class GraphQLController @Inject() (
             queryAst = queryAst,
             userContext = graphQLContextFactory.create(request),
             operationName = operation,
-            variables = variables getOrElse Json.obj()
+            variables = variables getOrElse Json.obj(),
+            deferredResolver = GraphQLSchema.Resolver
           )
           .map(Ok(_))
           .recover {

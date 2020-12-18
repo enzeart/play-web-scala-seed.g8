@@ -1,6 +1,7 @@
 package graphql
 
 import sangria.schema._
+import sangria.execution.deferred.DeferredResolver
 
 object GraphQLSchema {
 
@@ -12,4 +13,6 @@ object GraphQLSchema {
   )
 
   val Root: Schema[GraphQLContext, Unit] = Schema(Query, additionalTypes = AuthSchema.Types)
+
+  val Resolver: DeferredResolver[GraphQLContext] = DeferredResolver.fetchers()
 }
