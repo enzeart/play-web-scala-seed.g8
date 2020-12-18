@@ -6,13 +6,24 @@ import sangria.execution.deferred.DeferredResolver
 object GraphQLSchema {
 
   val Query: ObjectType[GraphQLContext, Unit] = ObjectType(
-    "Query",
+    GraphQLConstants.SchemaQuery,
     fields[GraphQLContext, Unit](
       AuthSchema.UserProfilesField
     )
   )
 
-  val Root: Schema[GraphQLContext, Unit] = Schema(Query, additionalTypes = AuthSchema.Types)
+  val Mutation: ObjectType[GraphQLContext, Unit] = ObjectType(
+    GraphQLConstants.SchemaMutation,
+    fields[GraphQLContext, Unit]()
+  )
+
+  val Subscription: ObjectType[GraphQLContext, Unit] = ObjectType(
+    GraphQLConstants.SchemaSubscription,
+    fields[GraphQLContext, Unit]()
+  )
+
+  val Root: Schema[GraphQLContext, Unit] =
+    Schema(query = Query, mutation = None, subscription = None, additionalTypes = AuthSchema.Types)
 
   val Resolver: DeferredResolver[GraphQLContext] = DeferredResolver.fetchers()
 }
