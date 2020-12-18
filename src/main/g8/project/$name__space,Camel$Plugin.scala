@@ -10,6 +10,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     lazy val $name;format="space,camel"$Controller = inputKey[Unit]("Create a controller from the giter8 scaffold")
     lazy val $name;format="space,camel"$Model = inputKey[Unit]("Create a model from the giter8 scaffold")
     lazy val $name;format="space,camel"$Module = inputKey[Unit]("Create a guice module from the giter8 scaffold")
+    lazy val $name;format="space,camel"$GraphqlSchema = inputKey[Unit]("Create a graphQL schema from the giter8 scaffold")
   }
 
   import autoImport._
@@ -28,10 +29,15 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     g8Scaffold.toTask(s" module --baseName=\${baseNameParser.parsed}")
   }
 
+  val $name;format="space,camel"$GraphqlSchemaTask = Def.inputTaskDyn {
+    g8Scaffold.toTask(s" graphqlSchema --baseName=\${baseNameParser.parsed}")
+  }
+
   val base$name;format="space,Camel"$Settings: Seq[Def.Setting[_]] = Seq(
     $name;format="space,camel"$Controller := $name;format="space,camel"$ControllerTask.evaluated,
     $name;format="space,camel"$Model := $name;format="space,camel"$ModelTask.evaluated,
-    $name;format="space,camel"$Module := $name;format="space,camel"$ModuleTask.evaluated
+    $name;format="space,camel"$Module := $name;format="space,camel"$ModuleTask.evaluated,
+    $name;format="space,camel"$GraphqlSchema := $name;format="space,camel"$GraphqlSchemaTask.evaluated
   )
 
   override val trigger = noTrigger
