@@ -43,8 +43,5 @@ object AuthSchema {
     DocumentField(fieldName = "displayName", description = DisplayNameFieldDescription)
   )
 
-  val UserProfilesField: Field[GraphQLContext, Unit] =
-    Field("userProfiles", ListType(UserProfile), resolve = _.ctx.query.userProfiles)
-
   val Types: List[Type with Named] = UserProfile :: CommonProfile :: Nil
 }
