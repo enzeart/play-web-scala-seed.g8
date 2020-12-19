@@ -8,7 +8,7 @@ object AuthSchema {
   private val IdFieldDescription          = "The user's id"
   private val UserNameFieldDescription    = "The user's account name"
   private val EmailFieldDescription       = "The user's email address"
-  private val FirstNameFieldDescription   = "This user's first name"
+  private val FirstNameFieldDescription   = "The user's first name"
   private val FamilyNameFieldDescription  = "The user's family name"
   private val DisplayNameFieldDescription = "The user's publicly displayed name"
   private val RolesFieldDescription       = "The user's account roles"
