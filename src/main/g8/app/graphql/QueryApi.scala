@@ -1,20 +1,16 @@
 package graphql
 
-import com.google.inject.assistedinject.Assisted
 import models.auth.{CommonProfile, UserProfile}
-import org.pac4j.play.scala.AuthenticatedRequest
 import org.pac4j.core.profile.{CommonProfile => Pac4jCommonProfile}
 import sangria.macros.derive.GraphQLField
 
-import scala.jdk.CollectionConverters._
 import javax.inject.Inject
+import scala.jdk.CollectionConverters._
 
-class QueryApi @Inject() (
-    @Assisted request: AuthenticatedRequest[Pac4jCommonProfile, _]
-) {
+class QueryApi @Inject() (implicit graphQLContext: GraphQLContext) {
 
   @GraphQLField
-  def userProfiles: Seq[UserProfile] = request.profiles.collect {
+  def userProfiles: Seq[UserProfile] = graphQLContext.request.profiles.collect {
     case profile: Pac4jCommonProfile =>
       CommonProfile(
         id = profile.getId,

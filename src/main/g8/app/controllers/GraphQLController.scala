@@ -1,7 +1,7 @@
 package controllers
 
 import config.AppConfig
-import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchema, MutationApiFactory, QueryApiFactory}
+import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchema}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.Environment
@@ -20,8 +20,6 @@ import scala.util.{Failure, Success}
 class GraphQLController @Inject() (
     val controllerComponents: SecurityComponents,
     graphQLContextFactory: GraphQLContextFactory,
-    queryApiFactory: QueryApiFactory,
-    mutationApiFactory: MutationApiFactory,
     appConfig: AppConfig,
     environment: Environment
 )(
@@ -66,8 +64,6 @@ class GraphQLController @Inject() (
       variables: Option[JsObject],
       operation: Option[String]
   ): Future[Result] = {
-    val queryApi    = queryApiFactory.create(request)
-    val mutationApi = mutationApiFactory.create(request)
 
     QueryParser.parse(query) match {
       case Success(queryAst) =>
@@ -75,7 +71,7 @@ class GraphQLController @Inject() (
           .execute(
             schema = GraphQLSchema.Root,
             queryAst = queryAst,
-            userContext = graphQLContextFactory.create(queryApi, mutationApi),
+            userContext = graphQLContextFactory.create(request),
             operationName = operation,
             variables = variables getOrElse Json.obj(),
             deferredResolver = GraphQLSchema.Resolver

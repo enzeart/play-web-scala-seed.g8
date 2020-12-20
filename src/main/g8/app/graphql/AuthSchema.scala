@@ -1,7 +1,8 @@
 package graphql
+
 import models.auth.{CommonProfile, UserProfile}
-import sangria.schema._
 import sangria.macros.derive._
+import sangria.schema.{Field, InterfaceType, ListType, Named, ObjectType, OptionType, StringType, Type, fields}
 
 object AuthSchema {
 

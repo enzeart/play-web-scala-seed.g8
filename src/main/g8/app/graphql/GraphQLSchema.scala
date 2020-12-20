@@ -1,9 +1,9 @@
 package graphql
 
-import sangria.schema._
+import AuthSchema.{Types => AuthSchemaTypes, _}
 import sangria.execution.deferred.DeferredResolver
 import sangria.macros.derive._
-import AuthSchema._
+import sangria.schema._
 
 object GraphQLSchema {
 
@@ -12,13 +12,16 @@ object GraphQLSchema {
   val Mutation: ObjectType[GraphQLContext, Unit] =
     deriveContextObjectType[GraphQLContext, MutationApi, Unit](_.mutation)
 
-  val Subscription: ObjectType[GraphQLContext, Unit] = ObjectType(
-    GraphQLConstants.SchemaSubscription,
-    fields[GraphQLContext, Unit]()
-  )
+  val Subscription: ObjectType[GraphQLContext, Unit] =
+    deriveContextObjectType[GraphQLContext, SubscriptionApi, Unit](_.subscription)
 
   val Root: Schema[GraphQLContext, Unit] =
-    Schema(query = Query, mutation = Option(Mutation), subscription = None, additionalTypes = AuthSchema.Types)
+    Schema(
+      query = Query,
+      mutation = Option(Mutation),
+      subscription = Option(Subscription),
+      additionalTypes = AuthSchemaTypes
+    )
 
   val Resolver: DeferredResolver[GraphQLContext] = DeferredResolver.fetchers()
 }

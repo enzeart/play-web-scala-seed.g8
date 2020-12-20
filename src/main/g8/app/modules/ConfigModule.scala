@@ -1,9 +1,10 @@
 package modules
 
 import com.google.inject.{AbstractModule, Provides}
+import config.AppConfig
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
-import config.AppConfig
+
 import javax.inject.Singleton
 
 class ConfigModule extends AbstractModule with ScalaModule {

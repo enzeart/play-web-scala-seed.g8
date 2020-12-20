@@ -7,6 +7,7 @@ object $name;format="space,Camel"$Dependencies {
   val scalaGuice: ModuleID = "net.codingwell" %% "scala-guice" % "$scalaGuiceVersion$"
   val sangria: ModuleID = "org.sangria-graphql" %% "sangria" % "$sangriaVersion$"
   val sangriaPlayJson: ModuleID = "org.sangria-graphql" %% "sangria-play-json" % "$sangriaVersion$"
+  val sangriaAkkaStreams: ModuleID = "org.sangria-graphql" %% "sangria-akka-streams" % "$sangriaAkkaStreamsVersion$"
 
   val rootDependencies: Seq[ModuleID] = Seq(
     guice,
@@ -14,6 +15,7 @@ object $name;format="space,Camel"$Dependencies {
     playPac4j,
     sangria,
     sangriaPlayJson,
-    caffeine
+    caffeine,
+    sangriaAkkaStreams
   )
 }

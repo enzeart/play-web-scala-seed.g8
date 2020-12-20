@@ -1,17 +1,18 @@
 package modules
 
-import org.pac4j.core.client.direct.AnonymousClient
 import com.google.inject.{AbstractModule, Provides}
-import org.pac4j.core.client.Clients
-import play.Environment
 import config.{AppConfig, AuthConfig}
-import org.pac4j.core.config.Config
 import net.codingwell.scalaguice.ScalaModule
+import org.pac4j.core.client.Clients
+import org.pac4j.core.client.direct.AnonymousClient
+import org.pac4j.core.config.Config
+import org.pac4j.play.scala.{DefaultSecurityComponents, SecurityComponents}
 import org.pac4j.play.store.{PlayCacheSessionStore, PlaySessionStore}
 import org.pac4j.play.{CallbackController, LogoutController}
+import play.Environment
 import play.libs.concurrent.HttpExecutionContext
+
 import javax.inject.Singleton
-import org.pac4j.play.scala.{DefaultSecurityComponents, SecurityComponents}
 
 class AuthModule extends AbstractModule with ScalaModule {
 
