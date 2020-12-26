@@ -33,10 +33,10 @@ class GraphQLController @Inject() (
     }
 
   def graphqlBody: Action[JsValue] = Secure(appConfig.auth.clientName).async(parse.json) { request =>
-    val query     = (request.body \ GraphQLConstants.QueryFieldQuery).as[String]
-    val operation = (request.body \ GraphQLConstants.QueryFieldOperation).asOpt[String]
+    val query     = (request.body \ GraphQLConstants.QueryFieldName.Query).as[String]
+    val operation = (request.body \ GraphQLConstants.QueryFieldName.Operation).asOpt[String]
 
-    val variables = (request.body \ GraphQLConstants.QueryFieldVariables).toOption.flatMap {
+    val variables = (request.body \ GraphQLConstants.QueryFieldName.Variables).toOption.flatMap {
       case JsString(vars) => Option(parseVariables(vars))
       case obj: JsObject  => Option(obj)
       case _              => None
