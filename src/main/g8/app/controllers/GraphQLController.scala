@@ -3,17 +3,13 @@ package controllers
 import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.adapter._
 import akka.stream.Materializer
-import akka.stream.scaladsl.Flow
 import config.AppConfig
 import graphql.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Protocol}
 import graphql.{GraphQLConstants, GraphQLContextFactory, _}
-import org.pac4j.core.profile.{CommonProfile, ProfileManager}
-import org.pac4j.play.PlayWebContext
-import org.pac4j.play.java.{SecureAction => SecureJavaAction}
-import org.pac4j.play.scala.{AuthenticatedRequest, SecureAction, Security, SecurityComponents}
+import org.pac4j.core.profile.CommonProfile
+import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.Environment
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
-import play.api.mvc.WebSocket.MessageFlowTransformer
 import play.api.mvc.WebSocket.MessageFlowTransformer.jsonMessageFlowTransformer
 import play.api.mvc._
 import sangria.ast.OperationType.{Mutation, Query, Subscription}
@@ -25,8 +21,6 @@ import utils.{StreamUtil, StringConstants}
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.jdk.CollectionConverters._
-import scala.jdk.FutureConverters._
 import scala.util.{Failure, Success}
 
 @Singleton
@@ -41,41 +35,8 @@ class GraphQLController @Inject() (
     mat: Materializer
 ) extends BaseController
     with Security[CommonProfile]
+    with WebSocketSecurity[CommonProfile]
     with GraphQLQueryExecution {
-
-  implicit class SecureWebsocket(secureAction: SecureAction[CommonProfile, AnyContent, AuthenticatedRequest]) {
-
-    def webSocket[In, Out](
-        f: AuthenticatedRequest[AnyContent] => Future[Either[Result, Flow[In, Out, _]]]
-    )(implicit transformer: MessageFlowTransformer[In, Out]): WebSocket =
-      WebSocket.acceptOrResult[In, Out] { request =>
-        val webContext       = new PlayWebContext(request, playSessionStore)
-        val secureJavaAction = new SecureJavaAction(config, playSessionStore)
-        secureJavaAction
-          .call(
-            webContext,
-            secureAction.clients,
-            secureAction.authorizers,
-            secureAction.matchers,
-            secureAction.multiProfile
-          )
-          .asScala
-          .flatMap(r =>
-            if (r == null) { // TODO: Clean up null check
-              val profileManager = new ProfileManager[CommonProfile](webContext)
-              val profiles       = profileManager.getAllLikeDefaultSecurityLogic(true)
-              f(
-                AuthenticatedRequest(
-                  profiles.asScala.toList,
-                  webContext.supplementRequest(request.asJava).asScala.withBody(AnyContentAsEmpty)
-                )
-              )
-            } else {
-              Future successful Left(r.asScala)
-            }
-          )
-      }
-  }
 
   def graphql(query: String, variables: Option[String], operation: Option[String]): Action[AnyContent] =
     Secure(appConfig.auth.clientName).async { request =>
