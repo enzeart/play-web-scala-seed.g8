@@ -1,33 +1,33 @@
 package controllers
 
 import akka.actor.ActorSystem
+import akka.actor.typed.scaladsl.adapter._
+import akka.stream.Materializer
 import akka.stream.scaladsl.Flow
 import config.AppConfig
 import graphql.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Protocol}
 import graphql.{GraphQLConstants, GraphQLContextFactory, _}
 import org.pac4j.core.profile.{CommonProfile, ProfileManager}
 import org.pac4j.play.PlayWebContext
+import org.pac4j.play.java.{SecureAction => SecureJavaAction}
 import org.pac4j.play.scala.{AuthenticatedRequest, SecureAction, Security, SecurityComponents}
 import play.Environment
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import play.api.mvc.WebSocket.MessageFlowTransformer
-import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, BaseController, Request, Result, WebSocket}
+import play.api.mvc.WebSocket.MessageFlowTransformer.jsonMessageFlowTransformer
+import play.api.mvc._
 import sangria.ast.OperationType.{Mutation, Query, Subscription}
 import sangria.execution.{ErrorWithResolver, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.{QueryParser, SyntaxError}
 import utils.{StreamUtil, StringConstants}
 
-import scala.jdk.CollectionConverters._
-import scala.jdk.FutureConverters._
-import org.pac4j.play.java.{SecureAction => SecureJavaAction}
-
+import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.jdk.CollectionConverters._
+import scala.jdk.FutureConverters._
 import scala.util.{Failure, Success}
-import akka.actor.typed.scaladsl.adapter._
-import akka.stream.Materializer
-import play.api.mvc.WebSocket.MessageFlowTransformer.jsonMessageFlowTransformer
 
 @Singleton
 class GraphQLController @Inject() (
@@ -97,18 +97,20 @@ class GraphQLController @Inject() (
 
   def subscriptionsTransportWsWebSocket: WebSocket =
     Secure(appConfig.auth.clientName).webSocket { request =>
+      val actorName = s"subscriptions-transport-ws-websocket-${UUID.randomUUID()}"
       StreamUtil
         .actorFlow[JsValue, Protocol, JsValue](
           inputTransform = PayloadData,
           inputRef = outputRef =>
             Future.successful(
-              actorSystem.spawn(SubscriptionsTransportWsConnection(outputRef, request, graphQLContextFactory), "name") // TODO: Pick a more suitable name
+              actorSystem
+                .spawn(SubscriptionsTransportWsConnection(outputRef, request, graphQLContextFactory), actorName)
             ),
           inputOnCompleteMessage = Disconnect,
           inputOnFailureMessage = _ => Disconnect
         )
         .map(Right(_))
-    }(jsonMessageFlowTransformer)
+    }
 
   def graphiql: Action[AnyContent] = Secure {
     if (environment.isProd) {
