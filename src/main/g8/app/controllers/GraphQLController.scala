@@ -1,13 +1,14 @@
 package controllers
 
 import config.AppConfig
-import graphql.{GraphQLConstants, GraphQLContextFactory, GraphQLSchema}
+import graphql.{GraphQLConstants, GraphQLContextFactory, _}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.Environment
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, Result}
-import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
+import sangria.ast.OperationType.{Mutation, Query, Subscription}
+import sangria.execution.{ErrorWithResolver, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.{QueryParser, SyntaxError}
 import utils.StringConstants
@@ -19,13 +20,14 @@ import scala.util.{Failure, Success}
 @Singleton
 class GraphQLController @Inject() (
     val controllerComponents: SecurityComponents,
-    graphQLContextFactory: GraphQLContextFactory,
+    val graphQLContextFactory: GraphQLContextFactory,
     appConfig: AppConfig,
     environment: Environment
 )(
     implicit ec: ExecutionContext
 ) extends BaseController
-    with Security[CommonProfile] {
+    with Security[CommonProfile]
+    with GraphQLQueryExecution {
 
   def graphql(query: String, variables: Option[String], operation: Option[String]): Action[AnyContent] =
     Secure(appConfig.auth.clientName).async { request =>
@@ -67,20 +69,23 @@ class GraphQLController @Inject() (
 
     QueryParser.parse(query) match {
       case Success(queryAst) =>
-        Executor
-          .execute(
-            schema = GraphQLSchema.Root,
-            queryAst = queryAst,
-            userContext = graphQLContextFactory.create(request),
-            operationName = operation,
-            variables = variables getOrElse Json.obj(),
-            deferredResolver = GraphQLSchema.Resolver
-          )
-          .map(Ok(_))
-          .recover {
-            case error: QueryAnalysisError => BadRequest(error.resolveError)
-            case error: ErrorWithResolver  => InternalServerError(error.resolveError)
-          }
+        queryAst.operationType(operation) match {
+          case Some(Query) | Some(Mutation) =>
+            executeStandardQuery(request, queryAst, variables, operation)
+              .map(Ok(_))
+              .recover {
+                case error: QueryAnalysisError => BadRequest(error.resolveError)
+                case error: ErrorWithResolver  => InternalServerError(error.resolveError)
+              }
+          case Some(Subscription) | None =>
+            Future.successful(
+              BadRequest(
+                Json.obj(
+                  GraphQLConstants.ErrorFieldName.Message -> ErrorMessages.unsupportedOperationType(Subscription)
+                )
+              )
+            )
+        }
       case Failure(error: SyntaxError) =>
         Future.successful(
           BadRequest(
