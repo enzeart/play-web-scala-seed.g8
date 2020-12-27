@@ -1,3 +1,4 @@
+import play.core.PlayVersion
 import play.sbt.PlayImport._
 import sbt._
 
@@ -8,6 +9,7 @@ object $name;format="space,Camel"$Dependencies {
   val sangria: ModuleID = "org.sangria-graphql" %% "sangria" % "$sangriaVersion$"
   val sangriaPlayJson: ModuleID = "org.sangria-graphql" %% "sangria-play-json" % "$sangriaVersion$"
   val sangriaAkkaStreams: ModuleID = "org.sangria-graphql" %% "sangria-akka-streams" % "$sangriaAkkaStreamsVersion$"
+  val akkaStreamTyped: ModuleID = "com.typesafe.akka" %% "akka-stream-typed" % PlayVersion.akkaVersion
 
   val rootDependencies: Seq[ModuleID] = Seq(
     guice,
@@ -16,6 +18,7 @@ object $name;format="space,Camel"$Dependencies {
     sangria,
     sangriaPlayJson,
     caffeine,
-    sangriaAkkaStreams
+    sangriaAkkaStreams,
+    akkaStreamTyped
   )
 }
