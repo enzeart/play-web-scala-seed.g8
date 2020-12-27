@@ -11,8 +11,6 @@ import scala.concurrent.ExecutionContext
 
 trait GraphQLQueryExecution {
 
-  val graphQLContextFactory: GraphQLContextFactory
-
   def executeStandardQuery(
       request: AuthenticatedRequest[CommonProfile, _],
       queryAst: Document,
@@ -22,7 +20,8 @@ trait GraphQLQueryExecution {
       implicit executionContext: ExecutionContext,
       marshaller: ResultMarshaller,
       um: InputUnmarshaller[JsObject],
-      scheme: ExecutionScheme
+      scheme: ExecutionScheme,
+      graphQLContextFactory: GraphQLContextFactory
   ): scheme.Result[GraphQLContext, marshaller.Node] =
     Executor
       .execute(

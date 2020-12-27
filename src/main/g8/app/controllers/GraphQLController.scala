@@ -26,13 +26,13 @@ import scala.util.{Failure, Success}
 @Singleton
 class GraphQLController @Inject() (
     val controllerComponents: SecurityComponents,
-    val graphQLContextFactory: GraphQLContextFactory,
     appConfig: AppConfig,
     environment: Environment
 )(
     implicit ec: ExecutionContext,
     actorSystem: ActorSystem,
-    mat: Materializer
+    mat: Materializer,
+    graphQLContextFactory: GraphQLContextFactory
 ) extends BaseController
     with Security[CommonProfile]
     with WebSocketSecurity[CommonProfile]
@@ -65,7 +65,7 @@ class GraphQLController @Inject() (
           inputRef = outputRef =>
             Future.successful(
               actorSystem
-                .spawn(SubscriptionsTransportWsConnection(outputRef, request, graphQLContextFactory), actorName)
+                .spawn(SubscriptionsTransportWsConnection(outputRef, request), actorName)
             ),
           inputOnCompleteMessage = Disconnect,
           inputOnFailureMessage = _ => Disconnect

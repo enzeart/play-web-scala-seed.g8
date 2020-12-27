@@ -17,9 +17,10 @@ object SubscriptionsTransportWsConnection {
 
   def apply(
       out: ActorRef[JsValue],
-      request: AuthenticatedRequest[CommonProfile, AnyContent],
-      graphQLContextFactory: GraphQLContextFactory
-  ): Behavior[Protocol] = Behaviors.setup { context => new SubscriptionsTransportWsConnection(context) }
+      request: AuthenticatedRequest[CommonProfile, AnyContent]
+  )(implicit graphQLContextFactory: GraphQLContextFactory): Behavior[Protocol] = Behaviors.setup { context =>
+    new SubscriptionsTransportWsConnection(context)
+  }
 }
 
 class SubscriptionsTransportWsConnection(context: ActorContext[Protocol]) extends AbstractBehavior[Protocol](context) {
