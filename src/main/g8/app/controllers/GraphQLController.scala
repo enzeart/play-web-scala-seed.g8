@@ -85,10 +85,12 @@ class GraphQLController @Inject() (
         Future.successful(
           BadRequest(
             Json.obj(
-              GraphQLConstants.SyntaxError -> error.getMessage(),
-              GraphQLConstants.Location -> Json.arr(
-                Json.obj(GraphQLConstants.Line -> error.originalError.position.line),
-                GraphQLConstants.Column -> error.originalError.position.column
+              GraphQLConstants.ErrorFieldName.Message -> error.getMessage(),
+              GraphQLConstants.ErrorFieldName.Locations -> Json.arr(
+                Json.obj(
+                  GraphQLConstants.ErrorFieldName.Line   -> error.originalError.position.line,
+                  GraphQLConstants.ErrorFieldName.Column -> error.originalError.position.column
+                )
               )
             )
           )

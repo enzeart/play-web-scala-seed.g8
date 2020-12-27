@@ -8,8 +8,10 @@ object GraphQLConstants {
     val Variables: String = "variables"
   }
 
-  val SyntaxError: String = "syntaxError"
-  val Location: String    = "location"
-  val Line: String        = "line"
-  val Column: String      = "column"
+  object ErrorFieldName {
+    val Message: String   = "message"
+    val Locations: String = "locations"
+    val Line: String      = "line"
+    val Column: String    = "column"
+  }
 }
