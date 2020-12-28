@@ -61,7 +61,7 @@ class GraphQLController @Inject() (
     Secure(appConfig.auth.clientName).webSocket { request =>
       val actorName = s"subscriptions-transport-ws-websocket-\${UUID.randomUUID()}"
       StreamUtil
-        .actorFlow[JsValue, Protocol, JsValue](
+        .actorFlow[String, Protocol, String](
           inputTransform = PayloadData,
           inputRef = outputRef =>
             Future.successful(

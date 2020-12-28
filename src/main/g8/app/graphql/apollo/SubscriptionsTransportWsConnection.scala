@@ -6,17 +6,16 @@ import graphql.GraphQLContextFactory
 import graphql.apollo.SubscriptionsTransportWsConnection.Protocol
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.AuthenticatedRequest
-import play.api.libs.json.JsValue
 import play.api.mvc.AnyContent
 
 object SubscriptionsTransportWsConnection {
 
   sealed trait Protocol
-  case class PayloadData(text: JsValue) extends Protocol
-  case object Disconnect                extends Protocol
+  case class PayloadData(text: String) extends Protocol
+  case object Disconnect               extends Protocol
 
   def apply(
-      out: ActorRef[JsValue],
+      out: ActorRef[String],
       request: AuthenticatedRequest[CommonProfile, AnyContent]
   )(implicit graphQLContextFactory: GraphQLContextFactory): Behavior[Protocol] = Behaviors.setup { context =>
     new SubscriptionsTransportWsConnection(context)
