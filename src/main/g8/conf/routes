@@ -2,9 +2,10 @@
 # https://www.playframework.com/documentation/latest/ScalaRouting
 GET     /debug/graphql/graphiql controllers.GraphQLController.graphiql
 
-GET     /auth/callback          @org.pac4j.play.CallbackController.callback(request: Request)
-GET     /api/graphql            controllers.GraphQLController.graphql(query: String, variables: Option[String], operation: Option[String])
-POST    /api/graphql            controllers.GraphQLController.graphqlBody
+GET     /auth/callback                                          @org.pac4j.play.CallbackController.callback(request: Request)
+GET     /api/graphql                                            controllers.GraphQLController.graphql(query: String, variables: Option[String], operation: Option[String])
+POST    /api/graphql                                            controllers.GraphQLController.graphqlBody
+GET     /api/graphql/subscription/subscriptions-transport-ws    controllers.GraphQLController.subscriptionsTransportWsWebSocket
 
-GET     /                       controllers.Assets.at(file = "index.html")
-GET     /*file                  controllers.Assets.at(file)
+GET     /                                                       controllers.Assets.at(file = "index.html")
+GET     /*file                                                  controllers.Assets.at(file)
