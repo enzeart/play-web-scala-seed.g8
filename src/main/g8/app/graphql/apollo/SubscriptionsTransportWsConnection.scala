@@ -1,13 +1,13 @@
-package graphql
+package graphql.apollo
 
+import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
-import akka.actor.typed.scaladsl.AbstractBehavior
-import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
-import graphql.SubscriptionsTransportWsConnection.Protocol
+import graphql.GraphQLContextFactory
+import graphql.apollo.SubscriptionsTransportWsConnection.Protocol
 import org.pac4j.core.profile.CommonProfile
+import org.pac4j.play.scala.AuthenticatedRequest
 import play.api.libs.json.JsValue
 import play.api.mvc.AnyContent
-import org.pac4j.play.scala.AuthenticatedRequest
 
 object SubscriptionsTransportWsConnection {
 

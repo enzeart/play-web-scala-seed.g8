@@ -4,7 +4,8 @@ import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.adapter._
 import akka.stream.Materializer
 import config.AppConfig
-import graphql.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Protocol}
+import graphql.apollo.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Protocol}
+import graphql.apollo.SubscriptionsTransportWsConnection
 import graphql.{GraphQLConstants, GraphQLContextFactory, _}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
@@ -58,7 +59,7 @@ class GraphQLController @Inject() (
 
   def subscriptionsTransportWsWebSocket: WebSocket =
     Secure(appConfig.auth.clientName).webSocket { request =>
-      val actorName = s"subscriptions-transport-ws-websocket-\${UUID.randomUUID()}"
+      val actorName = s"subscriptions-transport-ws-websocket-${UUID.randomUUID()}"
       StreamUtil
         .actorFlow[JsValue, Protocol, JsValue](
           inputTransform = PayloadData,
