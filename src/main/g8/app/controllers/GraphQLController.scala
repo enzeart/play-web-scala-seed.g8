@@ -4,14 +4,13 @@ import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.adapter._
 import akka.stream.Materializer
 import config.AppConfig
-import graphql.apollo.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Protocol}
 import graphql.apollo.SubscriptionsTransportWsConnection
+import graphql.apollo.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Protocol}
 import graphql.{GraphQLConstants, GraphQLContextFactory, _}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.Environment
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
-import play.api.mvc.WebSocket.MessageFlowTransformer.jsonMessageFlowTransformer
 import play.api.mvc._
 import sangria.ast.OperationType.{Mutation, Query, Subscription}
 import sangria.execution.{ErrorWithResolver, QueryAnalysisError}

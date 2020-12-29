@@ -3,9 +3,10 @@ package graphql.apollo
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
 import akka.actor.typed.{ActorRef, Behavior}
 import graphql.GraphQLContextFactory
-import graphql.apollo.SubscriptionsTransportWsConnection.Protocol
+import graphql.apollo.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Protocol}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.AuthenticatedRequest
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 
 object SubscriptionsTransportWsConnection {
@@ -25,6 +26,10 @@ object SubscriptionsTransportWsConnection {
 class SubscriptionsTransportWsConnection(context: ActorContext[Protocol]) extends AbstractBehavior[Protocol](context) {
 
   override def onMessage(msg: Protocol): Behavior[Protocol] = msg match {
-    case _ => println(msg); this
+    case PayloadData(text) =>
+//      val json = Json.parse(text).validate[OperationMessage]
+      this
+    case Disconnect => Behaviors.stopped
   }
+
 }
