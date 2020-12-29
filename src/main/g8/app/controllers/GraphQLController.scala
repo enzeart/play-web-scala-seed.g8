@@ -4,8 +4,8 @@ import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.adapter._
 import akka.stream.Materializer
 import config.AppConfig
-import graphql.apollo.SubscriptionsTransportWsConnection
 import graphql.apollo.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Protocol}
+import graphql.apollo.{SubscriptionsTransportWsConnection, randomSubscriptionsTransportWsConnectionName}
 import graphql.{GraphQLConstants, GraphQLContextFactory, _}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
@@ -18,7 +18,6 @@ import sangria.marshalling.playJson._
 import sangria.parser.{QueryParser, SyntaxError}
 import utils.{StreamUtil, StringConstants}
 
-import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -58,14 +57,20 @@ class GraphQLController @Inject() (
 
   def subscriptionsTransportWsWebSocket: WebSocket =
     Secure(appConfig.auth.clientName).webSocket { request =>
-      val actorName = s"subscriptions-transport-ws-websocket-\${UUID.randomUUID()}"
       StreamUtil
         .actorFlow[String, Protocol, String](
           inputTransform = PayloadData,
           inputRef = outputRef =>
             Future.successful(
               actorSystem
-                .spawn(SubscriptionsTransportWsConnection(outputRef, request), actorName)
+                .spawn(
+                  SubscriptionsTransportWsConnection(
+                    outputRef,
+                    request,
+                    appConfig.graphql.subscriptionsTransportWsKeepAliveInterval
+                  ),
+                  randomSubscriptionsTransportWsConnectionName
+                )
             ),
           inputOnCompleteMessage = Disconnect,
           inputOnFailureMessage = _ => Disconnect
