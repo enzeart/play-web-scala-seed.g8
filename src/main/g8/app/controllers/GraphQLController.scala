@@ -72,8 +72,8 @@ class GraphQLController @Inject() (
                   randomSubscriptionsTransportWsConnectionName
                 )
             ),
-          inputOnCompleteMessage = Disconnect,
-          inputOnFailureMessage = _ => Disconnect
+          inputOnCompleteMessage = Disconnect(),
+          inputOnFailureMessage = t => Disconnect(Option(t))
         )
         .map(Right(_))
     }
