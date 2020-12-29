@@ -59,7 +59,8 @@ class SubscriptionsTransportWsConnection(
           out ! Json.toJson(connectionError).toString
           Behaviors.same
       }
-    case Disconnect => Behaviors.stopped
+    case Disconnect => Behaviors.stopped // TODO: Add cleanup logic
+    case _          => Behaviors.same    // TODO: Perhaps log that there is some unexpected message
   }
 
   def connected(connectionInit: ConnectionInit): Behavior[Protocol] = {
