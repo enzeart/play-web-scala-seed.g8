@@ -52,11 +52,11 @@ sealed trait OperationMessage {
   val `type`: MessageType.Value
 }
 
-case class ConnectionInit(payload: JsObject, `type`: MessageType.Value = GqlConnectionInit) extends OperationMessage {
+case class ConnectionInit(payload: JsValue, `type`: MessageType.Value = GqlConnectionInit) extends OperationMessage {
   require(`type` == GqlConnectionInit)
 }
 
-case class Start(id: String, payload: JsObject, `type`: MessageType.Value = GqlStart) extends OperationMessage {
+case class Start(id: String, payload: JsValue, `type`: MessageType.Value = GqlStart) extends OperationMessage {
   require(`type` == GqlStart)
 }
 
@@ -68,20 +68,20 @@ case class ConnectionTerminate(`type`: MessageType.Value = GqlConnectionTerminat
   require(`type` == GqlConnectionTerminate)
 }
 
-case class ConnectionError(payload: JsObject, `type`: MessageType.Value = GqlConnectionError) extends OperationMessage {
+case class ConnectionError(payload: JsValue, `type`: MessageType.Value = GqlConnectionError) extends OperationMessage {
   require(`type` == GqlConnectionError)
 }
 
-case class ConnectionAck(payload: JsObject = Json.obj(), `type`: MessageType.Value = GqlConnectionAck)
+case class ConnectionAck(payload: JsValue = Json.obj(), `type`: MessageType.Value = GqlConnectionAck)
     extends OperationMessage {
   require(`type` == GqlConnectionAck)
 }
 
-case class Data(id: String, payload: JsObject, `type`: MessageType.Value = GqlData) extends OperationMessage {
+case class Data(id: String, payload: JsValue, `type`: MessageType.Value = GqlData) extends OperationMessage {
   require(`type` == GqlData)
 }
 
-case class Error(id: String, payload: JsObject, `type`: MessageType.Value = GqlError) extends OperationMessage {
+case class Error(id: String, payload: JsValue, `type`: MessageType.Value = GqlError) extends OperationMessage {
   require(`type` == GqlError)
 }
 
