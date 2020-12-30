@@ -4,19 +4,19 @@ import akka.actor.ActorSystem
 import akka.actor.typed.scaladsl.adapter._
 import akka.stream.Materializer
 import config.AppConfig
-import graphql.apollo.SubscriptionsTransportWsConnection.{Disconnect, PayloadData, Command}
+import graphql.apollo.SubscriptionsTransportWsConnection.{Command, Disconnect, PayloadData}
 import graphql.apollo.{SubscriptionsTransportWsConnection, randomSubscriptionsTransportWsConnectionName}
 import graphql.{GraphQLConstants, GraphQLContextFactory, _}
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.Environment
-import play.api.libs.json.{JsObject, JsString, JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc._
 import sangria.ast.OperationType.{Mutation, Query, Subscription}
 import sangria.execution.{ErrorWithResolver, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.{QueryParser, SyntaxError}
-import utils.{StreamUtil, StringConstants}
+import utils.StreamUtil
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -43,15 +43,7 @@ class GraphQLController @Inject() (
     }
 
   def graphqlBody: Action[JsValue] = Secure(appConfig.auth.clientName).async(parse.json) { request =>
-    val query     = (request.body \ GraphQLConstants.QueryFieldName.Query).as[String]
-    val operation = (request.body \ GraphQLConstants.QueryFieldName.Operation).asOpt[String]
-
-    val variables = (request.body \ GraphQLConstants.QueryFieldName.Variables).toOption.flatMap {
-      case JsString(vars) => Option(parseVariables(vars))
-      case obj: JsObject  => Option(obj)
-      case _              => None
-    }
-
+    val (query, operation, variables) = extractQueryFields(request.body)
     executeQuery(request, query, variables, operation)
   }
 
@@ -78,17 +70,12 @@ class GraphQLController @Inject() (
         .map(Right(_))
     }
 
-  def graphiql: Action[AnyContent] = Secure {
+  def graphiql: Action[AnyContent] = Secure(appConfig.auth.clientName) {
     if (environment.isProd) {
       NotFound
     } else {
       Ok(views.html.graphiql())
     }
-  }
-
-  private def parseVariables(variables: String): JsObject = {
-    if (variables.trim == StringConstants.Empty || variables.trim == StringConstants.JsonNull) Json.obj()
-    else Json.parse(variables).as[JsObject]
   }
 
   private def executeQuery(

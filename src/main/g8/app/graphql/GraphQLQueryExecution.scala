@@ -2,14 +2,33 @@ package graphql
 
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.AuthenticatedRequest
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import sangria.ast.Document
 import sangria.execution.{ExecutionScheme, Executor}
 import sangria.marshalling.{InputUnmarshaller, ResultMarshaller}
+import utils.StringConstants
 
 import scala.concurrent.ExecutionContext
 
 trait GraphQLQueryExecution {
+
+  protected def extractQueryFields(json: JsValue): (String, Option[String], Option[JsObject]) = {
+    val query     = (json \ GraphQLConstants.QueryFieldName.Query).as[String]
+    val operation = (json \ GraphQLConstants.QueryFieldName.Operation).asOpt[String]
+
+    val variables = (json \ GraphQLConstants.QueryFieldName.Variables).toOption.flatMap {
+      case JsString(vars) => Option(parseVariables(vars))
+      case obj: JsObject  => Option(obj)
+      case _              => None
+    }
+
+    (query, operation, variables)
+  }
+
+  protected def parseVariables(variables: String): JsObject = {
+    if (variables.trim == StringConstants.Empty || variables.trim == StringConstants.JsonNull) Json.obj()
+    else Json.parse(variables).as[JsObject]
+  }
 
   def executeStandardQuery(
       request: AuthenticatedRequest[CommonProfile, _],
