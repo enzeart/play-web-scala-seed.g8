@@ -12,14 +12,10 @@ object GraphQLSchema {
   val Mutation: ObjectType[GraphQLContext, Unit] =
     deriveContextObjectType[GraphQLContext, MutationApi, Unit](_.mutation)
 
-  val Subscription: ObjectType[GraphQLContext, Unit] =
-    deriveContextObjectType[GraphQLContext, SubscriptionApi, Unit](_.subscription)
-
   val Root: Schema[GraphQLContext, Unit] =
     Schema(
       query = Query,
       mutation = Option(Mutation),
-      subscription = Option(Subscription),
       additionalTypes = AuthSchemaTypes
     )
 

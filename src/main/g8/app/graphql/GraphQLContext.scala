@@ -10,5 +10,4 @@ class GraphQLContext @Inject() (@Assisted val request: AuthenticatedRequest[Comm
   implicit private val graphQLContext: GraphQLContext = this
   val query: QueryApi                                 = new QueryApi
   val mutation: MutationApi                           = new MutationApi
-  val subscription: SubscriptionApi                   = new SubscriptionApi
 }
