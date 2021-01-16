@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "Schema",
+  "title": "Proxy Config Schematic",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "The project to configure in the workspace configuration"
+    }
+  }
+}

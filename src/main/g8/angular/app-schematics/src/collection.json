@@ -1,0 +1,10 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "proxy-config": {
+      "description": "A blank schematic.",
+      "factory": "./proxy-config/index#proxyConfig",
+      "schema": "./proxy-config/schema.json"
+    }
+  }
+}
