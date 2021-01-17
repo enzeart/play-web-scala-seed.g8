@@ -13,6 +13,7 @@ object AppConfig {
     val AuthDefaultLoginUrl          = "auth.default-login-url"
     val AuthDefaultLogoutUrl         = "auth.default-logout-url"
     val UiSpaRedirectRouteQueryParam = "ui.spa-redirect-route-query-param"
+    val UiSpaRedirectUrl             = "ui.spa-redirect-url"
   }
 
   implicit val configLoader: ConfigLoader[AppConfig] = (rootConfig: Config, path: String) => {
@@ -26,7 +27,8 @@ object AppConfig {
         defaultLogoutUrl = config.getString(AuthDefaultLogoutUrl)
       ),
       ui = UiConfig(
-        spaRedirectRouteQueryParam = config.getString(UiSpaRedirectRouteQueryParam)
+        spaRedirectRouteQueryParam = config.getString(UiSpaRedirectRouteQueryParam),
+        spaRedirectUrl = config.getString(UiSpaRedirectUrl)
       )
     )
   }

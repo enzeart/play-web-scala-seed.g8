@@ -24,7 +24,7 @@ class AppHttpErrorHandler @Inject() (
     else
       Future.successful(
         Results.Redirect(
-          url = "/",
+          url = appConfig.ui.spaRedirectUrl,
           queryStringParams = Map(appConfig.ui.spaRedirectRouteQueryParam -> Seq(request.uri)),
           status = Status.FOUND
         )
