@@ -12,7 +12,7 @@ import { InsertChange } from "../utility/change";
 import { buildRelativePath } from "../utility/find-module";
 import { createAppModuleSourceFile, FilePaths } from "../utils/files";
 
-export function appInterceptor(_options: AppInterceptorSchema): Rule {
+export function appInterceptor(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const templateSources = apply(url("./files"), [template({})]);
     const appModuleSourceFile = createAppModuleSourceFile(tree);
