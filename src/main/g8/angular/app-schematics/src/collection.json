@@ -8,6 +8,10 @@
     "app-interceptor": {
       "description": "A blank schematic.",
       "factory": "./app-interceptor/index#appInterceptor"
+    },
+    "default-route-handler": {
+      "description": "A blank schematic.",
+      "factory": "./default-route-handler/index#defaultRouteHandler"
     }
   }
 }

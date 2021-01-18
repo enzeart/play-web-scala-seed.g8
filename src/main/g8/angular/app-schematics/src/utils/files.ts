@@ -15,14 +15,21 @@ export const parseWorkspaceConfig = (tree: Tree): any => {
   return JSON.parse(workspaceConfigBuffer.toString("utf-8"));
 };
 
-export const createAppModuleSourceFile = (tree: Tree): ts.SourceFile => {
-  const appModuleBuffer = tree.read(FilePaths.APP_MODULE);
-  if (!appModuleBuffer)
-    throw new SchematicsException(`Could not find ${FilePaths.APP_MODULE}`);
+export const createSourceFile = (path: string, tree: Tree): ts.SourceFile => {
+  const buffer = tree.read(path);
+  if (!buffer) throw new SchematicsException(`Could not find ${path}`);
   return ts.createSourceFile(
-    FilePaths.APP_MODULE,
-    appModuleBuffer.toString("utf-8"),
+    path,
+    buffer.toString("utf-8"),
     ts.ScriptTarget.Latest,
     true
   );
+};
+
+export const createAppModuleSourceFile = (tree: Tree): ts.SourceFile => {
+  return createSourceFile(FilePaths.APP_MODULE, tree);
+};
+
+export const createAppRoutingModuleSourceFile = (tree: Tree): ts.SourceFile => {
+  return createSourceFile(FilePaths.APP_ROUTING_MODULE, tree);
 };
