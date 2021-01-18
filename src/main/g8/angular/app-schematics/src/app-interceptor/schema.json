@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "id": "ProxyConfigSchema",
-  "title": "Proxy Config Schematic",
+  "id": "AppInterceptorSchema",
+  "title": "Application HTTP Interceptor Schematic",
   "type": "object",
   "properties": {
     "project": {

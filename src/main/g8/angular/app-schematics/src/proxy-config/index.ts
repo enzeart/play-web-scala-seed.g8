@@ -9,7 +9,7 @@ import {
   SchematicsException, chain
 } from '@angular-devkit/schematics';
 
-export function proxyConfig(_options: Schema): Rule {
+export function proxyConfig(_options: ProxyConfigSchema): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const proxyConfigPath = './proxy.conf.js';
     const proxyConfigExists = tree.exists(proxyConfigPath);

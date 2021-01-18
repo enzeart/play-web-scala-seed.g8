@@ -1,7 +1,7 @@
 /**
- * Proxy Config Schematic
+ * Application HTTP Interceptor Schematic
  */
-declare interface ProxyConfigSchema {
+declare interface AppInterceptorSchema {
     /**
      * The project to configure in the workspace configuration
      */

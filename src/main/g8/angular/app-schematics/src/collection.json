@@ -5,6 +5,10 @@
       "description": "A blank schematic.",
       "factory": "./proxy-config/index#proxyConfig",
       "schema": "./proxy-config/schema.json"
+    },
+    "app-interceptor": {
+      "description": "A blank schematic.",
+      "factory": "./app-interceptor/index#appInterceptor"
     }
   }
 }
