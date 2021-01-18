@@ -5,16 +5,16 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { json, virtualFs, workspaces } from '@angular-devkit/core';
-import { Rule, Tree, noop } from '@angular-devkit/schematics';
-import { ProjectType } from './workspace-models';
+import { json, virtualFs, workspaces } from "@angular-devkit/core";
+import { Rule, Tree, noop } from "@angular-devkit/schematics";
+import { ProjectType } from "./workspace-models";
 
 function createHost(tree: Tree): workspaces.WorkspaceHost {
   return {
     async readFile(path: string): Promise<string> {
       const data = tree.read(path);
       if (!data) {
-        throw new Error('File not found.');
+        throw new Error("File not found.");
       }
 
       return virtualFs.fileBufferToString(data);
@@ -33,21 +33,25 @@ function createHost(tree: Tree): workspaces.WorkspaceHost {
 }
 
 export function updateWorkspace(
-  updater: (workspace: workspaces.WorkspaceDefinition) => void | Rule | PromiseLike<void | Rule>,
+  updater: (
+    workspace: workspaces.WorkspaceDefinition
+  ) => void | Rule | PromiseLike<void | Rule>
 ): Rule;
 export function updateWorkspace(
-  workspace: workspaces.WorkspaceDefinition,
+  workspace: workspaces.WorkspaceDefinition
 ): Rule;
 export function updateWorkspace(
-  updaterOrWorkspace: workspaces.WorkspaceDefinition
-    | ((workspace: workspaces.WorkspaceDefinition) => void | Rule | PromiseLike<void | Rule>),
+  updaterOrWorkspace:
+    | workspaces.WorkspaceDefinition
+    | ((
+        workspace: workspaces.WorkspaceDefinition
+      ) => void | Rule | PromiseLike<void | Rule>)
 ): Rule {
   return async (tree: Tree) => {
     const host = createHost(tree);
 
-    if (typeof updaterOrWorkspace === 'function') {
-
-      const { workspace } = await workspaces.readWorkspace('/', host);
+    if (typeof updaterOrWorkspace === "function") {
+      const { workspace } = await workspaces.readWorkspace("/", host);
 
       const result = await updaterOrWorkspace(workspace);
 
@@ -62,7 +66,7 @@ export function updateWorkspace(
   };
 }
 
-export async function getWorkspace(tree: Tree, path = '/') {
+export async function getWorkspace(tree: Tree, path = "/") {
   const host = createHost(tree);
 
   const { workspace } = await workspaces.readWorkspace(path, host);
@@ -74,36 +78,48 @@ export async function getWorkspace(tree: Tree, path = '/') {
  * Build a default project path for generating.
  * @param project The project which will have its default path generated.
  */
-export function buildDefaultPath(project: workspaces.ProjectDefinition): string {
-  const root = project.sourceRoot ? `/${project.sourceRoot}/` : `/${project.root}/src/`;
-  const projectDirName = project.extensions['projectType'] === ProjectType.Application ? 'app' : 'lib';
+export function buildDefaultPath(
+  project: workspaces.ProjectDefinition
+): string {
+  const root = project.sourceRoot
+    ? `/${project.sourceRoot}/`
+    : `/${project.root}/src/`;
+  const projectDirName =
+    project.extensions["projectType"] === ProjectType.Application
+      ? "app"
+      : "lib";
 
   return `${root}${projectDirName}`;
 }
 
-export async function createDefaultPath(tree: Tree, projectName: string): Promise<string> {
+export async function createDefaultPath(
+  tree: Tree,
+  projectName: string
+): Promise<string> {
   const workspace = await getWorkspace(tree);
   const project = workspace.projects.get(projectName);
   if (!project) {
-    throw new Error('Specified project does not exist.');
+    throw new Error("Specified project does not exist.");
   }
 
   return buildDefaultPath(project);
 }
 
 export function* allWorkspaceTargets(
-  workspace: workspaces.WorkspaceDefinition,
-): Iterable<[string, workspaces.TargetDefinition, string, workspaces.ProjectDefinition]> {
+  workspace: workspaces.WorkspaceDefinition
+): Iterable<
+  [string, workspaces.TargetDefinition, string, workspaces.ProjectDefinition]
+> {
   for (const [projectName, project] of workspace.projects) {
     for (const [targetName, target] of project.targets) {
-      yield [targetName, target, projectName, project] ;
+      yield [targetName, target, projectName, project];
     }
   }
 }
 
 export function* allTargetOptions(
   target: workspaces.TargetDefinition,
-  skipBaseOptions = false,
+  skipBaseOptions = false
 ): Iterable<[string | undefined, Record<string, json.JsonValue | undefined>]> {
   if (!skipBaseOptions && target.options) {
     yield [undefined, target.options];
