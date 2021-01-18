@@ -3,8 +3,7 @@
   "schematics": {
     "proxy-config": {
       "description": "A blank schematic.",
-      "factory": "./proxy-config/index#proxyConfig",
-      "schema": "./proxy-config/schema.json"
+      "factory": "./proxy-config/index#proxyConfig"
     },
     "app-interceptor": {
       "description": "A blank schematic.",

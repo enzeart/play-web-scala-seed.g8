@@ -1,47 +1,15 @@
-import {
-  apply,
-  mergeWith,
-  Rule,
-  SchematicContext,
-  template,
-  Tree,
-  url,
-  SchematicsException, chain
-} from '@angular-devkit/schematics';
+import { apply, mergeWith, Rule, SchematicContext, template, Tree, url } from '@angular-devkit/schematics';
+import { FilePaths, parseWorkspaceConfig } from "../utils/files";
+import { buildRelativePath } from "../utility/find-module";
 
-export function proxyConfig(_options: ProxyConfigSchema): Rule {
+export function proxyConfig(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    const proxyConfigPath = './proxy.conf.js';
-    const proxyConfigExists = tree.exists(proxyConfigPath);
-    const proxyConfigRules = [];
 
-    if (proxyConfigExists) {
-      _context.logger.info('proxy.conf.js already exists in the workspace, skipping creation');
-    } else {
-      const proxyConfigTemplates = url('./files');
-      const appliedProxyConfigTemplates = apply(proxyConfigTemplates, [template({})]);
-      proxyConfigRules.push(mergeWith(appliedProxyConfigTemplates));
-    }
+    const workspaceConfig = parseWorkspaceConfig(tree);
+    const project = workspaceConfig.defaultProject;
+    workspaceConfig.projects[project].architect.serve.options.proxyConfig = buildRelativePath('/', FilePaths.PROXY_CONFIGURATION);
+    tree.overwrite(FilePaths.WORKSPACE_CONFIGURATION, JSON.stringify(workspaceConfig, null, 2));
 
-    const workspaceConfigPath = './angular.json';
-    const workspaceConfigBuffer = tree.read(workspaceConfigPath);
-    if (!workspaceConfigBuffer) {
-      throw new SchematicsException('angular.json is missing, this template can only be run in an Angular workspace');
-    }
-
-    const workspaceConfigJson = JSON.parse(workspaceConfigBuffer.toString('utf-8'));
-    const project = _options.project || workspaceConfigJson?.defaultProject;
-    if (!project) {
-      throw new SchematicsException('No project provided, and no default project configured for the workspace');
-    }
-
-    const projectServeOptions = workspaceConfigJson?.projects[project]?.architect?.serve?.options;
-    if (!projectServeOptions) {
-      throw new SchematicsException(`Missing serve options object for project "${project}"`);
-    }
-    projectServeOptions.proxyConfig = proxyConfigPath;
-    tree.overwrite(workspaceConfigPath, JSON.stringify(workspaceConfigJson, null, 2));
-
-    return chain(proxyConfigRules)(tree, _context);
+    return !tree.exists(FilePaths.PROXY_CONFIGURATION) ? mergeWith(apply(url('./files'), [template({})]))(tree, _context) : tree;
   };
 }
