@@ -5,8 +5,8 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { tags } from "@angular-devkit/core";
-import { SchematicsException } from "@angular-devkit/schematics";
+import { tags } from '@angular-devkit/core';
+import { SchematicsException } from '@angular-devkit/schematics';
 
 export function validateName(name: string): void {
   if (name && /^\d/.test(name)) {
@@ -39,17 +39,13 @@ export function validateProjectName(projectName: string) {
     const msg = tags.stripIndent`
     ${firstMessage}
     ${projectName}
-    ${Array(errorIndex + 1).join(" ") + "^"}
+    ${Array(errorIndex + 1).join(' ') + '^'}
     `;
     throw new SchematicsException(msg);
   } else if (unsupportedProjectNames.indexOf(projectName) !== -1) {
-    throw new SchematicsException(
-      `Project name ${JSON.stringify(projectName)} is not a supported name.`
-    );
+    throw new SchematicsException(`Project name ${JSON.stringify(projectName)} is not a supported name.`);
   } else if (!packageNameRegex.test(projectName)) {
-    throw new SchematicsException(
-      `Project name ${JSON.stringify(projectName)} is invalid.`
-    );
+    throw new SchematicsException(`Project name ${JSON.stringify(projectName)} is invalid.`);
   }
 }
 
@@ -57,12 +53,12 @@ function getRegExpFailPosition(str: string): number | null {
   const isScope = /^@.*\/.*/.test(str);
   if (isScope) {
     // Remove starting @
-    str = str.replace(/^@/, "");
+    str = str.replace(/^@/, '');
     // Change / to - for validation
-    str = str.replace(/\//g, "-");
+    str = str.replace(/\//g, '-');
   }
 
-  const parts = str.indexOf("-") >= 0 ? str.split("-") : [str];
+  const parts = str.indexOf('-') >= 0 ? str.split('-') : [str];
   const matched: string[] = [];
 
   const projectNameRegexp = /^[a-zA-Z][.0-9a-zA-Z]*(-[.0-9a-zA-Z]*)*$/;
@@ -73,7 +69,7 @@ function getRegExpFailPosition(str: string): number | null {
     }
   });
 
-  const compare = matched.join("-");
+  const compare = matched.join('-');
 
   return str !== compare ? compare.length : null;
 }

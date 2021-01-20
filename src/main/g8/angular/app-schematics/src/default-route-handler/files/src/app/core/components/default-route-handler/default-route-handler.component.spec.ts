@@ -1,8 +1,8 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DefaultRouteHandlerComponent } from "./default-route-handler.component";
+import { DefaultRouteHandlerComponent } from './default-route-handler.component';
 
-describe("DefaultRouteHandlerComponent", () => {
+describe('DefaultRouteHandlerComponent', () => {
   let component: DefaultRouteHandlerComponent;
   let fixture: ComponentFixture<DefaultRouteHandlerComponent>;
 
@@ -18,7 +18,7 @@ describe("DefaultRouteHandlerComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

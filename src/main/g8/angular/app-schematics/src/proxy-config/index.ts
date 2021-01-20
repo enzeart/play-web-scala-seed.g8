@@ -1,31 +1,17 @@
-import {
-  apply,
-  mergeWith,
-  Rule,
-  SchematicContext,
-  template,
-  Tree,
-  url,
-} from "@angular-devkit/schematics";
-import { FilePaths, parseWorkspaceConfig } from "../utils/files";
-import { buildRelativePath } from "../utility/find-module";
+import { mergeWith, Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
+import { applyStandardTemplates, FilePaths, parseWorkspaceConfig } from '../utils/files';
+import { buildRelativePath } from '../utility/find-module';
+
+const relativePathToProxyConfiguration = buildRelativePath('/', FilePaths.PROXY_CONFIGURATION);
 
 export function proxyConfig(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
+    const templateSources = applyStandardTemplates();
     const workspaceConfig = parseWorkspaceConfig(tree);
     const project = workspaceConfig.defaultProject;
-    workspaceConfig.projects[
-      project
-    ].architect.serve.options.proxyConfig = buildRelativePath(
-      "/",
-      FilePaths.PROXY_CONFIGURATION
-    );
-    tree.overwrite(
-      FilePaths.WORKSPACE_CONFIGURATION,
-      JSON.stringify(workspaceConfig, null, 2)
-    );
-    return !tree.exists(FilePaths.PROXY_CONFIGURATION)
-      ? mergeWith(apply(url("./files"), [template({})]))(tree, _context)
-      : tree;
+
+    workspaceConfig.projects[project].architect.serve.options.proxyConfig = relativePathToProxyConfiguration;
+    tree.overwrite(FilePaths.WORKSPACE_CONFIGURATION, JSON.stringify(workspaceConfig, null, 2));
+    return mergeWith(templateSources)(tree, _context);
   };
 }
