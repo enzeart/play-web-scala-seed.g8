@@ -12,6 +12,10 @@
     "spa-root": {
       "description": "A blank schematic.",
       "factory": "./spa-root/index#spaRoot"
+    },
+    "app-component": {
+      "description": "A blank schematic.",
+      "factory": "./app-component/index#appComponent"
     }
   }
 }

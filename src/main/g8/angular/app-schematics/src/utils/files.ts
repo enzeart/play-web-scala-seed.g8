@@ -1,4 +1,13 @@
-import { apply, SchematicsException, Source, template, Tree, url } from '@angular-devkit/schematics';
+import {
+  apply, forEach, mergeWith,
+  Rule,
+  SchematicContext,
+  SchematicsException,
+  Source,
+  template,
+  Tree,
+  url
+} from '@angular-devkit/schematics';
 import * as ts from 'typescript';
 
 export enum FilePaths {
@@ -29,3 +38,23 @@ export const createAppRoutingModuleSourceFile = (tree: Tree): ts.SourceFile => {
 };
 
 export const applyStandardTemplates = (options: any = {}): Source => apply(url('./files'), [template(options)]);
+
+export function applyWithOverwrite(source: Source, rules: Rule[] = []): Rule {
+  return (tree: Tree, _context: SchematicContext) => {
+    const rule = mergeWith(
+      apply(source, [
+        ...rules,
+        forEach((fileEntry) => {
+          if (tree.exists(fileEntry.path)) {
+            tree.overwrite(fileEntry.path, fileEntry.content);
+            return null;
+          }
+          return fileEntry;
+        }),
+
+      ]),
+    );
+
+    return rule(tree, _context);
+  };
+}
