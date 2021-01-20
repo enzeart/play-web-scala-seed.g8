@@ -22,7 +22,7 @@ export class SpaRootComponent implements OnInit {
   followRedirectRoute(): void {
     const { queryParams } = this.activatedRoute.snapshot;
     const redirectRoute = queryParams[redirectRouteQueryParam];
-    if (redirectRoute !== this.originalUrl) {
+    if (redirectRoute && redirectRoute !== this.originalUrl) {
       this.router.navigate(redirectRoute);
     }
   }

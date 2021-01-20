@@ -1,6 +1,11 @@
 import { mergeWith, Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
-import { applyStandardTemplates, createAppRoutingModuleSourceFile, FilePaths } from '../utils/files';
-import { findNodes, insertImport } from '../utility/ast-utils';
+import {
+  applyStandardTemplates,
+  createAppModuleSourceFile,
+  createAppRoutingModuleSourceFile,
+  FilePaths,
+} from '../utils/files';
+import { addDeclarationToModule, findNodes, insertImport } from '../utility/ast-utils';
 import { buildRelativePath } from '../utility/find-module';
 import * as ts from 'typescript';
 import { InsertChange } from '../utility/change';
@@ -9,12 +14,13 @@ const routesVariableStatementText = 'const routes: Routes = [];';
 
 const spaRootComponentClassifiedName = 'SpaRootComponent';
 
-const spaRootRouteDefinitionText = `{ path: '', component: ${spaRootComponentClassifiedName}, pathMatch: 'full' }`;
+const spaRootRouteDefinitionText = `
+  { path: '', component: ${spaRootComponentClassifiedName}, pathMatch: 'full' },
+  { path: '**', redirectTo: '/' }
+`;
 
-const relativePathToSpaRootComponent = buildRelativePath(
-  FilePaths.APP_ROUTING_MODULE,
-  '/src/app/core/components/spa-root/spa-root.component'
-);
+const relativePathToSpaRootComponent = (from: string) =>
+  buildRelativePath(from, '/src/app/core/components/spa-root/spa-root.component');
 
 const findRoutesArrayLiteral = (sourceFile: ts.SourceFile): ts.ArrayLiteralExpression => {
   const routesArrayVariableStatement = findNodes(sourceFile, ts.isVariableStatement).find(
@@ -30,27 +36,43 @@ export function spaRoot(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const templateSources = applyStandardTemplates();
     const appRoutingModuleSourceFile = createAppRoutingModuleSourceFile(tree);
+    const appModuleSourceFile = createAppModuleSourceFile(tree);
     const importSpaRootComponent = insertImport(
       appRoutingModuleSourceFile,
       FilePaths.APP_ROUTING_MODULE,
       spaRootComponentClassifiedName,
-      relativePathToSpaRootComponent
+      relativePathToSpaRootComponent(FilePaths.APP_ROUTING_MODULE)
     );
 
     const routesArrayLiteral = findRoutesArrayLiteral(appRoutingModuleSourceFile);
     const position = routesArrayLiteral.end - 1;
-    const changes = [
+    const appRoutingModuleChanges = [
       new InsertChange(FilePaths.APP_ROUTING_MODULE, position, spaRootRouteDefinitionText),
       importSpaRootComponent,
     ];
 
-    const recorder = tree.beginUpdate(FilePaths.APP_ROUTING_MODULE);
-    for (const change of changes) {
+    const appRoutingModuleRecorder = tree.beginUpdate(FilePaths.APP_ROUTING_MODULE);
+    for (const change of appRoutingModuleChanges) {
       if (change instanceof InsertChange) {
-        recorder.insertLeft(change.pos, change.toAdd);
+        appRoutingModuleRecorder.insertLeft(change.pos, change.toAdd);
       }
     }
-    tree.commitUpdate(recorder);
+    tree.commitUpdate(appRoutingModuleRecorder);
+
+    const addSpaRootComponentDeclaration = addDeclarationToModule(
+      appModuleSourceFile,
+      FilePaths.APP_MODULE,
+      spaRootComponentClassifiedName,
+      relativePathToSpaRootComponent(FilePaths.APP_MODULE)
+    );
+
+    const appModuleRecorder = tree.beginUpdate(FilePaths.APP_MODULE);
+    for (const change of addSpaRootComponentDeclaration) {
+      if (change instanceof InsertChange) {
+        appModuleRecorder.insertLeft(change.pos, change.toAdd);
+      }
+    }
+    tree.commitUpdate(appModuleRecorder);
 
     return mergeWith(templateSources)(tree, _context);
   };
