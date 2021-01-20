@@ -7,13 +7,13 @@ import { InsertChange } from '../utility/change';
 
 const routesVariableStatementText = 'const routes: Routes = [];';
 
-const defaultRouteDefinitionText = `{ path: '', component: DefaultRouteHandlerComponent, pathMatch: 'full' }`;
+const spaRootComponentClassifiedName = 'SpaRootComponent';
 
-const defaultRouteHandlerComponentClassifiedName = 'DefaultRouteHandlerComponent';
+const spaRootRouteDefinitionText = `{ path: '', component: ${spaRootComponentClassifiedName}, pathMatch: 'full' }`;
 
-const relativePathToDefaultRouteHandlerComponent = buildRelativePath(
+const relativePathToSpaRootComponent = buildRelativePath(
   FilePaths.APP_ROUTING_MODULE,
-  '/src/app/core/components/default-route-handler/default-route-handler.component'
+  '/src/app/core/components/spa-root/spa-root.component'
 );
 
 const findRoutesArrayLiteral = (sourceFile: ts.SourceFile): ts.ArrayLiteralExpression => {
@@ -26,22 +26,22 @@ const findRoutesArrayLiteral = (sourceFile: ts.SourceFile): ts.ArrayLiteralExpre
   return routesArrayLiteralExpression;
 };
 
-export function defaultRouteHandler(_options: any): Rule {
+export function spaRoot(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const templateSources = applyStandardTemplates();
     const appRoutingModuleSourceFile = createAppRoutingModuleSourceFile(tree);
-    const importDefaultRouteHandler = insertImport(
+    const importSpaRootComponent = insertImport(
       appRoutingModuleSourceFile,
       FilePaths.APP_ROUTING_MODULE,
-      defaultRouteHandlerComponentClassifiedName,
-      relativePathToDefaultRouteHandlerComponent
+      spaRootComponentClassifiedName,
+      relativePathToSpaRootComponent
     );
 
     const routesArrayLiteral = findRoutesArrayLiteral(appRoutingModuleSourceFile);
     const position = routesArrayLiteral.end - 1;
     const changes = [
-      new InsertChange(FilePaths.APP_ROUTING_MODULE, position, defaultRouteDefinitionText),
-      importDefaultRouteHandler,
+      new InsertChange(FilePaths.APP_ROUTING_MODULE, position, spaRootRouteDefinitionText),
+      importSpaRootComponent,
     ];
 
     const recorder = tree.beginUpdate(FilePaths.APP_ROUTING_MODULE);

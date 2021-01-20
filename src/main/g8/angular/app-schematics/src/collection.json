@@ -9,9 +9,9 @@
       "description": "A blank schematic.",
       "factory": "./app-interceptor/index#appInterceptor"
     },
-    "default-route-handler": {
+    "spa-root": {
       "description": "A blank schematic.",
-      "factory": "./default-route-handler/index#defaultRouteHandler"
+      "factory": "./spa-root/index#spaRoot"
     }
   }
 }
