@@ -1,11 +1,13 @@
 package modules
 
+import com.google.inject.multibindings.ProvidesIntoSet
 import com.google.inject.{AbstractModule, Provides}
 import config.{AppConfig, AuthConfig}
 import net.codingwell.scalaguice.ScalaModule
-import org.pac4j.core.client.Clients
 import org.pac4j.core.client.direct.AnonymousClient
+import org.pac4j.core.client.{Client, Clients}
 import org.pac4j.core.config.Config
+import org.pac4j.core.credentials.Credentials
 import org.pac4j.play.scala.{DefaultSecurityComponents, SecurityComponents}
 import org.pac4j.play.store.{PlayCacheSessionStore, PlaySessionStore}
 import org.pac4j.play.{CallbackController, LogoutController}
@@ -13,6 +15,7 @@ import play.Environment
 import play.libs.concurrent.HttpExecutionContext
 
 import javax.inject.Singleton
+import scala.jdk.CollectionConverters.IterableHasAsScala
 
 class AuthModule extends AbstractModule with ScalaModule {
 
@@ -64,25 +67,37 @@ class AuthModule extends AbstractModule with ScalaModule {
   }
 
   @Singleton
-  @Provides
-  def provideAnonymousClient(authConfig: AuthConfig): AnonymousClient = {
+  @ProvidesIntoSet
+  def provideAnonymousClient(authConfig: AuthConfig): Client[_ <: Credentials] = {
     val client = AnonymousClient.INSTANCE
     client.setName(authConfig.clientName)
     client
   }
 
+  private def anonymizeClient(clientName: String): AnonymousClient = {
+    val client = new AnonymousClient
+    client.setName(clientName)
+    client
+  }
+
+  private def anonymizeClients(clients: Seq[Client[_ <: Credentials]]): Seq[Client[_ <: Credentials]] =
+    clients.map(c => anonymizeClient(c.getName))
+
   @Singleton
   @Provides
-  def provideConfig(environment: Environment, authConfig: AuthConfig, anonymousClient: AnonymousClient): Config = {
-    val clients = new Clients(authConfig.callbackUrl)
-    val config  = new Config(clients)
+  def provideConfig(
+      environment: Environment,
+      authConfig: AuthConfig,
+      clientSet: java.util.Set[Client[_ <: Credentials]]
+  ): Config = {
+    val clients   = new Clients(authConfig.callbackUrl)
+    val config    = new Config(clients)
+    val clientSeq = clientSet.asScala.toSeq
 
     if (environment.isProd) {
-      clients.setClients(anonymousClient)
-    } else if (environment.isTest) {
-      clients.setClients(anonymousClient)
+      clients.setClients(clientSeq: _*)
     } else {
-      clients.setClients(anonymousClient)
+      clients.setClients(anonymizeClients(clientSeq): _*)
     }
 
     config
