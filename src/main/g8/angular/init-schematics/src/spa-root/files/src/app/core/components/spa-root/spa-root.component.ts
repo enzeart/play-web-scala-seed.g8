@@ -9,11 +9,8 @@ const redirectRouteQueryParam = 'spa-redirect-route';
   styleUrls: ['./spa-root.component.css'],
 })
 export class SpaRootComponent implements OnInit {
-  readonly originalUrl: string;
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {
-    this.originalUrl = router.url;
-  }
+  constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.followRedirectRoute();
@@ -22,8 +19,8 @@ export class SpaRootComponent implements OnInit {
   followRedirectRoute(): void {
     const { queryParams } = this.activatedRoute.snapshot;
     const redirectRoute = queryParams[redirectRouteQueryParam];
-    if (redirectRoute && redirectRoute !== this.originalUrl) {
-      this.router.navigate(redirectRoute);
+    if (redirectRoute) {
+      this.router.navigateByUrl(redirectRoute);
     }
   }
 }
