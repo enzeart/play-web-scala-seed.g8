@@ -4,7 +4,7 @@ import * as path from 'path';
 
 const collectionPath = path.join(__dirname, '../collection.json');
 
-describe('app-schematics', () => {
+describe('init-schematics', () => {
   it('works', async () => {
     const runner = new SchematicTestRunner('schematics', collectionPath);
     const tree = await runner.runSchematicAsync('proxy-config', {}, Tree.empty()).toPromise();
