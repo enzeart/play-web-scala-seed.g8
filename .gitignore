@@ -5,3 +5,5 @@ src_managed/
 project/plugins/project/
 .idea/
 .bsp/
+
+src/main/g8/angular/init-schematics/package-lock.json
