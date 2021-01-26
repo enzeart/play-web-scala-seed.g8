@@ -11,18 +11,19 @@ SCHEMATICS_DIR="$SCRIPT_DIR/$SCHEMATICS_PACKAGE_NAME"
 ANGULAR_APP_DIR_NAME="ui"
 ANGULAR_APP_DIR="$ORIGINAL_DIR/$ANGULAR_APP_DIR_NAME"
 
+ng new $ANGULAR_APP_DIR_NAME
+
 cd $SCHEMATICS_DIR
 npm install
 npm run build
 
-cd $ORIGINAL_DIR
-ng new $ANGULAR_APP_DIR_NAME
-
 cd $ANGULAR_APP_DIR
+
 npm link $(realpath --relative-to=$ANGULAR_APP_DIR $SCHEMATICS_DIR)
+
 ng g $SCHEMATICS_PACKAGE_NAME:proxy-config
 ng g $SCHEMATICS_PACKAGE_NAME:app-component
 ng g $SCHEMATICS_PACKAGE_NAME:spa-root
 ng g $SCHEMATICS_PACKAGE_NAME:app-interceptor
 
-
+ng add apollo-angular
