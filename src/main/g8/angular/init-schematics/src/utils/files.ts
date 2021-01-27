@@ -1,12 +1,14 @@
 import {
-  apply, forEach, mergeWith,
+  apply,
+  forEach,
+  mergeWith,
   Rule,
   SchematicContext,
   SchematicsException,
   Source,
   template,
   Tree,
-  url
+  url,
 } from '@angular-devkit/schematics';
 import * as ts from 'typescript';
 
@@ -51,8 +53,7 @@ export function applyWithOverwrite(source: Source, rules: Rule[] = []): Rule {
           }
           return fileEntry;
         }),
-
-      ]),
+      ])
     );
 
     return rule(tree, _context);

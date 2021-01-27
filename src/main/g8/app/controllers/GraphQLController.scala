@@ -13,6 +13,7 @@ import sangria.ast.OperationType.{Mutation, Query, Subscription}
 import sangria.execution.{ErrorWithResolver, QueryAnalysisError}
 import sangria.marshalling.playJson._
 import sangria.parser.{QueryParser, SyntaxError}
+import sangria.renderer.SchemaRenderer
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,6 +49,14 @@ class GraphQLController @Inject() (
       NotFound
     } else {
       Ok(views.html.graphiql())
+    }
+  }
+
+  def graphqlSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
+    if (environment.isProd) {
+      NotFound
+    } else {
+      Ok(SchemaRenderer.renderSchema(GraphQLSchema.Root))
     }
   }
 

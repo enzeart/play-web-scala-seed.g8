@@ -7,6 +7,7 @@ GET     /auth/logout                                            @org.pac4j.play.
 
 GET     /api/graphql                                            controllers.GraphQLController.graphql(query: String, variables: Option[String], operation: Option[String])
 POST    /api/graphql                                            controllers.GraphQLController.graphqlBody
+GET     /api/graphql/schema                                     controllers.GraphQLController.graphqlSchema
 
 GET     /                                                       controllers.Assets.at(file = "index.html")
 GET     /*file                                                  controllers.Assets.at(file)
