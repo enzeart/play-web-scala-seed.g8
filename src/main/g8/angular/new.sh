@@ -11,7 +11,7 @@ SCHEMATICS_DIR="$SCRIPT_DIR/$SCHEMATICS_PACKAGE_NAME"
 ANGULAR_APP_DIR_NAME="ui"
 ANGULAR_APP_DIR="$ORIGINAL_DIR/$ANGULAR_APP_DIR_NAME"
 
-ng new $ANGULAR_APP_DIR_NAME
+ng new $ANGULAR_APP_DIR_NAME --routing=true
 
 cd $SCHEMATICS_DIR
 npm install
@@ -26,4 +26,7 @@ ng g $SCHEMATICS_PACKAGE_NAME:app-component
 ng g $SCHEMATICS_PACKAGE_NAME:spa-root
 ng g $SCHEMATICS_PACKAGE_NAME:app-interceptor
 
-ng add apollo-angular
+ng add apollo-angular --endpoint="/api/graphql"
+npm install --save-dev @graphql-codegen/cli
+npx graphql-codegen init
+npm install
