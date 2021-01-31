@@ -29,3 +29,5 @@ ng g $SCHEMATICS_PACKAGE_NAME:app-interceptor
 ng g $SCHEMATICS_PACKAGE_NAME:graphql
 
 ng add apollo-angular --endpoint="/api/graphql"
+
+npm run prettier
