@@ -20,6 +20,10 @@
     "graphql": {
       "description": "A blank schematic.",
       "factory": "./graphql/index#graphql"
+    },
+    "core": {
+      "description": "A blank schematic.",
+      "factory": "./core/index#core"
     }
   }
 }
