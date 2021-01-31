@@ -7,6 +7,8 @@ generates:
       - "typescript"
       - "typescript-operations"
       - "typescript-apollo-angular"
+    config:
+      avoidOptionals: true
   ./graphql.schema.json:
     plugins:
       - "introspection"
