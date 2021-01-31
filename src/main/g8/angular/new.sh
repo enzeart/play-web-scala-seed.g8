@@ -29,10 +29,4 @@ ng g $SCHEMATICS_PACKAGE_NAME:graphql
 
 ng add apollo-angular --endpoint="/api/graphql"
 
-npm install --save-dev @graphql-codegen/cli \
-    @graphql-codegen/typescript \
-    @graphql-codegen/typescript-apollo-angular \
-    @graphql-codegen/typescript-operations \
-    @graphql-codegen/introspection
-
 npm install --save-dev prettier
