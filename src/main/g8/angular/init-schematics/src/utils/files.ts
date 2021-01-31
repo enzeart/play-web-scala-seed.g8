@@ -17,6 +17,7 @@ export enum FilePaths {
   APP_ROUTING_MODULE = '/src/app/app-routing.module.ts',
   PROXY_CONFIGURATION = '/proxy.conf.js',
   WORKSPACE_CONFIGURATION = '/angular.json',
+  PACKAGE_JSON = '/package.json',
 }
 
 export const parseWorkspaceConfig = (tree: Tree): any => {
@@ -39,9 +40,9 @@ export const createAppRoutingModuleSourceFile = (tree: Tree): ts.SourceFile => {
   return createSourceFile(FilePaths.APP_ROUTING_MODULE, tree);
 };
 
-export const applyStandardTemplates = (options: any = {}): Source => apply(url('./files'), [template(options)]);
+export const applyTemplates = (options: any = {}): Source => apply(url('./files'), [template(options)]);
 
-export function applyWithOverwrite(source: Source, rules: Rule[] = []): Rule {
+export const applyWithOverwrite = (source: Source, rules: Rule[] = []): Rule => {
   return (tree: Tree, _context: SchematicContext) => {
     const rule = mergeWith(
       apply(source, [
@@ -58,4 +59,14 @@ export function applyWithOverwrite(source: Source, rules: Rule[] = []): Rule {
 
     return rule(tree, _context);
   };
-}
+};
+
+export const parsePackageJson = (tree: Tree) => {
+  const packageJsonBuffer = tree.read(FilePaths.PACKAGE_JSON);
+  if (!packageJsonBuffer) throw new SchematicsException('Could not find package.json');
+  return JSON.parse(packageJsonBuffer.toString('utf-8'));
+};
+
+export const overwritePackageJson = (tree: Tree, contents: any) => {
+  tree.overwrite(FilePaths.PACKAGE_JSON, JSON.stringify(contents, null, 2));
+};

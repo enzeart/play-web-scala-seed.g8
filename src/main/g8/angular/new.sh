@@ -21,6 +21,7 @@ cd $ANGULAR_APP_DIR
 
 npm link $(realpath --relative-to=$ANGULAR_APP_DIR $SCHEMATICS_DIR)
 
+ng g $SCHEMATICS_PACKAGE_NAME:core
 ng g $SCHEMATICS_PACKAGE_NAME:proxy-config
 ng g $SCHEMATICS_PACKAGE_NAME:app-component
 ng g $SCHEMATICS_PACKAGE_NAME:spa-root
@@ -28,5 +29,3 @@ ng g $SCHEMATICS_PACKAGE_NAME:app-interceptor
 ng g $SCHEMATICS_PACKAGE_NAME:graphql
 
 ng add apollo-angular --endpoint="/api/graphql"
-
-npm install --save-dev prettier

@@ -1,10 +1,5 @@
 import { mergeWith, Rule, SchematicContext, SchematicsException, Tree } from '@angular-devkit/schematics';
-import {
-  applyStandardTemplates,
-  createAppModuleSourceFile,
-  createAppRoutingModuleSourceFile,
-  FilePaths,
-} from '../utils/files';
+import { applyTemplates, createAppModuleSourceFile, createAppRoutingModuleSourceFile, FilePaths } from '../utils/files';
 import { addDeclarationToModule, findNodes, insertImport } from '@schematics/angular/utility/ast-utils';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
@@ -34,7 +29,7 @@ const findRoutesArrayLiteral = (sourceFile: ts.SourceFile): ts.ArrayLiteralExpre
 
 export function spaRoot(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    const templateSources = applyStandardTemplates();
+    const templateSources = applyTemplates();
     const appRoutingModuleSourceFile = createAppRoutingModuleSourceFile(tree);
     const appModuleSourceFile = createAppModuleSourceFile(tree);
     const importSpaRootComponent = insertImport(
