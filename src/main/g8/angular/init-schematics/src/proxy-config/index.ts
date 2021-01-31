@@ -1,6 +1,6 @@
 import { mergeWith, Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
 import { applyStandardTemplates, FilePaths, parseWorkspaceConfig } from '../utils/files';
-import { buildRelativePath } from '../utility/find-module';
+import { buildRelativePath } from '@schematics/angular/utility/find-module';
 
 const relativePathToProxyConfiguration = buildRelativePath('/', FilePaths.PROXY_CONFIGURATION);
 

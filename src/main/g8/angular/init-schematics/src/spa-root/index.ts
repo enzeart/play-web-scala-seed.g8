@@ -5,10 +5,10 @@ import {
   createAppRoutingModuleSourceFile,
   FilePaths,
 } from '../utils/files';
-import { addDeclarationToModule, findNodes, insertImport } from '../utility/ast-utils';
-import { buildRelativePath } from '../utility/find-module';
-import * as ts from 'typescript';
-import { InsertChange } from '../utility/change';
+import { addDeclarationToModule, findNodes, insertImport } from '@schematics/angular/utility/ast-utils';
+import { buildRelativePath } from '@schematics/angular/utility/find-module';
+import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
+import { InsertChange } from '@schematics/angular/utility/change';
 
 const routesVariableStatementText = 'const routes: Routes = [];';
 

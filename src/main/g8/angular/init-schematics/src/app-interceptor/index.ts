@@ -1,7 +1,7 @@
 import { mergeWith, Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
-import { addProviderToModule } from '../utility/ast-utils';
-import { InsertChange } from '../utility/change';
-import { buildRelativePath } from '../utility/find-module';
+import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
+import { InsertChange } from '@schematics/angular/utility/change';
+import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { applyStandardTemplates, createAppModuleSourceFile, FilePaths } from '../utils/files';
 
 const httpInterceptorProvidersClassifiedName = 'httpInterceptorProviders';
