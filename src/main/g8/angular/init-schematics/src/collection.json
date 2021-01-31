@@ -16,6 +16,10 @@
     "app-component": {
       "description": "A blank schematic.",
       "factory": "./app-component/index#appComponent"
+    },
+    "graphql": {
+      "description": "A blank schematic.",
+      "factory": "./graphql/index#graphql"
     }
   }
 }
