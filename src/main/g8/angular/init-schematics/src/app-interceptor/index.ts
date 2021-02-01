@@ -1,11 +1,23 @@
-import { mergeWith, Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
+import {
+  mergeWith,
+  Rule,
+  SchematicContext,
+  Tree,
+} from '@angular-devkit/schematics';
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
-import { applyTemplates, createAppModuleSourceFile, FilePaths } from '../utils/files';
+import {
+  applyTemplates,
+  createAppModuleSourceFile,
+  FilePaths,
+} from '../utils/files';
 
 const httpInterceptorProvidersClassifiedName = 'httpInterceptorProviders';
-const relativePathToHttpInterceptors = buildRelativePath(FilePaths.APP_MODULE, `/src/app/core/http-interceptors/`);
+const relativePathToHttpInterceptors = buildRelativePath(
+  FilePaths.APP_MODULE,
+  `/src/app/core/http-interceptors/`
+);
 
 export function appInterceptor(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {

@@ -31,7 +31,6 @@
     "prettier": "^2.2.1"
   },
   "prettier": {
-    "printWidth": 120,
     "singleQuote": true
   }
 }

@@ -1,5 +1,14 @@
-import { mergeWith, Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
-import { applyTemplates, overwritePackageJson, parsePackageJson } from '../utils/files';
+import {
+  mergeWith,
+  Rule,
+  SchematicContext,
+  Tree,
+} from '@angular-devkit/schematics';
+import {
+  applyTemplates,
+  overwritePackageJson,
+  parsePackageJson,
+} from '../utils/files';
 
 export function core(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
