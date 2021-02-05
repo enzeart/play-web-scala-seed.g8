@@ -8,10 +8,10 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 SCHEMATICS_PACKAGE_NAME="init-schematics"
 SCHEMATICS_DIR="$SCRIPT_DIR/$SCHEMATICS_PACKAGE_NAME"
 
-ANGULAR_APP_DIR_NAME="ui"
+ANGULAR_APP_DIR_NAME="${1:-ui}"
 ANGULAR_APP_DIR="$ORIGINAL_DIR/$ANGULAR_APP_DIR_NAME"
 
-ng new $ANGULAR_APP_DIR_NAME --routing=true
+ng new $ANGULAR_APP_DIR_NAME --routing=true --style=css --skip-git
 
 cd $SCHEMATICS_DIR
 npm install
