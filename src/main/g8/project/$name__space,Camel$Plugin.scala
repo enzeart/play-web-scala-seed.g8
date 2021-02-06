@@ -14,6 +14,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     lazy val $name;format="space,camel"$Model = inputKey[Unit]("Create a model from the giter8 scaffold")
     lazy val $name;format="space,camel"$Module = inputKey[Unit]("Create a guice module from the giter8 scaffold")
     lazy val $name;format="space,camel"$GraphqlSchema = inputKey[Unit]("Create a graphQL schema from the giter8 scaffold")
+    lazy val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Run the graphql codgen")
     lazy val $name;format="space,camel"$AngularUi = inputKey[Unit]("Create an angular project")
   }
 
@@ -37,19 +38,32 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     g8Scaffold.toTask(s" graphqlSchema --baseName=\${baseNameParser.parsed}")
   }
 
-  val $name;format="space,camel"$AngularUiTaskParser = (Space ~> token(StringBasic).examples("<directoryName>")).?
+  val optionalDirectoryNameParser = (Space ~> token(StringBasic).examples("<directoryName>")).?
 
-  val $name;format="space,camel"$AngularUiTask = Def.inputTaskDyn {
-    val installationDirectory = $name;format="space,camel"$AngularUiTaskParser.parsed.getOrElse("ui")
-    val ngNew = Process("./angular/new.sh" :: installationDirectory :: Nil, baseDirectory.value)
-    val gqlCodegen = Process("npm run gqlcodegen", baseDirectory.value / installationDirectory)
-    val sbtRun = Process("sbt run", baseDirectory.value)
+  val $name;format="space,camel"$GraphqlCodegenTask = Def.inputTaskDyn {
+    val uiDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
+    val gqlCodegen = Process("npm run gqlcodegen", baseDirectory.value / uiDirectory)
+    val sbtRun = Process("sbt $name;format="norm"$/run")
 
     Def.task {
       val playProcess = sbtRun.run
-      (ngNew #&& gqlCodegen).!
+      Thread.sleep(15000)
+      gqlCodegen.!
       playProcess.destroy()
     }
+  }
+
+  val ngNewTask = Def.inputTaskDyn {
+    val installationDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
+    val ngNew = Process("./angular/new.sh" :: installationDirectory :: Nil, baseDirectory.value)
+    Def.task(ngNew.!)
+  }
+
+  val playTestAngularUiTask = Def.inputTaskDyn {
+    val installationDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
+    val in = s" \$installationDirectory"
+
+    Def.sequential(ngNewTask.toTask(in), $name;format="space,camel"$GraphqlCodegenTask.toTask(in))
   }
 
   val base$name;format="space,Camel"$Settings: Seq[Def.Setting[_]] = Seq(
@@ -57,6 +71,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     $name;format="space,camel"$Model := $name;format="space,camel"$ModelTask.evaluated,
     $name;format="space,camel"$Module := $name;format="space,camel"$ModuleTask.evaluated,
     $name;format="space,camel"$GraphqlSchema := $name;format="space,camel"$GraphqlSchemaTask.evaluated,
+    $name;format="space,camel"$GraphqlCodegen := $name;format="space,camel"$GraphqlCodegenTask.evaluated,
     $name;format="space,camel"$AngularUi := $name;format="space,camel"$AngularUiTask.evaluated
   )
 
