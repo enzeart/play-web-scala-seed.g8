@@ -20,14 +20,26 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
 
   import autoImport._
 
-  val baseNameParser: Parser[String] = Space ~> token(ScalaID).examples("<baseName>")
+  val baseNameParser = Space ~> token(ScalaID).examples("<baseName>")
+
+  val optionalDirectoryNameParser = (Space ~> token(StringBasic).examples("<directoryName>")).?
+
+  val optionalSubPackageNameParser = (Space ~> token(StringBasic).examples("<subPackageName")).?
 
   val $name;format="space,camel"$ControllerTask = Def.inputTaskDyn {
     g8Scaffold.toTask(s" controller --baseName=\${baseNameParser.parsed}")
   }
 
   val $name;format="space,camel"$ModelTask = Def.inputTaskDyn {
-    g8Scaffold.toTask(s" model --baseName=\${baseNameParser.parsed}")
+    val (baseName, optionalSubPackageName) = (baseNameParser ~ optionalSubPackageNameParser).parsed
+    val useSubPackage = optionalSubPackageName.isDefined
+    val subPackageName = optionalSubPackageName.getOrElse("")
+
+    if (useSubPackage) {
+      g8Scaffold.toTask(s" model --baseName=\$baseName --useSubPackage=\$useSubPackage --subPackageName=\$subPackageName")
+    } else {
+      g8Scaffold.toTask(s" model --baseName=\$baseName")
+    }
   }
 
   val $name;format="space,camel"$ModuleTask = Def.inputTaskDyn {
@@ -37,8 +49,6 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
   val $name;format="space,camel"$GraphqlSchemaTask = Def.inputTaskDyn {
     g8Scaffold.toTask(s" graphqlSchema --baseName=\${baseNameParser.parsed}")
   }
-
-  val optionalDirectoryNameParser = (Space ~> token(StringBasic).examples("<directoryName>")).?
 
   val $name;format="space,camel"$GraphqlCodegenTask = Def.inputTaskDyn {
     val uiDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
