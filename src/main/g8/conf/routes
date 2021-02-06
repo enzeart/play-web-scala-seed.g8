@@ -1,10 +1,13 @@
 # See the following documentation for more information on routing
 # https://www.playframework.com/documentation/latest/ScalaRouting
-GET     /debug/graphql/graphiql controllers.GraphQLController.graphiql
+GET     /debug/graphql/graphiql                                 controllers.GraphQLController.graphiql
 
 GET     /auth/callback                                          @org.pac4j.play.CallbackController.callback(request: Request)
+GET     /auth/logout                                            @org.pac4j.play.LogoutController.logout(request: Request)
+
 GET     /api/graphql                                            controllers.GraphQLController.graphql(query: String, variables: Option[String], operation: Option[String])
 POST    /api/graphql                                            controllers.GraphQLController.graphqlBody
+GET     /api/graphql/schema                                     controllers.GraphQLController.graphqlSchema
 
 GET     /                                                       controllers.Assets.at(file = "index.html")
 GET     /*file                                                  controllers.Assets.at(file)

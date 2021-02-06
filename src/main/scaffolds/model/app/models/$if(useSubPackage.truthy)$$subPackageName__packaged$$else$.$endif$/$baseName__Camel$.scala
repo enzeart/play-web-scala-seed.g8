@@ -1,4 +1,4 @@
-package models
+package models$if(useSubPackage.truthy)$.$subPackageName;format="package"$$endif$
 
 import play.api.libs.json._
 

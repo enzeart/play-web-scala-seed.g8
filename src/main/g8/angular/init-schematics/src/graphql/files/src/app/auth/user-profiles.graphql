@@ -1,0 +1,11 @@
+query UserProfiles {
+    userProfiles {
+        id
+        userName
+        email
+        firstName
+        familyName
+        displayName
+        roles
+    }
+}

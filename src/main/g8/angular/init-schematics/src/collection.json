@@ -1,0 +1,29 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "proxy-config": {
+      "description": "A blank schematic.",
+      "factory": "./proxy-config/index#proxyConfig"
+    },
+    "app-interceptor": {
+      "description": "A blank schematic.",
+      "factory": "./app-interceptor/index#appInterceptor"
+    },
+    "spa-root": {
+      "description": "A blank schematic.",
+      "factory": "./spa-root/index#spaRoot"
+    },
+    "app-component": {
+      "description": "A blank schematic.",
+      "factory": "./app-component/index#appComponent"
+    },
+    "graphql": {
+      "description": "A blank schematic.",
+      "factory": "./graphql/index#graphql"
+    },
+    "core": {
+      "description": "A blank schematic.",
+      "factory": "./core/index#core"
+    }
+  }
+}
