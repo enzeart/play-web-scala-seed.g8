@@ -16,6 +16,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     lazy val $name;format="space,camel"$GraphqlSchema = inputKey[Unit]("Create a graphQL schema from the giter8 scaffold")
     lazy val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Run the graphql codgen")
     lazy val $name;format="space,camel"$AngularUi = inputKey[Unit]("Create an angular project")
+    lazy val $name;format="space,camel"$AppStart = inputKey[Unit]("Start the application")
   }
 
   import autoImport._
@@ -52,8 +53,8 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
 
   val $name;format="space,camel"$GraphqlCodegenTask = Def.inputTaskDyn {
     val uiDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
-    val gqlCodegen = Process("npm run gqlcodegen", baseDirectory.value / uiDirectory)
-    val sbtRun = Process("sbt $name;format="norm"$/run")
+    val gqlCodegen = Process("npm" :: "run" :: "gqlcodegen" :: Nil, baseDirectory.value / uiDirectory)
+    val sbtRun = Process("sbt" :: "$name;format="norm"$/run" :: Nil)
 
     Def.task {
       val playProcess = sbtRun.run
@@ -76,13 +77,26 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     Def.sequential(ngNewTask.toTask(in), $name;format="space,camel"$GraphqlCodegenTask.toTask(in))
   }
 
+  val playTestAppStartTask = Def.inputTaskDyn {
+    val uiDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
+    val npmStart = Process("npm" :: "run" :: "start" :: Nil, baseDirectory.value / uiDirectory)
+    val sbtRun = Process("sbt" :: "$name;format="norm"$/run" :: Nil)
+
+    Def.task {
+      val playProcess = sbtRun.run
+      npmStart.!
+      playProcess.destroy()
+    }
+  }
+
   val base$name;format="space,Camel"$Settings: Seq[Def.Setting[_]] = Seq(
     $name;format="space,camel"$Controller := $name;format="space,camel"$ControllerTask.evaluated,
     $name;format="space,camel"$Model := $name;format="space,camel"$ModelTask.evaluated,
     $name;format="space,camel"$Module := $name;format="space,camel"$ModuleTask.evaluated,
     $name;format="space,camel"$GraphqlSchema := $name;format="space,camel"$GraphqlSchemaTask.evaluated,
     $name;format="space,camel"$GraphqlCodegen := $name;format="space,camel"$GraphqlCodegenTask.evaluated,
-    $name;format="space,camel"$AngularUi := $name;format="space,camel"$AngularUiTask.evaluated
+    $name;format="space,camel"$AngularUi := $name;format="space,camel"$AngularUiTask.evaluated,
+    $name;format="space,camel"$AppStart := $name;format="space,camel"$AppStartTask.evaluated
   )
 
   override val trigger = noTrigger
