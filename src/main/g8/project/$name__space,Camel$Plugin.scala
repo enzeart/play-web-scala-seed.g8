@@ -89,7 +89,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     }
   }
 
-  val base$name;format="space,Camel"$Settings: Seq[Def.Setting[_]] = Seq(
+  val base$name;format="space,Camel"$ProjectSettings: Seq[Def.Setting[_]] = Seq(
     $name;format="space,camel"$Controller := $name;format="space,camel"$ControllerTask.evaluated,
     $name;format="space,camel"$Model := $name;format="space,camel"$ModelTask.evaluated,
     $name;format="space,camel"$Module := $name;format="space,camel"$ModuleTask.evaluated,
@@ -103,5 +103,5 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
 
   override val requires: Plugins = ScaffoldPlugin
 
-  override lazy val projectSettings: Seq[Def.Setting[_]] = base$name;format="space,Camel"$Settings
+  override lazy val projectSettings: Seq[Def.Setting[_]] = base$name;format="space,Camel"$ProjectSettings
 }
