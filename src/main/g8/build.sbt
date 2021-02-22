@@ -14,6 +14,6 @@ lazy val `$name;format="norm"$` = (project in file("."))
     topLevelDirectory := Option(packageName.value),
     inThisBuild(Seq(
       organization := "$organization$",
-      scalaVersion := "$scalaVersion$"
+      scalaVersion := "$scala_version$"
     ))
   )
