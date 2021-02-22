@@ -6,6 +6,6 @@ import javax.inject.{Inject, Singleton}
 import play.api.mvc.BaseController
 
 @Singleton
-class $baseName;format="Camel"$Controller @Inject() (val controllerComponents: SecurityComponents)
+class $base_name;format="Camel"$Controller @Inject() (val controllerComponents: SecurityComponents)
     extends BaseController
     with Security[CommonProfile] {}
