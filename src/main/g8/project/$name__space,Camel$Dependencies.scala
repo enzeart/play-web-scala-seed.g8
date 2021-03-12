@@ -16,6 +16,12 @@ object $name;format="space,Camel"$Dependencies {
 
   val pureconfig: ModuleID = "com.github.pureconfig" %% "pureconfig" % "$pureconfig_version$"
 
+  val scalatestplusPlay: ModuleID = "org.scalatestplus.play" %% "scalatestplus-play" % "$scalatestplus_play_version$" % Test
+
+  val akkaStreamTestkit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % PlayVersion.akkaVersion % Test
+
+  val akkaActorTestkitTyped: ModuleID = "com.typesafe.akka" %% "akka-actor-testkit-typed" % PlayVersion.akkaVersion % Test
+
   val rootDependencies: Seq[ModuleID] = Seq(
     guice,
     scalaGuice,
@@ -24,6 +30,9 @@ object $name;format="space,Camel"$Dependencies {
     sangriaPlayJson,
     caffeine,
     akkaStreamTyped,
-    pureconfig
+    pureconfig,
+    scalatestplusPlay,
+    akkaStreamTestkit,
+    akkaActorTestkitTyped
   )
 }
