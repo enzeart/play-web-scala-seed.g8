@@ -10,13 +10,13 @@ import scala.sys.process.Process
 object $name;format="space,Camel"$Plugin extends AutoPlugin {
 
   object autoImport {
-    lazy val $name;format="space,camel"$Controller = inputKey[Unit]("Create a controller from the giter8 scaffold")
-    lazy val $name;format="space,camel"$Model = inputKey[Unit]("Create a model from the giter8 scaffold")
-    lazy val $name;format="space,camel"$Module = inputKey[Unit]("Create a guice module from the giter8 scaffold")
-    lazy val $name;format="space,camel"$GraphqlSchema = inputKey[Unit]("Create a graphQL schema from the giter8 scaffold")
-    lazy val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Run the graphql codgen")
-    lazy val $name;format="space,camel"$AngularUi = inputKey[Unit]("Create an angular project")
-    lazy val $name;format="space,camel"$AppStart = inputKey[Unit]("Start the application")
+    val $name;format="space,camel"$Controller = inputKey[Unit]("Create a controller from the giter8 scaffold")
+    val $name;format="space,camel"$Model = inputKey[Unit]("Create a model from the giter8 scaffold")
+    val $name;format="space,camel"$Module = inputKey[Unit]("Create a guice module from the giter8 scaffold")
+    val $name;format="space,camel"$GraphqlSchema = inputKey[Unit]("Create a graphQL schema from the giter8 scaffold")
+    val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Run the graphql codgen")
+    val $name;format="space,camel"$AngularUi = inputKey[Unit]("Create an angular project")
+    val $name;format="space,camel"$AppStart = inputKey[Unit]("Start the application")
   }
 
   import autoImport._
