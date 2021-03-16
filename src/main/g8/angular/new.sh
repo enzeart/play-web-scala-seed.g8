@@ -27,6 +27,7 @@ ng g $SCHEMATICS_PACKAGE_NAME:app-component
 ng g $SCHEMATICS_PACKAGE_NAME:spa-root
 ng g $SCHEMATICS_PACKAGE_NAME:app-interceptor
 ng g $SCHEMATICS_PACKAGE_NAME:graphql
+ng g $SCHEMATICS_PACKAGE_NAME:shared-module
 
 ng add apollo-angular --endpoint="/api/graphql"
 

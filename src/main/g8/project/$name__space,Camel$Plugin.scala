@@ -58,7 +58,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
 
     Def.task {
       val playProcess = sbtRun.run
-      Thread.sleep(15000)
+      Thread.sleep(30000)
       gqlCodegen.!
       playProcess.destroy()
     }

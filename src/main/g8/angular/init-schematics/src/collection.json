@@ -24,6 +24,10 @@
     "core": {
       "description": "A blank schematic.",
       "factory": "./core/index#core"
+    },
+    "shared-module": {
+      "description": "A blank schematic.",
+      "factory": "./shared-module/index#sharedModule"
     }
   }
 }

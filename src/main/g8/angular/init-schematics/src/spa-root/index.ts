@@ -102,11 +102,13 @@ export function spaRoot(_options: any): Rule {
     );
 
     const appModuleRecorder = tree.beginUpdate(FilePaths.APP_MODULE);
+
     for (const change of addSpaRootComponentDeclaration) {
       if (change instanceof InsertChange) {
         appModuleRecorder.insertLeft(change.pos, change.toAdd);
       }
     }
+
     tree.commitUpdate(appModuleRecorder);
 
     return mergeWith(templateSources)(tree, _context);
