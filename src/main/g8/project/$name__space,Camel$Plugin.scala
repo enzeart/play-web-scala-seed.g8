@@ -21,7 +21,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
 
   import autoImport._
 
-  val baseNameParser = Space ~> token(ScalaID).examples("<base_name>")
+  val baseNameParser = Space ~> token(StringBasic).examples("<base_name>")
 
   val optionalDirectoryNameParser = (Space ~> token(StringBasic).examples("<directoryName>")).?
 
