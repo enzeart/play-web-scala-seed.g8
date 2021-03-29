@@ -4,6 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.Materializer
 import config.AppConfig
 import graphql.{GraphQLConstants, GraphQLContextFactory, _}
+import modules.GraphQLModule.QueryReducers
 import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.Environment
@@ -23,7 +24,8 @@ import scala.util.{Failure, Success}
 class GraphQLController @Inject() (
     val controllerComponents: SecurityComponents,
     appConfig: AppConfig,
-    environment: Environment
+    environment: Environment,
+    queryReducers: QueryReducers
 )(
     implicit ec: ExecutionContext,
     actorSystem: ActorSystem,
@@ -76,7 +78,8 @@ class GraphQLController @Inject() (
               queryAst,
               variables,
               operation,
-              maxQueryDepth = appConfig.graphql.maxQueryDepth
+              maxQueryDepth = appConfig.graphql.maxQueryDepth,
+              queryReducers = queryReducers.reducers
             ).map(Ok(_))
               .recover {
                 case error: QueryAnalysisError => BadRequest(error.resolveError)

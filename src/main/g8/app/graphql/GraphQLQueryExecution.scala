@@ -4,7 +4,7 @@ import org.pac4j.core.profile.CommonProfile
 import org.pac4j.play.scala.AuthenticatedRequest
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import sangria.ast.Document
-import sangria.execution.{ExecutionScheme, Executor}
+import sangria.execution.{ExecutionScheme, Executor, QueryReducer}
 import sangria.marshalling.{InputUnmarshaller, ResultMarshaller}
 import utils.StringConstants
 
@@ -35,7 +35,8 @@ trait GraphQLQueryExecution {
       queryAst: Document,
       variables: Option[JsObject],
       operation: Option[String],
-      maxQueryDepth: Option[Int]
+      maxQueryDepth: Option[Int],
+      queryReducers: List[QueryReducer[GraphQLContext, _]]
   )(
       implicit executionContext: ExecutionContext,
       marshaller: ResultMarshaller,
@@ -51,6 +52,7 @@ trait GraphQLQueryExecution {
         operationName = operation,
         variables = variables getOrElse Json.obj(),
         deferredResolver = GraphQLSchema.Resolver,
-        maxQueryDepth = maxQueryDepth
+        maxQueryDepth = maxQueryDepth,
+        queryReducers = queryReducers
       )
 }
