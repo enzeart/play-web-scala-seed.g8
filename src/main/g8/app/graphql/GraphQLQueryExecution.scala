@@ -34,7 +34,8 @@ trait GraphQLQueryExecution {
       request: AuthenticatedRequest[CommonProfile, _],
       queryAst: Document,
       variables: Option[JsObject],
-      operation: Option[String]
+      operation: Option[String],
+      maxQueryDepth: Option[Int]
   )(
       implicit executionContext: ExecutionContext,
       marshaller: ResultMarshaller,
@@ -49,6 +50,7 @@ trait GraphQLQueryExecution {
         userContext = graphQLContextFactory.create(request),
         operationName = operation,
         variables = variables getOrElse Json.obj(),
-        deferredResolver = GraphQLSchema.Resolver
+        deferredResolver = GraphQLSchema.Resolver,
+        maxQueryDepth = maxQueryDepth
       )
 }

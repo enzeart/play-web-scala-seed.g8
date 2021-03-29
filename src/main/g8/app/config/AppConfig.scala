@@ -1,3 +1,3 @@
 package config
 
-case class AppConfig(auth: AuthConfig, ui: UiConfig)
+case class AppConfig(auth: AuthConfig, ui: UiConfig, graphql: GraphQLConfig)

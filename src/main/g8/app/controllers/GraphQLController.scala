@@ -71,8 +71,13 @@ class GraphQLController @Inject() (
       case Success(queryAst) =>
         queryAst.operationType(operation) match {
           case Some(Query) | Some(Mutation) =>
-            executeStandardQuery(request, queryAst, variables, operation)
-              .map(Ok(_))
+            executeStandardQuery(
+              request,
+              queryAst,
+              variables,
+              operation,
+              maxQueryDepth = appConfig.graphql.maxQueryDepth
+            ).map(Ok(_))
               .recover {
                 case error: QueryAnalysisError => BadRequest(error.resolveError)
                 case error: ErrorWithResolver  => InternalServerError(error.resolveError)
