@@ -35,7 +35,8 @@ npm install --save-dev @graphql-codegen/cli \
     @graphql-codegen/typescript \
     @graphql-codegen/typescript-apollo-angular \
     @graphql-codegen/typescript-operations \
-    @graphql-codegen/introspection
+    @graphql-codegen/introspection \
+    @graphql-codegen/time
 
 npm install --save-dev prettier
 
