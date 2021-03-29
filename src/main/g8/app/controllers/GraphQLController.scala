@@ -11,7 +11,7 @@ import play.Environment
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc._
 import sangria.ast.OperationType.{Mutation, Query, Subscription}
-import sangria.execution.{ErrorWithResolver, QueryAnalysisError}
+import sangria.execution.{ErrorWithResolver, QueryAnalysisError, QueryReducingError}
 import sangria.marshalling.playJson._
 import sangria.parser.{QueryParser, SyntaxError}
 import sangria.renderer.SchemaRenderer
@@ -81,6 +81,7 @@ class GraphQLController @Inject() (
               queryReducers = queryReducers.reducers
             ).map(Ok(_))
               .recover {
+                case error: QueryReducingError => BadRequest(error.resolveError)
                 case error: QueryAnalysisError => BadRequest(error.resolveError)
                 case error: ErrorWithResolver  => InternalServerError(error.resolveError)
               }
