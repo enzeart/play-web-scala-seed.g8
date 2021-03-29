@@ -1,3 +1,3 @@
 package config
 
-case class GraphQLConfig(maxQueryDepth: Option[Int], complexityThreshold: Double)
+case class GraphQLConfig(maxQueryDepth: Int, complexityThreshold: Double)

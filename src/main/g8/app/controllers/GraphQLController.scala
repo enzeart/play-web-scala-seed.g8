@@ -78,7 +78,6 @@ class GraphQLController @Inject() (
               queryAst,
               variables,
               operation,
-              maxQueryDepth = appConfig.graphql.maxQueryDepth,
               queryReducers = queryReducers.reducers
             ).map(Ok(_))
               .recover {

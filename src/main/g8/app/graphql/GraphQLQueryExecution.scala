@@ -35,7 +35,6 @@ trait GraphQLQueryExecution {
       queryAst: Document,
       variables: Option[JsObject],
       operation: Option[String],
-      maxQueryDepth: Option[Int],
       queryReducers: List[QueryReducer[GraphQLContext, _]]
   )(
       implicit executionContext: ExecutionContext,
@@ -52,7 +51,6 @@ trait GraphQLQueryExecution {
         operationName = operation,
         variables = variables getOrElse Json.obj(),
         deferredResolver = GraphQLSchema.Resolver,
-        maxQueryDepth = maxQueryDepth,
         queryReducers = queryReducers
       )
 }

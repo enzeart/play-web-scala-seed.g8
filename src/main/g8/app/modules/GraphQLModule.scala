@@ -27,6 +27,8 @@ class GraphQLModule extends AbstractModule with ScalaModule {
           s"Query complexity threshold exceeded: \$c/\${appConfig.graphql.complexityThreshold}"
         )
     )
-    new QueryReducers(reducers = rejectComplexQueries :: Nil)
+    val rejectMaxDepth = QueryReducer.rejectMaxDepth[GraphQLContext](appConfig.graphql.maxQueryDepth)
+
+    new QueryReducers(rejectMaxDepth :: rejectComplexQueries :: Nil)
   }
 }
