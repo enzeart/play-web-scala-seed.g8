@@ -14,7 +14,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     val $name;format="space,camel"$Model = inputKey[Unit]("Create a model from the giter8 scaffold")
     val $name;format="space,camel"$Module = inputKey[Unit]("Create a guice module from the giter8 scaffold")
     val $name;format="space,camel"$GraphqlSchema = inputKey[Unit]("Create a graphQL schema from the giter8 scaffold")
-    val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Run the graphql codgen")
+    val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Run the graphql codegen")
     val $name;format="space,camel"$AngularUi = inputKey[Unit]("Create an angular project")
     val $name;format="space,camel"$AppStart = inputKey[Unit]("Start the application")
   }
