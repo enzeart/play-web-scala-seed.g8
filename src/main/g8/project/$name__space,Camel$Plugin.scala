@@ -75,14 +75,14 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     Def.task(ngNew.!)
   }
 
-  val playTestAngularUiTask = Def.inputTaskDyn {
+  val $name;format="space,camel"$AngularUiTask = Def.inputTaskDyn {
     val installationDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
     val in = s" \$installationDirectory"
 
     Def.sequential(ngNewTask.toTask(in), $name;format="space,camel"$GraphqlCodegenTask.toTask(in))
   }
 
-  val playTestAppStartTask = Def.inputTaskDyn {
+  val $name;format="space,camel"$AppStartTask = Def.inputTaskDyn {
     val uiDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
     val npmStart = Process("npm" :: "run" :: "start" :: Nil, baseDirectory.value / uiDirectory)
     val sbtRun = Process("sbt" :: "$name;format="norm"$/run" :: Nil)
