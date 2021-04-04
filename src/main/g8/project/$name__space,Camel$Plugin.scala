@@ -13,6 +13,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     val $name;format="space,camel"$Controller = inputKey[Unit]("Create a controller from the giter8 scaffold")
     val $name;format="space,camel"$Model = inputKey[Unit]("Create a model from the giter8 scaffold")
     val $name;format="space,camel"$Module = inputKey[Unit]("Create a guice module from the giter8 scaffold")
+    val $name;format="space,camel"$Extension = inputKey[Unit]("Create an actor system extension from the giter8 scaffold")
     val $name;format="space,camel"$GraphqlSchema = inputKey[Unit]("Create a graphQL schema from the giter8 scaffold")
     val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Run the graphql codegen")
     val $name;format="space,camel"$AngularUi = inputKey[Unit]("Create an angular project")
@@ -45,6 +46,10 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
 
   val $name;format="space,camel"$ModuleTask = Def.inputTaskDyn {
     g8Scaffold.toTask(s" module --base_name=\${baseNameParser.parsed}")
+  }
+
+  val $name;format="space,camel"$ExtensionTask = Def.inputTaskDyn {
+    g8Scaffold.toTask(s" extension --base_name=\${baseNameParser.parsed}")
   }
 
   val $name;format="space,camel"$GraphqlSchemaTask = Def.inputTaskDyn {
@@ -93,6 +98,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     $name;format="space,camel"$Controller := $name;format="space,camel"$ControllerTask.evaluated,
     $name;format="space,camel"$Model := $name;format="space,camel"$ModelTask.evaluated,
     $name;format="space,camel"$Module := $name;format="space,camel"$ModuleTask.evaluated,
+    $name;format="space,camel"$Extension := $name;format="space,camel"$ExtensionTask.evaluated,
     $name;format="space,camel"$GraphqlSchema := $name;format="space,camel"$GraphqlSchemaTask.evaluated,
     $name;format="space,camel"$GraphqlCodegen := $name;format="space,camel"$GraphqlCodegenTask.evaluated,
     $name;format="space,camel"$AngularUi := $name;format="space,camel"$AngularUiTask.evaluated,
