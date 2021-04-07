@@ -3,10 +3,13 @@ package utils
 import akka.actor.ActorSystem
 import akka.actor.testkit.typed.scaladsl.ScalaTestWithActorTestKit
 import akka.actor.typed.scaladsl.Behaviors
-import akka.stream.scaladsl.Source
+import akka.stream.scaladsl.{Flow, Source}
 import akka.stream.testkit.scaladsl.TestSink
 import org.scalatest.freespec.AnyFreeSpecLike
 import utils.StreamUtils._
+
+import scala.concurrent.{ExecutionContext, Future}
+import ExecutionContext.Implicits.global
 
 class StreamUtilsSpec extends ScalaTestWithActorTestKit with AnyFreeSpecLike {
 
@@ -18,17 +21,23 @@ class StreamUtilsSpec extends ScalaTestWithActorTestKit with AnyFreeSpecLike {
       val flowUnderTest = actorFlow[Int, Int, Int](
         inputTransform = _ * 2,
         inputRef = ref =>
-          testKit.spawn(Behaviors.receiveMessage[Int] {
-            case m @ Integer.MAX_VALUE => ref ! m; Behaviors.stopped
-            case m                     => ref ! m; Behaviors.same
-          }),
+          Future.successful {
+            testKit.spawn(Behaviors.receiveMessage[Int] {
+              case m @ Integer.MAX_VALUE => ref ! m; Behaviors.stopped
+              case m                     => ref ! m; Behaviors.same
+            })
+          },
         inputOnCompleteMessage = Integer.MAX_VALUE,
         inputOnFailureMessage = _ => Integer.MIN_VALUE,
         outputCompletionMatcher = { case Integer.MAX_VALUE => },
         outputFailureMatcher = PartialFunction.empty
       )
 
-      Source(Seq(1, 2, 3)).via(flowUnderTest).runWith(TestSink.probe[Int]).request(3).expectNext(2, 4, 6)
+      Source(Seq(1, 2, 3))
+        .via(Flow.futureFlow(flowUnderTest))
+        .runWith(TestSink.probe[Int])
+        .request(3)
+        .expectNext(2, 4, 6)
     }
 
     "when the stream completes successfully" - {
@@ -37,16 +46,22 @@ class StreamUtilsSpec extends ScalaTestWithActorTestKit with AnyFreeSpecLike {
         val flowUnderTest = actorFlow[Int, Int, Int](
           inputTransform = identity,
           inputRef = ref =>
-            testKit.spawn(Behaviors.receiveMessage[Int] {
-              case m @ Integer.MAX_VALUE => ref ! m; Behaviors.stopped
-            }),
+            Future.successful {
+              testKit.spawn(Behaviors.receiveMessage[Int] {
+                case m @ Integer.MAX_VALUE => ref ! m; Behaviors.stopped
+              })
+            },
           inputOnCompleteMessage = Integer.MAX_VALUE,
           inputOnFailureMessage = _ => Integer.MIN_VALUE,
           outputCompletionMatcher = { case Integer.MAX_VALUE => },
           outputFailureMatcher = PartialFunction.empty
         )
 
-        Source.empty[Int].via(flowUnderTest).runWith(TestSink.probe[Int]).expectSubscriptionAndComplete()
+        Source
+          .empty[Int]
+          .via(Flow.futureFlow(flowUnderTest))
+          .runWith(TestSink.probe[Int])
+          .expectSubscriptionAndComplete()
       }
     }
 
@@ -57,9 +72,11 @@ class StreamUtilsSpec extends ScalaTestWithActorTestKit with AnyFreeSpecLike {
         val flowUnderTest = actorFlow[Int, Int, Int](
           inputTransform = identity,
           inputRef = ref =>
-            testKit.spawn(Behaviors.receiveMessage[Int] {
-              case m @ Integer.MIN_VALUE => ref ! m; Behaviors.stopped
-            }),
+            Future.successful {
+              testKit.spawn(Behaviors.receiveMessage[Int] {
+                case m @ Integer.MIN_VALUE => ref ! m; Behaviors.stopped
+              })
+            },
           inputOnCompleteMessage = Integer.MAX_VALUE,
           inputOnFailureMessage = _ => Integer.MIN_VALUE,
           outputCompletionMatcher = { case Integer.MAX_VALUE => },
@@ -68,7 +85,7 @@ class StreamUtilsSpec extends ScalaTestWithActorTestKit with AnyFreeSpecLike {
 
         Source
           .failed[Int](new Exception)
-          .via(flowUnderTest)
+          .via(Flow.futureFlow(flowUnderTest))
           .runWith(TestSink.probe[Int])
           .expectSubscriptionAndError(exception)
       }
@@ -79,15 +96,21 @@ class StreamUtilsSpec extends ScalaTestWithActorTestKit with AnyFreeSpecLike {
       "should successfully complete the stream" in {
         val flowUnderTest = actorFlow[Int, Int, Int](
           inputTransform = identity,
-          inputRef =
-            ref => testKit.spawn(Behaviors.receiveMessage[Int] { _ => ref ! Integer.MAX_VALUE; Behaviors.same }),
+          inputRef = ref =>
+            Future.successful(testKit.spawn(Behaviors.receiveMessage[Int] { _ =>
+              ref ! Integer.MAX_VALUE; Behaviors.same
+            })),
           inputOnCompleteMessage = Integer.MAX_VALUE,
           inputOnFailureMessage = _ => Integer.MIN_VALUE,
           outputCompletionMatcher = { case Integer.MAX_VALUE => },
           outputFailureMatcher = PartialFunction.empty
         )
 
-        Source.single(1).via(flowUnderTest).runWith(TestSink.probe[Int]).expectSubscriptionAndComplete()
+        Source
+          .single(1)
+          .via(Flow.futureFlow(flowUnderTest))
+          .runWith(TestSink.probe[Int])
+          .expectSubscriptionAndComplete()
       }
     }
 
@@ -97,15 +120,21 @@ class StreamUtilsSpec extends ScalaTestWithActorTestKit with AnyFreeSpecLike {
         val exception = new Exception("Expected exception")
         val flowUnderTest = actorFlow[Int, Int, Int](
           inputTransform = identity,
-          inputRef =
-            ref => testKit.spawn(Behaviors.receiveMessage[Int] { _ => ref ! Integer.MIN_VALUE; Behaviors.same }),
+          inputRef = ref =>
+            Future.successful(testKit.spawn(Behaviors.receiveMessage[Int] { _ =>
+              ref ! Integer.MIN_VALUE; Behaviors.same
+            })),
           inputOnCompleteMessage = Integer.MAX_VALUE,
           inputOnFailureMessage = _ => Integer.MIN_VALUE,
           outputCompletionMatcher = { case Integer.MAX_VALUE => },
           outputFailureMatcher = { case Integer.MIN_VALUE    => exception }
         )
 
-        Source.single(1).via(flowUnderTest).runWith(TestSink.probe[Int]).expectSubscriptionAndError(exception)
+        Source
+          .single(1)
+          .via(Flow.futureFlow(flowUnderTest))
+          .runWith(TestSink.probe[Int])
+          .expectSubscriptionAndError(exception)
       }
     }
   }
