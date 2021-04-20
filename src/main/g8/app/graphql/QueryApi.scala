@@ -5,9 +5,10 @@ import org.pac4j.core.profile.{CommonProfile => Pac4jCommonProfile}
 import sangria.macros.derive.GraphQLField
 
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._
 
-class QueryApi @Inject() (implicit graphQLContext: GraphQLContext) {
+class QueryApi @Inject() (implicit graphQLContext: GraphQLContext, ec: ExecutionContext) {
 
   @GraphQLField
   def userProfiles: Seq[UserProfile] = graphQLContext.request.profiles.collect {
