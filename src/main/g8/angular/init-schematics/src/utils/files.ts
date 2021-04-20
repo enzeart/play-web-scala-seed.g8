@@ -81,3 +81,10 @@ export const parsePackageJson = (tree: Tree) => {
 export const overwritePackageJson = (tree: Tree, contents: any) => {
   tree.overwrite(FilePaths.PACKAGE_JSON, JSON.stringify(contents, null, 2));
 };
+
+export const overwriteWorkspaceConfig = (tree: Tree, contents: any) => {
+  tree.overwrite(
+    FilePaths.WORKSPACE_CONFIGURATION,
+    JSON.stringify(contents, null, 2)
+  );
+};

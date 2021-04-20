@@ -7,6 +7,7 @@ import {
 import {
   applyTemplates,
   FilePaths,
+  overwriteWorkspaceConfig,
   parseWorkspaceConfig,
 } from '../utils/files';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
@@ -25,10 +26,9 @@ export function proxyConfig(_options: any): Rule {
     workspaceConfig.projects[
       project
     ].architect.serve.options.proxyConfig = relativePathToProxyConfiguration;
-    tree.overwrite(
-      FilePaths.WORKSPACE_CONFIGURATION,
-      JSON.stringify(workspaceConfig, null, 2)
-    );
+
+    overwriteWorkspaceConfig(tree, workspaceConfig);
+
     return mergeWith(templateSources)(tree, _context);
   };
 }

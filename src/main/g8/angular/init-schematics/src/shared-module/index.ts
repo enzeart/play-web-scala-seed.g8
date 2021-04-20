@@ -1,4 +1,9 @@
-import { mergeWith, Rule, SchematicContext, Tree } from '@angular-devkit/schematics';
+import {
+  mergeWith,
+  Rule,
+  SchematicContext,
+  Tree,
+} from '@angular-devkit/schematics';
 import {
   applyTemplates,
   createAppModuleSourceFile,
