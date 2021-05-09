@@ -2,6 +2,8 @@
 > compile
 
 # Verify the app-specific plugin tasks can be invoked
-> exampleController lol
-> exampleModel lol
-> exampleModule lol
+> playTestController test
+> playTestModel test
+> playTestModule test
+> playTestExtension test
+> playTestGraphqlSchema test
