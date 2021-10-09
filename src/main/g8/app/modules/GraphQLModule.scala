@@ -5,6 +5,7 @@ import config.AppConfig
 import graphql.GraphQLContext
 import modules.GraphQLModule.QueryReducers
 import net.codingwell.scalaguice.ScalaModule
+import play.Environment
 import sangria.execution.QueryReducer
 
 import javax.inject.Singleton
@@ -19,7 +20,7 @@ class GraphQLModule extends AbstractModule with ScalaModule {
   override def configure(): Unit = ()
 
   @Provides @Singleton
-  def provideQueryReducers(appConfig: AppConfig): QueryReducers = {
+  def provideQueryReducers(appConfig: AppConfig, environment: Environment): QueryReducers = {
     val rejectComplexQueries = QueryReducer.rejectComplexQueries[GraphQLContext](
       appConfig.graphql.complexityThreshold,
       (c, _) =>
@@ -28,7 +29,13 @@ class GraphQLModule extends AbstractModule with ScalaModule {
         )
     )
     val rejectMaxDepth = QueryReducer.rejectMaxDepth[GraphQLContext](appConfig.graphql.maxQueryDepth)
+    val rejectIntrospection =
+      QueryReducer.rejectIntrospection[GraphQLContext](appConfig.graphql.rejectTypeNameIntrospection)
+    val defaultQueryReducers    = rejectMaxDepth :: rejectComplexQueries :: Nil
+    val productionQueryReducers = rejectIntrospection :: Nil
 
-    new QueryReducers(rejectMaxDepth :: rejectComplexQueries :: Nil)
+    new QueryReducers(
+      reducers = if (environment.isProd) productionQueryReducers ::: defaultQueryReducers else defaultQueryReducers
+    )
   }
 }
