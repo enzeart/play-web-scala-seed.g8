@@ -22,5 +22,6 @@ lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-
     devSettings ++= Seq(
       "play.server.https.port" -> "9443"
     ),
-    topLevelDirectory := Option(packageName.value)
+    topLevelDirectory := Option(packageName.value),
+    g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8"
   )
