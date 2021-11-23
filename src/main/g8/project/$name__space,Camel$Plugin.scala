@@ -80,10 +80,9 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     Def.sequential(ngNewTask, $name;format="space,camel"$GraphqlCodegenTask)
   }
 
-  val $name;format="space,camel"$AppStartTask = Def.inputTaskDyn {
-    val uiDirectory = optionalDirectoryNameParser.parsed.getOrElse("ui")
-    val npmStart = Process("npm" :: "run" :: "start" :: Nil, baseDirectory.value / uiDirectory)
-    val sbtRun = Process("sbt" :: "$name;format="norm"$/run" :: Nil)
+  val $name;format="space,camel"$AppStartTask = Def.taskDyn {
+    val npmStart = Process("npm" :: "run" :: "start" :: Nil, $name;format="space,camel"$UiDirectory.value)
+    val sbtRun = Process("sbt" :: "$name;format="norm"$-server/run" :: Nil)
 
     Def.task {
       val playProcess = sbtRun.run
@@ -101,7 +100,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
     $name;format="space,camel"$GraphqlSchema := $name;format="space,camel"$GraphqlSchemaTask.evaluated,
     $name;format="space,camel"$GraphqlCodegen := $name;format="space,camel"$GraphqlCodegenTask.value,
     $name;format="space,camel"$AngularUi := $name;format="space,camel"$AngularUiTask.value,
-    $name;format="space,camel"$AppStart := $name;format="space,camel"$AppStartTask.evaluated
+    $name;format="space,camel"$AppStart := $name;format="space,camel"$AppStartTask.value
   )
 
   override val trigger = noTrigger
