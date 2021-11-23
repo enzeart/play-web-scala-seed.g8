@@ -8,6 +8,7 @@ lazy val `$name;format="norm"$` = (project in file("."))
     `$name;format="norm"$-server`
   )
   .settings(
+    name := "$name;format="norm"$",
     inThisBuild(Seq(
       organization := "$organization$",
       scalaVersion := "$scala_version$"
@@ -17,7 +18,7 @@ lazy val `$name;format="norm"$` = (project in file("."))
 lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-server"))
   .enablePlugins(PlayScala, $name;format="space,Camel"$Plugin)
   .settings(
-    name := "$name;format="norm"$",
+    name := "$name;format="norm"$-server",
     libraryDependencies ++= rootDependencies,
     devSettings ++= Seq(
       "play.server.https.port" -> "9443"
