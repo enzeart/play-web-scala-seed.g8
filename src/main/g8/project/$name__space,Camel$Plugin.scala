@@ -10,6 +10,7 @@ import scala.sys.process.Process
 object $name;format="space,Camel"$Plugin extends AutoPlugin {
 
   object autoImport {
+    val $name;format="space,camel"$GraphqlCodegenSleepDuration = settingKey[Long]("The duration that the graphql code generation task will wait for the dev server to start up")
     val $name;format="space,camel"$UiDirectory = settingKey[File]("The directory that holds the UI resources")
     val $name;format="space,camel"$Controller = inputKey[Unit]("Create a controller from the giter8 scaffold")
     val $name;format="space,camel"$Model = inputKey[Unit]("Create a model from the giter8 scaffold")
@@ -60,10 +61,11 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
   val $name;format="space,camel"$GraphqlCodegenTask = Def.taskDyn {
     val gqlCodegen = Process("npm" :: "run" :: "gqlcodegen" :: Nil, $name;format="space,camel"$UiDirectory.value)
     val sbtRun = Process("sbt" :: "$name;format="norm"$-server/run" :: Nil)
+    val sleepDuration = $name;format="space,camel"$GraphqlCodegenSleepDuration.value
 
     Def.task {
       val playProcess = sbtRun.run
-      Thread.sleep(30000)
+      Thread.sleep(sleepDuration)
       gqlCodegen.!
       playProcess.destroy()
     }
@@ -92,6 +94,7 @@ object $name;format="space,Camel"$Plugin extends AutoPlugin {
   }
 
   val base$name;format="space,Camel"$ProjectSettings: Seq[Def.Setting[_]] = Seq(
+    $name;format="space,camel"$GraphqlCodegenSleepDuration := 30000,
     $name;format="space,camel"$UiDirectory := baseDirectory.value / "ui",
     $name;format="space,camel"$Controller := $name;format="space,camel"$ControllerTask.evaluated,
     $name;format="space,camel"$Model := $name;format="space,camel"$ModelTask.evaluated,
