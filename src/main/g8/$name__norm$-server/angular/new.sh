@@ -38,6 +38,8 @@ npm install --save-dev @graphql-codegen/cli \
     @graphql-codegen/introspection \
     @graphql-codegen/time
 
+npx sb init
+
 npm install --save-dev prettier
 
 npm run prettier
