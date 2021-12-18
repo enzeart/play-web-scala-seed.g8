@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 ORIGINAL_DIR="$(pwd)"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -29,7 +29,7 @@ ng g $SCHEMATICS_PACKAGE_NAME:app-interceptor
 ng g $SCHEMATICS_PACKAGE_NAME:graphql
 ng g $SCHEMATICS_PACKAGE_NAME:shared-module
 
-ng add apollo-angular --endpoint="/api/graphql"
+ng add --skip-confirmation apollo-angular --endpoint="/api/graphql"
 
 npm install --save-dev @graphql-codegen/cli \
     @graphql-codegen/typescript \

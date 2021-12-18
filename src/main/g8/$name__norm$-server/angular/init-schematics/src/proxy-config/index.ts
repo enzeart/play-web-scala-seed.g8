@@ -23,9 +23,9 @@ export function proxyConfig(_options: any): Rule {
     const workspaceConfig = parseWorkspaceConfig(tree);
     const project = workspaceConfig.defaultProject;
 
-    workspaceConfig.projects[
-      project
-    ].architect.serve.options.proxyConfig = relativePathToProxyConfiguration;
+    workspaceConfig.projects[project].architect.serve.options = {
+      proxyConfig: relativePathToProxyConfiguration,
+    };
 
     overwriteWorkspaceConfig(tree, workspaceConfig);
 
