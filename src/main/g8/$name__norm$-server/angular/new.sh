@@ -11,7 +11,7 @@ SCHEMATICS_DIR="$SCRIPT_DIR/$SCHEMATICS_PACKAGE_NAME"
 ANGULAR_APP_DIR_NAME="${1:-ui}"
 ANGULAR_APP_DIR="$ORIGINAL_DIR/$ANGULAR_APP_DIR_NAME"
 
-ng new $ANGULAR_APP_DIR_NAME --routing=true --style=css --skip-git
+ng new $ANGULAR_APP_DIR_NAME --routing=true --style=scss --skip-git
 
 cd $SCHEMATICS_DIR
 npm install
