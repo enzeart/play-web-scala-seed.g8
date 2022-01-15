@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 ORIGINAL_DIR="$(pwd)"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -11,7 +11,7 @@ SCHEMATICS_DIR="$SCRIPT_DIR/$SCHEMATICS_PACKAGE_NAME"
 ANGULAR_APP_DIR_NAME="${1:-ui}"
 ANGULAR_APP_DIR="$ORIGINAL_DIR/$ANGULAR_APP_DIR_NAME"
 
-ng new $ANGULAR_APP_DIR_NAME --routing=true --style=css --skip-git
+ng new $ANGULAR_APP_DIR_NAME --routing=true --style=scss --skip-git
 
 cd $SCHEMATICS_DIR
 npm install
@@ -29,7 +29,7 @@ ng g $SCHEMATICS_PACKAGE_NAME:app-interceptor
 ng g $SCHEMATICS_PACKAGE_NAME:graphql
 ng g $SCHEMATICS_PACKAGE_NAME:shared-module
 
-ng add apollo-angular --endpoint="/api/graphql"
+ng add --skip-confirmation apollo-angular --endpoint="/api/graphql"
 
 npm install --save-dev @graphql-codegen/cli \
     @graphql-codegen/typescript \
@@ -37,6 +37,8 @@ npm install --save-dev @graphql-codegen/cli \
     @graphql-codegen/typescript-operations \
     @graphql-codegen/introspection \
     @graphql-codegen/time
+
+npx sb init
 
 npm install --save-dev prettier
 
