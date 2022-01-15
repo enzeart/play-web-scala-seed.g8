@@ -22,7 +22,7 @@ object $name;format="space,Camel"$Dependencies {
 
   val akkaActorTestkitTyped: ModuleID = "com.typesafe.akka" %% "akka-actor-testkit-typed" % PlayVersion.akkaVersion % Test
 
-  val rootDependencies: Seq[ModuleID] = Seq(
+  val serverDependencies: Seq[ModuleID] = Seq(
     guice,
     scalaGuice,
     playPac4j,
