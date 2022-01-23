@@ -6,4 +6,6 @@ project/plugins/project/
 .idea/
 .bsp/
 
+
+.DS_Store
 src/main/g8/angular/init-schematics/package-lock.json
