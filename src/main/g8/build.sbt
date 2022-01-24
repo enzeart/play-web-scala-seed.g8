@@ -1,4 +1,3 @@
-import $name;format="space,Camel"$Dependencies._
 import play.sbt.PlayImport.PlayKeys.devSettings
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
@@ -19,7 +18,7 @@ lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-
   .enablePlugins(PlayScala, $name;format="space,Camel"$Plugin)
   .settings(
     name := "$name;format="norm"$-server",
-    libraryDependencies ++= rootDependencies,
+    libraryDependencies ++= $name;format="space,Camel"$Dependencies.serverDependencies,
     devSettings ++= Seq(
       "play.server.https.port" -> "9443"
     ),

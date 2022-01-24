@@ -46,14 +46,6 @@ class GraphQLController @Inject() (
     executeQuery(request, query, variables, operation)
   }
 
-  def graphiql: Action[AnyContent] = Secure(appConfig.auth.clientName) {
-    if (environment.isProd) {
-      NotFound
-    } else {
-      Ok(views.html.graphiql())
-    }
-  }
-
   def graphqlSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
     if (environment.isProd) {
       NotFound

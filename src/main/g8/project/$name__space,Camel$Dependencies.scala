@@ -10,7 +10,7 @@ object $name;format="space,Camel"$Dependencies {
 
   val sangria: ModuleID = "org.sangria-graphql" %% "sangria" % "$sangria_version$"
 
-  val sangriaPlayJson: ModuleID = "org.sangria-graphql" %% "sangria-play-json" % "$sangria_version$"
+  val sangriaPlayJson: ModuleID = "org.sangria-graphql" %% "sangria-play-json" % "$sangria_play_json_version$"
 
   val akkaStreamTyped: ModuleID = "com.typesafe.akka" %% "akka-stream-typed" % PlayVersion.akkaVersion
 
@@ -22,7 +22,7 @@ object $name;format="space,Camel"$Dependencies {
 
   val akkaActorTestkitTyped: ModuleID = "com.typesafe.akka" %% "akka-actor-testkit-typed" % PlayVersion.akkaVersion % Test
 
-  val rootDependencies: Seq[ModuleID] = Seq(
+  val serverDependencies: Seq[ModuleID] = Seq(
     guice,
     scalaGuice,
     playPac4j,

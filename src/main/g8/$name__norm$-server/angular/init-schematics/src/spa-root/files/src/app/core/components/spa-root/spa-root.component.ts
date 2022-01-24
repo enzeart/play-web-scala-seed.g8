@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-const redirectRouteQueryParam = 'spa-redirect-route';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-spa-root',
@@ -17,7 +16,7 @@ export class SpaRootComponent implements OnInit {
 
   followRedirectRoute(): void {
     const { queryParams } = this.activatedRoute.snapshot;
-    const redirectRoute = queryParams[redirectRouteQueryParam];
+    const redirectRoute = queryParams[environment.redirectRouteQueryParam];
     if (redirectRoute) {
       this.router.navigateByUrl(redirectRoute);
     }

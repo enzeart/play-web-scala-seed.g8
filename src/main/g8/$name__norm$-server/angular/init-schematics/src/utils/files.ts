@@ -18,6 +18,7 @@ export enum FilePaths {
   PROXY_CONFIGURATION = '/proxy.conf.js',
   WORKSPACE_CONFIGURATION = '/angular.json',
   PACKAGE_JSON = '/package.json',
+  ENVIRONMENT = '/src/environments/environment.ts',
 }
 
 export const parseWorkspaceConfig = (tree: Tree): any => {
@@ -44,6 +45,10 @@ export const createAppModuleSourceFile = (tree: Tree): ts.SourceFile => {
 
 export const createAppRoutingModuleSourceFile = (tree: Tree): ts.SourceFile => {
   return createSourceFile(FilePaths.APP_ROUTING_MODULE, tree);
+};
+
+export const createEnvironmentSourceFile = (tree: Tree): ts.SourceFile => {
+  return createSourceFile(FilePaths.ENVIRONMENT, tree);
 };
 
 export const applyTemplates = (options: any = {}): Source =>
