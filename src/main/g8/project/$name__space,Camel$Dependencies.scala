@@ -4,6 +4,16 @@ import sbt._
 
 object $name;format="space,Camel"$Dependencies {
 
+  val playGrpcRuntime: ModuleID = "com.lightbend.play" %% "play-grpc-runtime" % "$play_grpc_runtime_version$"
+
+  val scalapbValidateCore: ModuleID = "com.thesamet.scalapb" %% "scalapb-validate-core" % scalapb.validate.compiler.BuildInfo.version
+
+  val scalapbValidateCoreProtobuf: ModuleID = scalapbValidateCore % "protobuf"
+
+  val scalapbRuntime: ModuleID = "com.thesamet.scalapb" %% "scalapb-runtime" % "$scalapb_runtime_version$"
+
+  val scalapbLenses: ModuleID = "com.thesamet.scalapb" %% "lenses" % "$scalapb_lenses_version$"
+
   val playPac4j: ModuleID = "org.pac4j" %% "play-pac4j" % "$play_pac4j_version$"
 
   val scalaGuice: ModuleID = "net.codingwell" %% "scala-guice" % "$scala_guice_version$"
@@ -22,6 +32,25 @@ object $name;format="space,Camel"$Dependencies {
 
   val akkaActorTestkitTyped: ModuleID = "com.typesafe.akka" %% "akka-actor-testkit-typed" % PlayVersion.akkaVersion % Test
 
+  val akkaDiscovery: ModuleID = "com.typesafe.akka" %% "akka-discovery" % PlayVersion.akkaVersion
+
+  val akkaHttp: ModuleID = "com.typesafe.akka" %% "akka-http" % PlayVersion.akkaHttpVersion
+
+  val akkaHttpSprayJson: ModuleID = "com.typesafe.akka" %% "akka-http-spray-json" % PlayVersion.akkaHttpVersion
+
+  val akkaHttp2Support: ModuleID = "com.typesafe.akka" %% "akka-http2-support" % PlayVersion.akkaHttpVersion
+
+  val protobufDependencies: Seq[ModuleID] = Seq(
+    playGrpcRuntime,
+    scalapbValidateCore,
+    scalapbValidateCoreProtobuf
+  )
+
+  val protobufDependencyOverrides: Seq[ModuleID] = Seq(
+    scalapbRuntime,
+    scalapbLenses
+  )
+
   val serverDependencies: Seq[ModuleID] = Seq(
     guice,
     scalaGuice,
@@ -34,5 +63,12 @@ object $name;format="space,Camel"$Dependencies {
     scalatestplusPlay,
     akkaStreamTestkit,
     akkaActorTestkitTyped
+  )
+
+  val serverDependencyOverrides: Seq[ModuleID] = Seq(
+    akkaDiscovery,
+    akkaHttp,
+    akkaHttpSprayJson,
+    akkaHttp2Support
   )
 }
