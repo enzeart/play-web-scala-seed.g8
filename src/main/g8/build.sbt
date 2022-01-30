@@ -18,13 +18,14 @@ lazy val `$name;format="norm"$` = (project in file("."))
   )
 
 lazy val `$name;format="norm"$-protobuf` = (project in file("$name;format="norm"$-protobuf"))
-  .enablePlugins(AkkaGrpcPlugin)
+  .enablePlugins(AkkaGrpcPlugin, $name;format="space,Camel"$Plugin)
   .settings(
     name := "$name;format="norm"$-protobuf",
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.protobufDependencies,
     dependencyOverrides ++= $name;format="space,Camel"$Dependencies.protobufDependencyOverrides,
     akkaGrpcExtraGenerators ++= Seq(PlayScalaClientCodeGenerator),
     akkaGrpcGeneratedSources := Seq(AkkaGrpc.Client),
+    g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8",
     Compile / PB.targets += scalapb.validate.gen(FlatPackage) -> (Compile / akkaGrpcCodeGeneratorSettings / target).value
   )
 
