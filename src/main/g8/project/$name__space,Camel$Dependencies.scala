@@ -56,6 +56,10 @@ object $name;format="space,Camel"$Dependencies {
     scalapbRuntime
   )
 
+  val protobufServiceDependencies: Seq[ModuleID] = Seq(
+
+  )
+
   val serverDependencies: Seq[ModuleID] = Seq(
     akkaActorTestkitTyped,
     akkaStreamTestkit,

@@ -22,6 +22,7 @@ lazy val `$name;format="norm"$-protobuf` = (project in file("$name;format="norm"
   .settings(
     name := "$name;format="norm"$-protobuf",
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.protobufDependencies,
+    libraryDependencies ++= $name;format="space,Camel"$Dependencies.protobufServiceDependencies,
     dependencyOverrides ++= $name;format="space,Camel"$Dependencies.protobufDependencyOverrides,
     akkaGrpcExtraGenerators ++= Seq(PlayScalaClientCodeGenerator),
     akkaGrpcGeneratedSources := Seq(AkkaGrpc.Client),
