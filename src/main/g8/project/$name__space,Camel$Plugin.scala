@@ -3,7 +3,6 @@ import giter8.ScaffoldPlugin.autoImport.g8Scaffold
 import sbt.{AutoPlugin, Def, _}
 import complete.DefaultParsers._
 import sbt.Keys._
-import sbt.internal.util.complete.Parser
 
 import scala.sys.process.Process
 
