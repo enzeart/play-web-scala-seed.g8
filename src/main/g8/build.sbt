@@ -32,7 +32,7 @@ lazy val `$name;format="norm"$-protobuf` = (project in file("$name;format="norm"
 
 
 lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-server"))
-  .enablePlugins(PlayScala, $name;format="space,Camel"$Plugin)
+  .enablePlugins(PlayScala, $name;format="space,Camel"$ServerPlugin)
   .dependsOn(`$name;format="norm"$-protobuf`)
   .settings(
     name := "$name;format="norm"$-server",

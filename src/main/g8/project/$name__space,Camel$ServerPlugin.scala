@@ -6,7 +6,7 @@ import sbt.Keys._
 
 import scala.sys.process.Process
 
-object $name;format="space,Camel"$Plugin extends AutoPlugin {
+object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
 
   object autoImport {
     val $name;format="space,camel"$GraphqlCodegenSleepDuration = settingKey[Long]("The duration that the graphql code generation task will wait for the dev server to start up")
