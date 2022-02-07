@@ -18,7 +18,7 @@ lazy val `$name;format="norm"$` = (project in file("."))
   )
 
 lazy val `$name;format="norm"$-protobuf` = (project in file("$name;format="norm"$-protobuf"))
-  .enablePlugins(AkkaGrpcPlugin, $name;format="space,Camel"$Plugin)
+  .enablePlugins(AkkaGrpcPlugin)
   .settings(
     name := "$name;format="norm"$-protobuf",
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.protobufDependencies,
