@@ -7,7 +7,7 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 lazy val `$name;format="norm"$` = (project in file("."))
   .aggregate(
     `$name;format="norm"$-server`,
-    `$name;format="norm"$-protobuf`
+    `$name;format="norm"$-core`
   )
   .settings(
     name := "$name;format="norm"$",
@@ -17,10 +17,11 @@ lazy val `$name;format="norm"$` = (project in file("."))
     ))
   )
 
-lazy val `$name;format="norm"$-protobuf` = (project in file("$name;format="norm"$-protobuf"))
+lazy val `$name;format="norm"$-core` = (project in file("$name;format="norm"$-core"))
   .enablePlugins(AkkaGrpcPlugin)
   .settings(
-    name := "$name;format="norm"$-protobuf",
+    name := "$name;format="norm"$-core",
+    libraryDependencies ++= $name;format="space,Camel"$Dependencies.coreDependencies,
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.protobufDependencies,
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.protobufServiceDependencies,
     dependencyOverrides ++= $name;format="space,Camel"$Dependencies.protobufDependencyOverrides,
@@ -33,7 +34,7 @@ lazy val `$name;format="norm"$-protobuf` = (project in file("$name;format="norm"
 
 lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-server"))
   .enablePlugins(PlayScala, $name;format="space,Camel"$ServerPlugin)
-  .dependsOn(`$name;format="norm"$-protobuf`)
+  .dependsOn(`$name;format="norm"$-core`)
   .settings(
     name := "$name;format="norm"$-server",
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.serverDependencies,

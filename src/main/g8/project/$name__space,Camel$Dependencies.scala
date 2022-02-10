@@ -60,6 +60,10 @@ object $name;format="space,Camel"$Dependencies {
 
   )
 
+  val coreDependencies: Seq[ModuleID] = Seq(
+
+  )
+
   val serverDependencies: Seq[ModuleID] = Seq(
     akkaActorTestkitTyped,
     akkaStreamTestkit,
