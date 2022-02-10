@@ -22,6 +22,7 @@ lazy val `$name;format="norm"$-core` = (project in file("$name;format="norm"$-co
   .settings(
     name := "$name;format="norm"$-core",
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.coreDependencies,
+    dependencyOverrides ++= $name;format="space,Camel"$Dependencies.coreDependencyOverrides,
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.protobufDependencies,
     libraryDependencies ++= $name;format="space,Camel"$Dependencies.protobufServiceDependencies,
     dependencyOverrides ++= $name;format="space,Camel"$Dependencies.protobufDependencyOverrides,
