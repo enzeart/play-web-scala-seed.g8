@@ -42,6 +42,7 @@ lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-
     dependencyOverrides ++= $name;format="space,Camel"$Dependencies.serverDependencyOverrides,
     devSettings ++= Seq(
     ),
+    Universal / packageName := name.value,
     topLevelDirectory := Option(packageName.value),
     g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8"
   )
