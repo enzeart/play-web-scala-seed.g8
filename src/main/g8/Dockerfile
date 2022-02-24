@@ -3,10 +3,14 @@ FROM ubuntu:latest AS builder
 WORKDIR /build
 COPY . .
 
-RUN apt-get update && apt-get install -y curl zip openjdk-11-jdk
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y curl zip openjdk-11-jdk
+RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && apt-get install -y nodejs
+
 SHELL ["/bin/bash", "-c"]
 RUN curl -s https://get.sdkman.io | bash
 RUN source "/root/.sdkman/bin/sdkman-init.sh" && sdk install sbt
+
+RUN if [ -d "/build/$name;format="norm"$-server/ui" ]; then cd /build/$name;format="norm"$-server/ui && npm ci && npm run build; fi
 
 RUN source "/root/.sdkman/bin/sdkman-init.sh" && sbt clean $name;format="norm"$-server/Universal/packageZipTarball
 RUN tar -xzf /build/$name;format="norm"$-server/target/universal/$name;format="norm"$-server.tgz -C /tmp
