@@ -9,7 +9,7 @@ import {
   applyTemplates,
   createAppModuleSourceFile,
   createAppRoutingModuleSourceFile,
-  createEnvironmentSourceFile,
+  createSourceFile,
   FilePaths,
 } from '../utils/files';
 import {
@@ -58,8 +58,6 @@ const findRoutesArrayLiteral = (
   return routesArrayLiteralExpression;
 };
 
-const redirectRouteQueryParamText = `,\n\tredirectRouteQueryParam: 'spa-redirect-route'`;
-
 const findEnvironmentObjectLiteral = (
   sourceFile: ts.SourceFile
 ): ts.ObjectLiteralExpression => {
@@ -74,6 +72,24 @@ const findEnvironmentObjectLiteral = (
   return environmentObjectLiteralExpression;
 };
 
+const editEnvironmentConfiguration = (path: string, tree: Tree): void => {
+  const changes = [
+    new InsertChange(
+      path,
+      findEnvironmentObjectLiteral(createSourceFile(path, tree)).end - 2,
+      ",\n\tredirectRouteQueryParam: 'spa-redirect-route'"
+    ),
+  ];
+
+  const recorder = tree.beginUpdate(path);
+
+  for (const change of changes) {
+    recorder.insertLeft(change.pos, change.toAdd);
+  }
+
+  tree.commitUpdate(recorder);
+};
+
 export function spaRoot(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const templateSources = applyTemplates();
@@ -85,7 +101,7 @@ export function spaRoot(_options: any): Rule {
       spaRootComponentClassifiedName,
       relativePathToSpaRootComponent(FilePaths.APP_ROUTING_MODULE)
     );
-    const environmentSourceFile = createEnvironmentSourceFile(tree);
+    // const environmentSourceFile = createEnvironmentSourceFile(tree);
 
     const routesArrayLiteral = findRoutesArrayLiteral(
       appRoutingModuleSourceFile
@@ -129,25 +145,8 @@ export function spaRoot(_options: any): Rule {
 
     tree.commitUpdate(appModuleRecorder);
 
-    const environmentObjectLiteral = findEnvironmentObjectLiteral(
-      environmentSourceFile
-    );
-    const environmentObjectPosition = environmentObjectLiteral.end - 2;
-    const environmentFileChanges = [
-      new InsertChange(
-        FilePaths.ENVIRONMENT,
-        environmentObjectPosition,
-        redirectRouteQueryParamText
-      ),
-    ];
-
-    const environmentFileRecorder = tree.beginUpdate(FilePaths.ENVIRONMENT);
-
-    for (const change of environmentFileChanges) {
-      environmentFileRecorder.insertLeft(change.pos, change.toAdd);
-    }
-
-    tree.commitUpdate(environmentFileRecorder);
+    editEnvironmentConfiguration(FilePaths.ENVIRONMENT, tree);
+    editEnvironmentConfiguration(FilePaths.ENVIRONMENT_PROD, tree);
 
     return mergeWith(templateSources)(tree, _context);
   };

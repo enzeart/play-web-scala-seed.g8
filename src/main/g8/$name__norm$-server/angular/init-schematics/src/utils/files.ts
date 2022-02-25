@@ -19,6 +19,7 @@ export enum FilePaths {
   WORKSPACE_CONFIGURATION = '/angular.json',
   PACKAGE_JSON = '/package.json',
   ENVIRONMENT = '/src/environments/environment.ts',
+  ENVIRONMENT_PROD = '/src/environments/environment.prod.ts',
 }
 
 export const parseWorkspaceConfig = (tree: Tree): any => {
