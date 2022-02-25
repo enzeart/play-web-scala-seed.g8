@@ -58,25 +58,21 @@ const findRoutesArrayLiteral = (
   return routesArrayLiteralExpression;
 };
 
-const findEnvironmentObjectLiteral = (
-  sourceFile: ts.SourceFile
-): ts.ObjectLiteralExpression => {
-  const environmentObjectLiteralExpression = findNodes(
-    sourceFile,
+const editEnvironmentConfiguration = (path: string, tree: Tree): void => {
+  const expression = findNodes(
+    createSourceFile(path, tree),
     ts.isObjectLiteralExpression
   )[0];
 
-  if (!environmentObjectLiteralExpression)
-    throw new SchematicsException('Could not find object literal');
+  if (!expression)
+    throw new SchematicsException(
+      'Could not find environment object literal expression'
+    );
 
-  return environmentObjectLiteralExpression;
-};
-
-const editEnvironmentConfiguration = (path: string, tree: Tree): void => {
   const changes = [
     new InsertChange(
       path,
-      findEnvironmentObjectLiteral(createSourceFile(path, tree)).end - 2,
+      expression.end - 2,
       ",\n\tredirectRouteQueryParam: 'spa-redirect-route'"
     ),
   ];
