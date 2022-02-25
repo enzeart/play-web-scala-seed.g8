@@ -7,7 +7,6 @@ import {
 } from '@angular-devkit/schematics';
 import {
   applyTemplates,
-  createAppModuleSourceFile,
   createAppRoutingModuleSourceFile,
   createSourceFile,
   FilePaths,
@@ -30,7 +29,7 @@ const spaRootRouteDefinitionText = `
   { path: '**', redirectTo: '/' }
 `;
 
-const relativePathToSpaRootComponent = (from: string) =>
+const spaRootComponentRelativePath = (from: string) =>
   buildRelativePath(
     from,
     '/src/app/core/components/spa-root/spa-root.component'
@@ -56,6 +55,25 @@ const findRoutesArrayLiteral = (
     throw new SchematicsException('Could not find routes array literal');
 
   return routesArrayLiteralExpression;
+};
+
+const editAppModule = (tree: Tree): void => {
+  const changes = addDeclarationToModule(
+    createSourceFile(FilePaths.APP_MODULE, tree),
+    FilePaths.APP_MODULE,
+    spaRootComponentClassifiedName,
+    spaRootComponentRelativePath(FilePaths.APP_MODULE)
+  );
+
+  const recorder = tree.beginUpdate(FilePaths.APP_MODULE);
+
+  for (const change of changes) {
+    if (change instanceof InsertChange) {
+      recorder.insertLeft(change.pos, change.toAdd);
+    }
+  }
+
+  tree.commitUpdate(recorder);
 };
 
 const editEnvironmentConfiguration = (path: string, tree: Tree): void => {
@@ -90,14 +108,12 @@ export function spaRoot(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const templateSources = applyTemplates();
     const appRoutingModuleSourceFile = createAppRoutingModuleSourceFile(tree);
-    const appModuleSourceFile = createAppModuleSourceFile(tree);
     const importSpaRootComponent = insertImport(
       appRoutingModuleSourceFile,
       FilePaths.APP_ROUTING_MODULE,
       spaRootComponentClassifiedName,
-      relativePathToSpaRootComponent(FilePaths.APP_ROUTING_MODULE)
+      spaRootComponentRelativePath(FilePaths.APP_ROUTING_MODULE)
     );
-    // const environmentSourceFile = createEnvironmentSourceFile(tree);
 
     const routesArrayLiteral = findRoutesArrayLiteral(
       appRoutingModuleSourceFile
@@ -124,23 +140,8 @@ export function spaRoot(_options: any): Rule {
 
     tree.commitUpdate(appRoutingModuleRecorder);
 
-    const addSpaRootComponentDeclaration = addDeclarationToModule(
-      appModuleSourceFile,
-      FilePaths.APP_MODULE,
-      spaRootComponentClassifiedName,
-      relativePathToSpaRootComponent(FilePaths.APP_MODULE)
-    );
 
-    const appModuleRecorder = tree.beginUpdate(FilePaths.APP_MODULE);
-
-    for (const change of addSpaRootComponentDeclaration) {
-      if (change instanceof InsertChange) {
-        appModuleRecorder.insertLeft(change.pos, change.toAdd);
-      }
-    }
-
-    tree.commitUpdate(appModuleRecorder);
-
+    editAppModule(tree);
     editEnvironmentConfiguration(FilePaths.ENVIRONMENT, tree);
     editEnvironmentConfiguration(FilePaths.ENVIRONMENT_PROD, tree);
 
