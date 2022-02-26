@@ -44,14 +44,6 @@ export const createAppModuleSourceFile = (tree: Tree): ts.SourceFile => {
   return createSourceFile(FilePaths.APP_MODULE, tree);
 };
 
-export const createAppRoutingModuleSourceFile = (tree: Tree): ts.SourceFile => {
-  return createSourceFile(FilePaths.APP_ROUTING_MODULE, tree);
-};
-
-export const createEnvironmentSourceFile = (tree: Tree): ts.SourceFile => {
-  return createSourceFile(FilePaths.ENVIRONMENT, tree);
-};
-
 export const applyTemplates = (options: any = {}): Source =>
   apply(url('./files'), [template(options)]);
 
