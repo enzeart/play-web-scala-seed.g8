@@ -6,19 +6,20 @@ import {
 } from '@angular-devkit/schematics';
 import {
   applyTemplates,
-  overwritePackageJson,
-  parsePackageJson,
+  writePackageConfiguration,
+  readPackageConfiguration,
 } from '../utils/files';
 
 export function graphql(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    const templateSources = applyTemplates();
-    const packageJson = parsePackageJson(tree);
-
-    packageJson.scripts.gqlcodegen = 'graphql-codegen && npm run prettier';
-
-    overwritePackageJson(tree, packageJson);
-
-    return mergeWith(templateSources)(tree, _context);
+    editPackageConfiguration(tree);
+    return mergeWith(applyTemplates())(tree, _context);
   };
 }
+
+const editPackageConfiguration = (tree: Tree): void => {
+  const packageConfiguration = readPackageConfiguration(tree);
+  packageConfiguration.scripts.gqlcodegen =
+    'graphql-codegen && npm run prettier';
+  writePackageConfiguration(packageConfiguration, tree);
+};

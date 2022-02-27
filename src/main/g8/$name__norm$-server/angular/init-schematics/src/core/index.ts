@@ -6,16 +6,16 @@ import {
 } from '@angular-devkit/schematics';
 import {
   applyTemplates,
-  overwritePackageJson,
+  writePackageConfiguration,
   writeWorkspaceConfiguration,
-  parsePackageJson,
+  readPackageConfiguration,
   readWorkspaceConfiguration,
 } from '../utils/files';
 
 export function core(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const templateSources = applyTemplates();
-    const packageJson = parsePackageJson(tree);
+    const packageJson = readPackageConfiguration(tree);
     const workspaceConfig = readWorkspaceConfiguration(tree);
     const project = workspaceConfig.defaultProject;
 
@@ -28,7 +28,7 @@ export function core(_options: any): Rule {
       displayBlock: true,
     };
 
-    overwritePackageJson(tree, packageJson);
+    writePackageConfiguration(packageJson, tree);
     writeWorkspaceConfiguration(workspaceConfig, tree);
 
     return mergeWith(templateSources)(tree, _context);

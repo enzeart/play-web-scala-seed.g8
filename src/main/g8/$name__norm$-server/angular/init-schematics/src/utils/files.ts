@@ -36,6 +36,17 @@ export const writeWorkspaceConfiguration = (contents: any, tree: Tree) => {
   );
 };
 
+export const readPackageConfiguration = (tree: Tree) => {
+  const packageJsonBuffer = tree.read(FilePaths.PACKAGE_JSON);
+  if (!packageJsonBuffer)
+    throw new SchematicsException('Failed to read package definition.');
+  return JSON.parse(packageJsonBuffer.toString('utf-8'));
+};
+
+export const writePackageConfiguration = (contents: any, tree: Tree) => {
+  tree.overwrite(FilePaths.PACKAGE_JSON, JSON.stringify(contents, null, 2));
+};
+
 export const createSourceFile = (path: string, tree: Tree): ts.SourceFile => {
   const buffer = tree.read(path);
   if (!buffer) throw new SchematicsException(`Could not find ${path}`);
@@ -74,15 +85,4 @@ export const applyWithOverwrite = (
 
     return rule(tree, _context);
   };
-};
-
-export const parsePackageJson = (tree: Tree) => {
-  const packageJsonBuffer = tree.read(FilePaths.PACKAGE_JSON);
-  if (!packageJsonBuffer)
-    throw new SchematicsException('Could not find package.json');
-  return JSON.parse(packageJsonBuffer.toString('utf-8'));
-};
-
-export const overwritePackageJson = (tree: Tree, contents: any) => {
-  tree.overwrite(FilePaths.PACKAGE_JSON, JSON.stringify(contents, null, 2));
 };
