@@ -58,10 +58,6 @@ export const createSourceFile = (path: string, tree: Tree): ts.SourceFile => {
   );
 };
 
-export const createAppModuleSourceFile = (tree: Tree): ts.SourceFile => {
-  return createSourceFile(FilePaths.APP_MODULE, tree);
-};
-
 export const applyTemplates = (options: any = {}): Source =>
   apply(url('./files'), [template(options)]);
 
