@@ -7,28 +7,26 @@ import {
 import {
   applyTemplates,
   FilePaths,
-  overwriteWorkspaceConfig,
-  parseWorkspaceConfig,
+  writeWorkspaceConfiguration,
+  readWorkspaceConfiguration,
 } from '../utils/files';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 
-const relativePathToProxyConfiguration = buildRelativePath(
-  '/',
-  FilePaths.PROXY_CONFIGURATION
-);
-
 export function proxyConfig(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    const templateSources = applyTemplates();
-    const workspaceConfig = parseWorkspaceConfig(tree);
-    const project = workspaceConfig.defaultProject;
-
-    workspaceConfig.projects[project].architect.serve.options = {
-      proxyConfig: relativePathToProxyConfiguration,
-    };
-
-    overwriteWorkspaceConfig(tree, workspaceConfig);
-
-    return mergeWith(templateSources)(tree, _context);
+    editWorkspaceConfiguration(tree);
+    return mergeWith(applyTemplates())(tree, _context);
   };
 }
+
+const editWorkspaceConfiguration = (tree: Tree): void => {
+  const workspaceConfiguration = readWorkspaceConfiguration(tree);
+
+  workspaceConfiguration.projects[
+    workspaceConfiguration.defaultProject
+  ].architect.serve.options = {
+    proxyConfig: buildRelativePath('/', FilePaths.PROXY_CONFIGURATION),
+  };
+
+  writeWorkspaceConfiguration(workspaceConfiguration, tree);
+};

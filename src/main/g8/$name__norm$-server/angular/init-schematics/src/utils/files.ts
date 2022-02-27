@@ -22,11 +22,18 @@ export enum FilePaths {
   ENVIRONMENT_PROD = '/src/environments/environment.prod.ts',
 }
 
-export const parseWorkspaceConfig = (tree: Tree): any => {
-  const workspaceConfigBuffer = tree.read(FilePaths.WORKSPACE_CONFIGURATION);
-  if (!workspaceConfigBuffer)
-    throw new SchematicsException('Could not find angular.json');
-  return JSON.parse(workspaceConfigBuffer.toString('utf-8'));
+export const readWorkspaceConfiguration = (tree: Tree): any => {
+  const buffer = tree.read(FilePaths.WORKSPACE_CONFIGURATION);
+  if (!buffer)
+    throw new SchematicsException('Failed to read workspace configuration');
+  return JSON.parse(buffer.toString('utf-8'));
+};
+
+export const writeWorkspaceConfiguration = (contents: any, tree: Tree) => {
+  tree.overwrite(
+    FilePaths.WORKSPACE_CONFIGURATION,
+    JSON.stringify(contents, null, 2)
+  );
 };
 
 export const createSourceFile = (path: string, tree: Tree): ts.SourceFile => {
@@ -78,11 +85,4 @@ export const parsePackageJson = (tree: Tree) => {
 
 export const overwritePackageJson = (tree: Tree, contents: any) => {
   tree.overwrite(FilePaths.PACKAGE_JSON, JSON.stringify(contents, null, 2));
-};
-
-export const overwriteWorkspaceConfig = (tree: Tree, contents: any) => {
-  tree.overwrite(
-    FilePaths.WORKSPACE_CONFIGURATION,
-    JSON.stringify(contents, null, 2)
-  );
 };

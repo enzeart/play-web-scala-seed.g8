@@ -7,16 +7,16 @@ import {
 import {
   applyTemplates,
   overwritePackageJson,
-  overwriteWorkspaceConfig,
+  writeWorkspaceConfiguration,
   parsePackageJson,
-  parseWorkspaceConfig,
+  readWorkspaceConfiguration,
 } from '../utils/files';
 
 export function core(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     const templateSources = applyTemplates();
     const packageJson = parsePackageJson(tree);
-    const workspaceConfig = parseWorkspaceConfig(tree);
+    const workspaceConfig = readWorkspaceConfiguration(tree);
     const project = workspaceConfig.defaultProject;
 
     packageJson.scripts.build = 'ng build --outputPath=../public';
@@ -29,7 +29,7 @@ export function core(_options: any): Rule {
     };
 
     overwritePackageJson(tree, packageJson);
-    overwriteWorkspaceConfig(tree, workspaceConfig);
+    writeWorkspaceConfiguration(workspaceConfig, tree);
 
     return mergeWith(templateSources)(tree, _context);
   };
