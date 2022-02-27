@@ -4,38 +4,39 @@ import {
   SchematicContext,
   Tree,
 } from '@angular-devkit/schematics';
-import {
-  applyTemplates,
-  createAppModuleSourceFile,
-  FilePaths,
-} from '../utils/files';
+import { applyTemplates, createSourceFile, FilePaths } from '../utils/files';
 import { addImportToModule } from '@schematics/angular/utility/ast-utils';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { InsertChange } from '@schematics/angular/utility/change';
 
-const sharedModuleClassifiedName = 'SharedModule';
-
 export function sharedModule(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    const templateSources = applyTemplates();
-    const appModuleSourceFile = createAppModuleSourceFile(tree);
-    const addSharedModuleImport = addImportToModule(
+    editAppModule(tree);
+    return mergeWith(applyTemplates())(tree, _context);
+  };
+}
+
+const sharedModuleClassifiedName = 'SharedModule';
+
+const editAppModule = (tree: Tree): void => {
+  const appModuleSourceFile = createSourceFile(FilePaths.APP_MODULE, tree);
+
+  const changes = [
+    ...addImportToModule(
       appModuleSourceFile,
       FilePaths.APP_MODULE,
       sharedModuleClassifiedName,
       buildRelativePath(FilePaths.APP_MODULE, '/src/app/shared/shared.module')
-    );
+    ),
+  ];
 
-    const appModuleRecorder = tree.beginUpdate(FilePaths.APP_MODULE);
+  const recorder = tree.beginUpdate(FilePaths.APP_MODULE);
 
-    for (const change of addSharedModuleImport) {
-      if (change instanceof InsertChange) {
-        appModuleRecorder.insertLeft(change.pos, change.toAdd);
-      }
+  for (const change of changes) {
+    if (change instanceof InsertChange) {
+      recorder.insertLeft(change.pos, change.toAdd);
     }
+  }
 
-    tree.commitUpdate(appModuleRecorder);
-
-    return mergeWith(templateSources)(tree, _context);
-  };
-}
+  tree.commitUpdate(recorder);
+};
