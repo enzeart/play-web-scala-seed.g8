@@ -14,23 +14,29 @@ import {
 
 export function core(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    const templateSources = applyTemplates();
-    const packageJson = readPackageConfiguration(tree);
-    const workspaceConfig = readWorkspaceConfiguration(tree);
-    const project = workspaceConfig.defaultProject;
-
-    packageJson.scripts.build = 'ng build --outputPath=../public';
-    packageJson.scripts.prettier = 'npx prettier --write "src/**/*.ts"';
-
-    workspaceConfig.projects[project].schematics[
-      '@schematics/angular:component'
-    ] = {
-      displayBlock: true,
-    };
-
-    writePackageConfiguration(packageJson, tree);
-    writeWorkspaceConfiguration(workspaceConfig, tree);
-
-    return mergeWith(templateSources)(tree, _context);
+    editPackageConfiguration(tree);
+    editWorkspaceConfiguration(tree);
+    return mergeWith(applyTemplates())(tree, _context);
   };
 }
+
+const editPackageConfiguration = (tree: Tree): void => {
+  const packageConfiguration = readPackageConfiguration(tree);
+
+  packageConfiguration.scripts.build = 'ng build --outputPath=../public';
+  packageConfiguration.scripts.prettier = 'npx prettier --write "src/**/*.ts"';
+
+  writePackageConfiguration(packageConfiguration, tree);
+};
+
+const editWorkspaceConfiguration = (tree: Tree): void => {
+  const workspaceConfiguration = readWorkspaceConfiguration(tree);
+
+  workspaceConfiguration.projects[
+    workspaceConfiguration.defaultProject
+  ].schematics['@schematics/angular:component'] = {
+    displayBlock: true,
+  };
+
+  writeWorkspaceConfiguration(workspaceConfiguration, tree);
+};
