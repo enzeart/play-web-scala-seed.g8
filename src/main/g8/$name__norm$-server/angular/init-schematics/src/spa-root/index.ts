@@ -36,7 +36,13 @@ const editAppRoutingModule = (tree: Tree): void => {
   const routesVariableStatement = findNodes(
     sourceFile,
     ts.isVariableStatement
-  ).find((statement) => statement.getText() === 'const routes: Routes = [];');
+  ).find((statement) =>
+    statement.declarationList.declarations.some(
+      (declaration) =>
+        ts.isIdentifier(declaration.name) &&
+        declaration.name.escapedText === 'routes'
+    )
+  );
 
   if (!routesVariableStatement)
     throw new SchematicsException('Failed to find "routes" variable statement');
@@ -61,7 +67,7 @@ const editAppRoutingModule = (tree: Tree): void => {
       routesExpression.end - 1,
       `
         { path: '', component: ${ClassifiedNames.spaRootComponent}, pathMatch: 'full' },
-        { path: '**', redirectTo: '/' }
+        { path: '**', redirectTo: '/' },
       `
     ),
   ];
