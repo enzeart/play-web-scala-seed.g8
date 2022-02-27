@@ -8,7 +8,7 @@ import {
   applyTemplates,
   writePackageConfiguration,
   readPackageConfiguration,
-} from '../utils/files';
+} from '../util/files-utils';
 
 export function graphql(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {

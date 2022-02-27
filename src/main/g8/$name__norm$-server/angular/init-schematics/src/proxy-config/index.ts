@@ -6,11 +6,11 @@ import {
 } from '@angular-devkit/schematics';
 import {
   applyTemplates,
-  FilePaths,
   writeWorkspaceConfiguration,
   readWorkspaceConfiguration,
-} from '../utils/files';
+} from '../util/files-utils';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
+import * as FilePaths from '../util/file-paths';
 
 export function proxyConfig(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
@@ -25,7 +25,7 @@ const editWorkspaceConfiguration = (tree: Tree): void => {
   workspaceConfiguration.projects[
     workspaceConfiguration.defaultProject
   ].architect.serve.options = {
-    proxyConfig: buildRelativePath('/', FilePaths.PROXY_CONFIGURATION),
+    proxyConfig: buildRelativePath('/', FilePaths.proxyConfiguration),
   };
 
   writeWorkspaceConfiguration(workspaceConfiguration, tree);

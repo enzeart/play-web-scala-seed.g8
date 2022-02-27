@@ -5,7 +5,7 @@ import {
   SchematicsException,
   Tree,
 } from '@angular-devkit/schematics';
-import { applyTemplates, createSourceFile, FilePaths } from '../utils/files';
+import { applyTemplates, createSourceFile } from '../util/files-utils';
 import {
   addDeclarationToModule,
   findNodes,
@@ -14,34 +14,32 @@ import {
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { InsertChange } from '@schematics/angular/utility/change';
+import * as FilePaths from '../util/file-paths';
+import * as ImportPaths from '../util/import-paths';
+import * as ClassifiedNames from '../util/classified-names';
 
 export function spaRoot(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     editAppRoutingModule(tree);
     editAppModule(tree);
-    editEnvironmentConfiguration(FilePaths.ENVIRONMENT, tree);
-    editEnvironmentConfiguration(FilePaths.ENVIRONMENT_PROD, tree);
+    editEnvironmentConfiguration(FilePaths.environmentConfiguration, tree);
+    editEnvironmentConfiguration(FilePaths.prodEnvironmentConfiguration, tree);
     return mergeWith(applyTemplates())(tree, _context);
   };
 }
 
-const spaRootComponentClassifiedName = 'SpaRootComponent';
-
 const spaRootComponentRelativePath = (from: string) =>
-  buildRelativePath(
-    from,
-    '/src/app/core/components/spa-root/spa-root.component'
-  );
+  buildRelativePath(from, ImportPaths.spaRootComponent);
 
 const editAppRoutingModule = (tree: Tree): void => {
-  const sourceFile = createSourceFile(FilePaths.APP_ROUTING_MODULE, tree);
+  const sourceFile = createSourceFile(FilePaths.appRoutingModule, tree);
   const routesVariableStatement = findNodes(
     sourceFile,
     ts.isVariableStatement
   ).find((statement) => statement.getText() === 'const routes: Routes = [];');
 
   if (!routesVariableStatement)
-    throw new SchematicsException('Could not find "routes" variable statement');
+    throw new SchematicsException('Failed to find "routes" variable statement');
 
   const routesExpression = findNodes(
     routesVariableStatement,
@@ -49,26 +47,26 @@ const editAppRoutingModule = (tree: Tree): void => {
   )[0];
 
   if (!routesExpression)
-    throw new SchematicsException('Could not find "routes" array literal');
+    throw new SchematicsException('Failed to find "routes" array literal');
 
   const changes = [
     insertImport(
       sourceFile,
-      FilePaths.APP_ROUTING_MODULE,
-      spaRootComponentClassifiedName,
-      spaRootComponentRelativePath(FilePaths.APP_ROUTING_MODULE)
+      FilePaths.appRoutingModule,
+      ClassifiedNames.spaRootComponent,
+      spaRootComponentRelativePath(FilePaths.appRoutingModule)
     ),
     new InsertChange(
-      FilePaths.APP_ROUTING_MODULE,
+      FilePaths.appRoutingModule,
       routesExpression.end - 1,
       `
-        { path: '', component: ${spaRootComponentClassifiedName}, pathMatch: 'full' },
+        { path: '', component: ${ClassifiedNames.spaRootComponent}, pathMatch: 'full' },
         { path: '**', redirectTo: '/' }
       `
     ),
   ];
 
-  const recorder = tree.beginUpdate(FilePaths.APP_ROUTING_MODULE);
+  const recorder = tree.beginUpdate(FilePaths.appRoutingModule);
 
   for (const change of changes) {
     if (change instanceof InsertChange) {
@@ -81,13 +79,13 @@ const editAppRoutingModule = (tree: Tree): void => {
 
 const editAppModule = (tree: Tree): void => {
   const changes = addDeclarationToModule(
-    createSourceFile(FilePaths.APP_MODULE, tree),
-    FilePaths.APP_MODULE,
-    spaRootComponentClassifiedName,
-    spaRootComponentRelativePath(FilePaths.APP_MODULE)
+    createSourceFile(FilePaths.appModule, tree),
+    FilePaths.appModule,
+    ClassifiedNames.spaRootComponent,
+    spaRootComponentRelativePath(FilePaths.appModule)
   );
 
-  const recorder = tree.beginUpdate(FilePaths.APP_MODULE);
+  const recorder = tree.beginUpdate(FilePaths.appModule);
 
   for (const change of changes) {
     if (change instanceof InsertChange) {
@@ -106,7 +104,7 @@ const editEnvironmentConfiguration = (path: string, tree: Tree): void => {
 
   if (!expression)
     throw new SchematicsException(
-      'Could not find environment object literal expression'
+      'Failed to find environment object literal expression'
     );
 
   const changes = [

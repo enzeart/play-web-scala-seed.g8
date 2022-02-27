@@ -4,10 +4,13 @@ import {
   SchematicContext,
   Tree,
 } from '@angular-devkit/schematics';
-import { applyTemplates, createSourceFile, FilePaths } from '../utils/files';
+import { applyTemplates, createSourceFile } from '../util/files-utils';
 import { addImportToModule } from '@schematics/angular/utility/ast-utils';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { InsertChange } from '@schematics/angular/utility/change';
+import * as FilePaths from '../util/file-paths';
+import * as ImportPaths from '../util/import-paths';
+import * as ClassifiedNames from '../util/classified-names';
 
 export function sharedModule(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
@@ -16,21 +19,19 @@ export function sharedModule(_options: any): Rule {
   };
 }
 
-const sharedModuleClassifiedName = 'SharedModule';
-
 const editAppModule = (tree: Tree): void => {
-  const appModuleSourceFile = createSourceFile(FilePaths.APP_MODULE, tree);
+  const appModuleSourceFile = createSourceFile(FilePaths.appModule, tree);
 
   const changes = [
     ...addImportToModule(
       appModuleSourceFile,
-      FilePaths.APP_MODULE,
-      sharedModuleClassifiedName,
-      buildRelativePath(FilePaths.APP_MODULE, '/src/app/shared/shared.module')
+      FilePaths.appModule,
+      ClassifiedNames.sharedModule,
+      buildRelativePath(FilePaths.appModule, ImportPaths.sharedModule)
     ),
   ];
 
-  const recorder = tree.beginUpdate(FilePaths.APP_MODULE);
+  const recorder = tree.beginUpdate(FilePaths.appModule);
 
   for (const change of changes) {
     if (change instanceof InsertChange) {

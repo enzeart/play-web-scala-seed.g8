@@ -7,7 +7,9 @@ import {
 import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import { InsertChange } from '@schematics/angular/utility/change';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
-import { applyTemplates, createSourceFile, FilePaths } from '../utils/files';
+import { applyTemplates, createSourceFile } from '../util/files-utils';
+import * as FilePaths from '../util/file-paths';
+import * as ClassifiedNames from '../util/classified-names';
 
 export function appInterceptor(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
@@ -16,23 +18,22 @@ export function appInterceptor(_options: any): Rule {
   };
 }
 
-const httpInterceptorProvidersClassifiedName = 'httpInterceptorProviders';
-
 const editAppModule = (tree: Tree): void => {
-  const appModuleSourceFile = createSourceFile(FilePaths.APP_MODULE, tree);
-  const recorder = tree.beginUpdate(FilePaths.APP_MODULE);
+  const appModuleSourceFile = createSourceFile(FilePaths.appModule, tree);
 
   const changes = [
     ...addProviderToModule(
       appModuleSourceFile,
-      FilePaths.APP_MODULE,
-      httpInterceptorProvidersClassifiedName,
+      FilePaths.appModule,
+      ClassifiedNames.httpInterceptorProviders,
       buildRelativePath(
-        FilePaths.APP_MODULE,
-        `/src/app/core/http-interceptors/`
+        FilePaths.appModule,
+        FilePaths.httpInterceptorsDirectory
       )
     ),
   ];
+
+  const recorder = tree.beginUpdate(FilePaths.appModule);
 
   for (const change of changes) {
     if (change instanceof InsertChange) {

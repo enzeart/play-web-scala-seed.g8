@@ -10,7 +10,7 @@ import {
   writeWorkspaceConfiguration,
   readPackageConfiguration,
   readWorkspaceConfiguration,
-} from '../utils/files';
+} from '../util/files-utils';
 
 export function core(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
