@@ -4,38 +4,40 @@ import {
   SchematicContext,
   Tree,
 } from '@angular-devkit/schematics';
-import {
-  applyTemplates,
-  createAppModuleSourceFile,
-  FilePaths,
-} from '../utils/files';
+import { applyTemplates, createSourceFile } from '../util/files-utils';
 import { addImportToModule } from '@schematics/angular/utility/ast-utils';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { InsertChange } from '@schematics/angular/utility/change';
-
-const sharedModuleClassifiedName = 'SharedModule';
+import * as FilePaths from '../util/file-paths';
+import * as ImportPaths from '../util/import-paths';
+import * as ClassifiedNames from '../util/classified-names';
 
 export function sharedModule(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    const templateSources = applyTemplates();
-    const appModuleSourceFile = createAppModuleSourceFile(tree);
-    const addSharedModuleImport = addImportToModule(
-      appModuleSourceFile,
-      FilePaths.APP_MODULE,
-      sharedModuleClassifiedName,
-      buildRelativePath(FilePaths.APP_MODULE, '/src/app/shared/shared.module')
-    );
-
-    const appModuleRecorder = tree.beginUpdate(FilePaths.APP_MODULE);
-
-    for (const change of addSharedModuleImport) {
-      if (change instanceof InsertChange) {
-        appModuleRecorder.insertLeft(change.pos, change.toAdd);
-      }
-    }
-
-    tree.commitUpdate(appModuleRecorder);
-
-    return mergeWith(templateSources)(tree, _context);
+    editAppModule(tree);
+    return mergeWith(applyTemplates())(tree, _context);
   };
 }
+
+const editAppModule = (tree: Tree): void => {
+  const appModuleSourceFile = createSourceFile(FilePaths.appModule, tree);
+
+  const changes = [
+    ...addImportToModule(
+      appModuleSourceFile,
+      FilePaths.appModule,
+      ClassifiedNames.sharedModule,
+      buildRelativePath(FilePaths.appModule, ImportPaths.sharedModule)
+    ),
+  ];
+
+  const recorder = tree.beginUpdate(FilePaths.appModule);
+
+  for (const change of changes) {
+    if (change instanceof InsertChange) {
+      recorder.insertLeft(change.pos, change.toAdd);
+    }
+  }
+
+  tree.commitUpdate(recorder);
+};
