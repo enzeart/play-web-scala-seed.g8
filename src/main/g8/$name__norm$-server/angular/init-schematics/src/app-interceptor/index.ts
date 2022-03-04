@@ -10,6 +10,7 @@ import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { applyTemplates, createSourceFile } from '../util/files-utils';
 import * as FilePaths from '../util/file-paths';
 import * as ClassifiedNames from '../util/classified-names';
+import * as ImportPaths from '../util/import-paths';
 
 export function appInterceptor(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
@@ -31,6 +32,12 @@ const editAppModule = (tree: Tree): void => {
         FilePaths.httpInterceptorsDirectory
       )
     ),
+    ...addProviderToModule(
+      appModuleSourceFile,
+      FilePaths.appModule,
+      ClassifiedNames.cookieService,
+      ImportPaths.ngxCookieService
+    )
   ];
 
   const recorder = tree.beginUpdate(FilePaths.appModule);
