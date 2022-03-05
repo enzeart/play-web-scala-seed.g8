@@ -8,7 +8,7 @@ import org.pac4j.core.client.direct.AnonymousClient
 import org.pac4j.core.client.{Client, Clients}
 import org.pac4j.core.config.Config
 import org.pac4j.core.credentials.Credentials
-$if(oidc_enabled)$
+$if(oidc_enabled.truthy)$
 import org.pac4j.oidc.client.OidcClient
 import org.pac4j.oidc.config.OidcConfiguration
 $endif$
@@ -70,7 +70,7 @@ class AuthModule extends AbstractModule with ScalaModule {
     logoutController
   }
 
-  $if(oidc_enabled)$
+  $if(oidc_enabled.truthy)$
   @Singleton
   @ProvidesIntoSet
   def provideOidcClient(authConfig: AuthConfig): Client[_ <: Credentials] = {
@@ -83,6 +83,7 @@ class AuthModule extends AbstractModule with ScalaModule {
     client
   }
   $else$
+
   @Singleton
   @ProvidesIntoSet
   def provideAnonymousClient(authConfig: AuthConfig): Client[_ <: Credentials] = {

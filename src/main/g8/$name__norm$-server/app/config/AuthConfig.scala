@@ -5,7 +5,7 @@ case class AuthConfig(
     callbackUrl: String,
     defaultLoginUrl: String,
     defaultLogoutUrl: String,
-    $if(oidc_enabled)$
+    $if(oidc_enabled.truthy)$
     clientId: String,
     secret: String,
     discoveryUri: String,

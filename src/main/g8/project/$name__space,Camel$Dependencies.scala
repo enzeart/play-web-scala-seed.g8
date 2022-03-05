@@ -12,14 +12,14 @@ object $name;format="space,Camel"$Dependencies {
   // Play Framework
   val scalatestplusPlay: ModuleID = "org.scalatestplus.play" %% "scalatestplus-play" % "$scalatestplus_play_version$" % Test
 
-  $if(oidc_enabled)$
+  $if(oidc_enabled.truthy)$
   val jacksonDatabind: ModuleID = "com.fasterxml.jackson.core" % "jackson-databind" % "$jackson_databind_version$"
   $endif$
 
   // Auth
   val playPac4j: ModuleID = "org.pac4j" %% "play-pac4j" % "$play_pac4j_version$"
 
-  $if(oidc_enabled)$
+  $if(oidc_enabled.truthy)$
   val pac4jOidc: ModuleID = "org.pac4j" % "pac4j-oidc" % "$pac4j_oidc_version$"
   $endif$
 
@@ -89,7 +89,7 @@ object $name;format="space,Camel"$Dependencies {
     sangriaPlayJson,
     scalaGuice,
     scalatestplusPlay,
-    $if(oidc_enabled)$
+    $if(oidc_enabled.truthy)$
     pac4jOidc,
     $endif$
   )
@@ -99,7 +99,7 @@ object $name;format="space,Camel"$Dependencies {
     akkaHttp,
     akkaHttp2Support,
     akkaHttpSprayJson,
-    $if(oidc_enabled)$
+    $if(oidc_enabled.truthy)$
     jacksonDatabind,
     $endif$
   )

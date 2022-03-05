@@ -20,33 +20,30 @@ export function appInterceptor(_options: any): Rule {
 }
 
 const editAppModule = (tree: Tree): void => {
-  const appModuleSourceFile = createSourceFile(FilePaths.appModule, tree);
-
-  const changes = [
-    ...addProviderToModule(
-      appModuleSourceFile,
-      FilePaths.appModule,
-      ClassifiedNames.httpInterceptorProviders,
-      buildRelativePath(
+  const addProviders = (classifiedName: string, importPath: string) => {
+    const changes = [
+      ...addProviderToModule(
+        createSourceFile(FilePaths.appModule, tree),
         FilePaths.appModule,
-        FilePaths.httpInterceptorsDirectory
-      )
-    ),
-    ...addProviderToModule(
-      appModuleSourceFile,
-      FilePaths.appModule,
-      ClassifiedNames.cookieService,
-      ImportPaths.ngxCookieService
-    )
-  ];
+        classifiedName,
+        importPath
+      ),
+    ];
 
-  const recorder = tree.beginUpdate(FilePaths.appModule);
+    const recorder = tree.beginUpdate(FilePaths.appModule);
 
-  for (const change of changes) {
-    if (change instanceof InsertChange) {
-      recorder.insertLeft(change.pos, change.toAdd);
+    for (const change of changes) {
+      if (change instanceof InsertChange) {
+        recorder.insertLeft(change.pos, change.toAdd);
+      }
     }
-  }
 
-  tree.commitUpdate(recorder);
+    tree.commitUpdate(recorder);
+  };
+
+  addProviders(
+    ClassifiedNames.httpInterceptorProviders,
+    buildRelativePath(FilePaths.appModule, FilePaths.httpInterceptorsDirectory)
+  );
+  addProviders(ClassifiedNames.cookieService, ImportPaths.ngxCookieService);
 };
