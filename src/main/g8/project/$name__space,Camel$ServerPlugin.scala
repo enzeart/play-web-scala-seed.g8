@@ -82,13 +82,18 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
   }
 
   val $name;format="space,camel"$AppStartTask = Def.taskDyn {
-    val npmStart = Process("npm" :: "run" :: "start" :: Nil, $name;format="space,camel"$UiDirectory.value)
+    val uiDirectory = $name;format="space,camel"$UiDirectory.value
+    val npmStart = Process("npm" :: "run" :: "start" :: Nil, uiDirectory)
     val sbtRun = Process("sbt" :: "$name;format="norm"$-server/run" :: Nil)
 
     Def.task {
-      val playProcess = sbtRun.run
-      npmStart.!
-      playProcess.destroy()
+      if (uiDirectory.exists()) {
+        val playProcess = sbtRun.run
+        npmStart.!
+        playProcess.destroy()
+      } else {
+        sbtRun.!
+      }
     }
   }
 

@@ -8,6 +8,10 @@ import org.pac4j.core.client.direct.AnonymousClient
 import org.pac4j.core.client.{Client, Clients}
 import org.pac4j.core.config.Config
 import org.pac4j.core.credentials.Credentials
+$if(oidc_enabled.truthy)$
+import org.pac4j.oidc.client.OidcClient
+import org.pac4j.oidc.config.OidcConfiguration
+$endif$
 import org.pac4j.play.scala.{DefaultSecurityComponents, SecurityComponents}
 import org.pac4j.play.store.{PlayCacheSessionStore, PlaySessionStore}
 import org.pac4j.play.{CallbackController, LogoutController}
@@ -66,6 +70,20 @@ class AuthModule extends AbstractModule with ScalaModule {
     logoutController
   }
 
+  $if(oidc_enabled.truthy)$
+  @Singleton
+  @ProvidesIntoSet
+  def provideOidcClient(authConfig: AuthConfig): Client[_ <: Credentials] = {
+    val configuration = new OidcConfiguration
+    configuration.setClientId(authConfig.clientId)
+    configuration.setSecret(authConfig.secret)
+    configuration.setDiscoveryURI(authConfig.discoveryUri)
+    val client = new OidcClient(configuration)
+    client.setName(authConfig.clientName)
+    client
+  }
+  $else$
+
   @Singleton
   @ProvidesIntoSet
   def provideAnonymousClient(authConfig: AuthConfig): Client[_ <: Credentials] = {
@@ -73,6 +91,7 @@ class AuthModule extends AbstractModule with ScalaModule {
     client.setName(authConfig.clientName)
     client
   }
+  $endif$
 
   private def anonymizeClient(clientName: String): AnonymousClient = {
     val client = new AnonymousClient

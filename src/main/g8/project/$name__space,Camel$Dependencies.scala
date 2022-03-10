@@ -10,9 +10,18 @@ object $name;format="space,Camel"$Dependencies {
   val scalaGuice: ModuleID = "net.codingwell" %% "scala-guice" % "$scala_guice_version$"
 
   // Play Framework
+  val scalatestplusPlay: ModuleID = "org.scalatestplus.play" %% "scalatestplus-play" % "$scalatestplus_play_version$" % Test
+
+  $if(oidc_enabled.truthy)$
+  val jacksonDatabind: ModuleID = "com.fasterxml.jackson.core" % "jackson-databind" % "$jackson_databind_version$"
+  $endif$
+
+  // Auth
   val playPac4j: ModuleID = "org.pac4j" %% "play-pac4j" % "$play_pac4j_version$"
 
-  val scalatestplusPlay: ModuleID = "org.scalatestplus.play" %% "scalatestplus-play" % "$scalatestplus_play_version$" % Test
+  $if(oidc_enabled.truthy)$
+  val pac4jOidc: ModuleID = "org.pac4j" % "pac4j-oidc" % "$pac4j_oidc_version$"
+  $endif$
 
   // GraphQL
   val sangria: ModuleID = "org.sangria-graphql" %% "sangria" % "$sangria_version$"
@@ -48,12 +57,12 @@ object $name;format="space,Camel"$Dependencies {
   val protobufDependencies: Seq[ModuleID] = Seq(
     playGrpcRuntime,
     scalapbValidateCore,
-    scalapbValidateCoreProtobuf
+    scalapbValidateCoreProtobuf,
   )
 
   val protobufDependencyOverrides: Seq[ModuleID] = Seq(
     scalapbLenses,
-    scalapbRuntime
+    scalapbRuntime,
   )
 
   val protobufServiceDependencies: Seq[ModuleID] = Seq(
@@ -79,13 +88,19 @@ object $name;format="space,Camel"$Dependencies {
     sangria,
     sangriaPlayJson,
     scalaGuice,
-    scalatestplusPlay
+    scalatestplusPlay,
+    $if(oidc_enabled.truthy)$
+    pac4jOidc,
+    $endif$
   )
 
   val serverDependencyOverrides: Seq[ModuleID] = Seq(
     akkaDiscovery,
     akkaHttp,
     akkaHttp2Support,
-    akkaHttpSprayJson
+    akkaHttpSprayJson,
+    $if(oidc_enabled.truthy)$
+    jacksonDatabind,
+    $endif$
   )
 }
