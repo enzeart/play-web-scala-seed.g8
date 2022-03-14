@@ -35,12 +35,14 @@ object $name;format="space,Camel"$Dependencies {
 
   val scalapbRuntime: ModuleID = "com.thesamet.scalapb" %% "scalapb-runtime" % "$scalapb_runtime_version$"
 
-  val scalapbValidateCore: ModuleID = "com.thesamet.scalapb" %% "scalapb-validate-core" % scalapb.validate.compiler.BuildInfo.version
+  val scalapbValidateCore: ModuleID =
+    "com.thesamet.scalapb" %% "scalapb-validate-core" % scalapb.validate.compiler.BuildInfo.version
 
   val scalapbValidateCoreProtobuf: ModuleID = scalapbValidateCore % "protobuf"
 
   // Akka
-  val akkaActorTestkitTyped: ModuleID = "com.typesafe.akka" %% "akka-actor-testkit-typed" % PlayVersion.akkaVersion % Test
+  val akkaActorTestkitTyped: ModuleID =
+    "com.typesafe.akka" %% "akka-actor-testkit-typed" % PlayVersion.akkaVersion % Test
 
   val akkaDiscovery: ModuleID = "com.typesafe.akka" %% "akka-discovery" % PlayVersion.akkaVersion
 

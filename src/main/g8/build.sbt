@@ -11,10 +11,12 @@ lazy val `$name;format="norm"$` = (project in file("."))
   )
   .settings(
     name := "$name;format="norm"$",
-    inThisBuild(Seq(
-      organization := "$organization$",
-      scalaVersion := "$scala_version$"
-    ))
+    inThisBuild(
+      Seq(
+        organization := "$organization$",
+        scalaVersion := "$scala_version$"
+      )
+    )
   )
 
 lazy val `$name;format="norm"$-core` = (project in file("$name;format="norm"$-core"))
@@ -29,9 +31,9 @@ lazy val `$name;format="norm"$-core` = (project in file("$name;format="norm"$-co
     akkaGrpcExtraGenerators ++= Seq(PlayScalaClientCodeGenerator),
     akkaGrpcGeneratedSources := Seq(AkkaGrpc.Client),
     g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8",
-    Compile / PB.targets += scalapb.validate.gen(FlatPackage) -> (Compile / akkaGrpcCodeGeneratorSettings / target).value
+    Compile / PB.targets += scalapb.validate
+      .gen(FlatPackage) -> (Compile / akkaGrpcCodeGeneratorSettings / target).value
   )
-
 
 lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-server"))
   .enablePlugins(PlayScala, $name;format="space,Camel"$ServerPlugin)
