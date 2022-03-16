@@ -100,7 +100,7 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
     }
   }
 
-  val base$name;format="space,Camel"$ProjectSettings: Seq[Def.Setting[_]] = Seq(
+  val baseProjectSettings: Seq[Def.Setting[_]] = Seq(
     $name;format="space,camel"$GraphqlCodegenSleepDuration := 30000,
     $name;format="space,camel"$UiDirectory := baseDirectory.value / "ui",
     $name;format="space,camel"$Controller := $name;format="space,camel"$ControllerTask.evaluated,
@@ -117,5 +117,5 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
 
   override val requires: Plugins = ScaffoldPlugin
 
-  override lazy val projectSettings: Seq[Def.Setting[_]] = base$name;format="space,Camel"$ProjectSettings
+  override lazy val projectSettings: Seq[Def.Setting[_]] = baseProjectSettings
 }
