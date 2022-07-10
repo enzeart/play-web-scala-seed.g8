@@ -31,7 +31,7 @@ ng g $SCHEMATICS_PACKAGE_NAME:shared-module
 
 npm install --save ngx-cookie-service
 
-ng add --skip-confirmation apollo-angular@2.6.0 --endpoint="/api/graphql"
+ng add --skip-confirmation apollo-angular --endpoint="/api/graphql"
 
 npm install --save-dev @graphql-codegen/cli \
     @graphql-codegen/typescript \
