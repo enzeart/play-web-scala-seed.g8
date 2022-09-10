@@ -1,5 +1,5 @@
 // Utilities
-addSbtPlugin("org.scalameta"            % "sbt-scalafmt"        % "$scalafmt_version$")
+addSbtPlugin("org.scalameta"            % "sbt-scalafmt"        % "$sbt_scalafmt_version$")
 addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "$sbt_giter8_scaffold_version$")
 
 addDependencyTreePlugin
