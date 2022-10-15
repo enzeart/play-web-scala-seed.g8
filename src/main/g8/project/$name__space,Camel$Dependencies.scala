@@ -1,6 +1,7 @@
 import play.core.PlayVersion
 import play.sbt.PlayImport._
 import sbt._
+import sbtprotoc.ProtocPlugin.ProtobufSrcConfig
 
 object $name;format="space,Camel"$Dependencies {
 
@@ -67,9 +68,9 @@ object $name;format="space,Camel"$Dependencies {
     scalapbRuntime,
   )
 
-  val protobufServiceDependencies: Seq[ModuleID] = Seq(
+  val protobufServiceDependencies: Seq[ModuleID] = Seq[ModuleID](
 
-  )
+  ).map(_  % ProtobufSrcConfig intransitive())
 
   val coreDependencies: Seq[ModuleID] = Seq(
 

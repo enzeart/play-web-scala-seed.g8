@@ -16,3 +16,8 @@ libraryDependencies ++= Seq(
   "com.thesamet.scalapb" %% "compilerplugin"           % "$scalapb_compilerplugin_version$",
   "com.thesamet.scalapb" %% "scalapb-validate-codegen" % "$scalapb_validate_codegen_version$"
 )
+
+$if(codeartifact_support_enabled.truthy)$
+// AWS CodeArtifact Support
+addSbtPlugin("io.github.bbstilson" % "sbt-codeartifact" % "$sbt_codeartifact_version$")
+$endif$
