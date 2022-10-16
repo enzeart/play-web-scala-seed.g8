@@ -10,16 +10,16 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
 
   object autoImport {
     val $name;format="space,camel"$GraphqlCodegenSleepDuration =
-      settingKey[Long]("The duration that the graphql code generation task will wait for the dev server to start up")
-    val $name;format="space,camel"$UiDirectory    = settingKey[File]("The directory that holds the UI resources")
-    val $name;format="space,camel"$Controller     = inputKey[Unit]("Create a controller from the giter8 scaffold")
-    val $name;format="space,camel"$Model          = inputKey[Unit]("Create a model from the giter8 scaffold")
-    val $name;format="space,camel"$Module         = inputKey[Unit]("Create a guice module from the giter8 scaffold")
-    val $name;format="space,camel"$Extension      = inputKey[Unit]("Create an actor system extension from the giter8 scaffold")
-    val $name;format="space,camel"$GraphqlSchema  = inputKey[Unit]("Create a graphQL schema from the giter8 scaffold")
-    val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Run the graphql codegen")
-    val $name;format="space,camel"$AngularUi      = inputKey[Unit]("Create an angular project")
-    val $name;format="space,camel"$AppStart       = inputKey[Unit]("Start the application")
+      settingKey[Long]("The maximum duration to wait for the development server to start up during UI GraphQL code generation.")
+    val $name;format="space,camel"$UiDirectory    = settingKey[File]("The directory that holds the UI resources.")
+    val $name;format="space,camel"$Controller     = inputKey[Unit]("Generate a controller class from the giter8 scaffold.")
+    val $name;format="space,camel"$Model          = inputKey[Unit]("Generate a model class from the giter8 scaffold.")
+    val $name;format="space,camel"$Module         = inputKey[Unit]("Generate a guice module from the giter8 scaffold.")
+    val $name;format="space,camel"$Extension      = inputKey[Unit]("Generate an actor system extension from the giter8 scaffold.")
+    val $name;format="space,camel"$GraphqlSchema  = inputKey[Unit]("Generate a GraphQL schema class from the giter8 scaffold.")
+    val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Execute GraphQL codegen for the UI.")
+    val $name;format="space,camel"$AngularUi      = inputKey[Unit]("Generate an Angular project.")
+    val $name;format="space,camel"$AppStart       = inputKey[Unit]("Start the application in development mode.")
   }
 
   import autoImport._
