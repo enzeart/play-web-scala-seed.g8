@@ -13,8 +13,12 @@ lazy val `$name;format="norm"$` = (project in file("."))
     name := "$name;format="norm"$",
     inThisBuild(
       Seq(
+        version := "0.0.0",
         organization := "$organization$",
-        scalaVersion := "$scala_version$"
+        scalaVersion := "$scala_version$",
+        $if(codeartifact_support_enabled.truthy) $
+        codeArtifactUrl := "$codeartifact_url$"
+        $endif$
       )
     )
   )

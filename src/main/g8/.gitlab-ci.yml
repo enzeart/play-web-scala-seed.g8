@@ -1,0 +1,44 @@
+variables:
+  AWS_ACCESS_KEY_ID: \$AWS_ACCESS_KEY_ID
+  $if(codeartifact_support_enabled.truthy)$
+  AWS_CODEARTIFACT_DOMAIN: \$AWS_CODEARTIFACT_DOMAIN
+  AWS_CODEARTIFACT_DOMAIN_OWNER: \$AWS_CODEARTIFACT_DOMAIN_OWNER
+  $endif$
+  AWS_REGION: \$AWS_REGION
+  AWS_SECRET_ACCESS_KEY: \$AWS_SECRET_ACCESS_KEY
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_REGISTRY: \$DOCKER_REGISTRY
+  DOCKER_REPOSITORY_NAME: \$DOCKER_REPOSITORY_NAME
+  DOCKER_REPOSITORY_URI: '\$DOCKER_REGISTRY/\$DOCKER_REPOSITORY_NAME'
+stages:
+  - build
+build-docker-image:
+  stage: build
+  environment:
+    name: production
+  image:
+    name: amazon/aws-cli
+    entrypoint: [""]
+  services:
+    - name: docker:dind
+      alias: docker
+  before_script:
+    - amazon-linux-extras install docker
+    - aws --version
+    - docker --version
+  script:
+    $if(codeartifact_support_enabled.truthy)$
+    - docker build -t \$DOCKER_REPOSITORY_URI:latest -t \$DOCKER_REPOSITORY_URI:\$CI_COMMIT_TAG
+        --build-arg AWS_ACCESS_KEY_ID=\$AWS_ACCESS_KEY_ID
+        --build-arg AWS_SECRET_ACCESS_KEY=\$AWS_SECRET_ACCESS_KEY
+        --build-arg AWS_REGION=\$AWS_REGION .
+    $else$
+    - docker build -t \$DOCKER_REPOSITORY_URI:latest -t \$DOCKER_REPOSITORY_URI:\$CI_COMMIT_TAG .
+    $endif$
+    - aws ecr get-login-password | docker login --username AWS --password-stdin \$DOCKER_REGISTRY
+    - docker push \$DOCKER_REPOSITORY_URI:latest
+    - docker push \$DOCKER_REPOSITORY_URI:\$CI_COMMIT_TAG
+  rules:
+    - if: '\$CI_COMMIT_TAG != null'
+      when: always
+
