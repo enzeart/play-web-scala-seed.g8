@@ -2,7 +2,7 @@ package modules
 
 import com.google.inject.multibindings.ProvidesIntoSet
 import com.google.inject.{AbstractModule, Provides}
-import config.{AppConfig, AuthConfig}
+import config.{AppServerConfig, AuthConfig}
 import net.codingwell.scalaguice.ScalaModule
 import org.pac4j.core.client.direct.AnonymousClient
 import org.pac4j.core.client.{Client, Clients}
@@ -30,7 +30,7 @@ class AuthModule extends AbstractModule with ScalaModule {
 
   @Singleton
   @Provides
-  def provideAuthConfig(appConfig: AppConfig): AuthConfig = appConfig.auth
+  def provideAuthConfig(appServerConfig: AppServerConfig): AuthConfig = appServerConfig.auth
 
   @Singleton
   @Provides

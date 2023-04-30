@@ -1,7 +1,7 @@
 package modules
 
 import com.google.inject.{AbstractModule, Provides}
-import config.AppConfig
+import config.AppServerConfig
 import graphql.GraphQLContext
 import modules.GraphQLModule.QueryReducers
 import net.codingwell.scalaguice.ScalaModule
@@ -20,17 +20,17 @@ class GraphQLModule extends AbstractModule with ScalaModule {
   override def configure(): Unit = ()
 
   @Provides @Singleton
-  def provideQueryReducers(appConfig: AppConfig, environment: Environment): QueryReducers = {
+  def provideQueryReducers(appServerConfig: AppServerConfig, environment: Environment): QueryReducers = {
     val rejectComplexQueries = QueryReducer.rejectComplexQueries[GraphQLContext](
-      appConfig.graphql.complexityThreshold,
+      appServerConfig.graphql.complexityThreshold,
       (c, _) =>
         new IllegalArgumentException(
-          s"Query complexity threshold exceeded: \$c/\${appConfig.graphql.complexityThreshold}"
+          s"Query complexity threshold exceeded: \$c/\${appServerConfig.graphql.complexityThreshold}"
         )
     )
-    val rejectMaxDepth = QueryReducer.rejectMaxDepth[GraphQLContext](appConfig.graphql.maxQueryDepth)
+    val rejectMaxDepth = QueryReducer.rejectMaxDepth[GraphQLContext](appServerConfig.graphql.maxQueryDepth)
     val rejectIntrospection =
-      QueryReducer.rejectIntrospection[GraphQLContext](appConfig.graphql.rejectTypeNameIntrospection)
+      QueryReducer.rejectIntrospection[GraphQLContext](appServerConfig.graphql.rejectTypeNameIntrospection)
     val defaultQueryReducers    = rejectMaxDepth :: rejectComplexQueries :: Nil
     val productionQueryReducers = rejectIntrospection :: Nil
 

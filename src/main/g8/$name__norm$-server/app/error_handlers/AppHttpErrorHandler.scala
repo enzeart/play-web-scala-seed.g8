@@ -1,6 +1,6 @@
 package error_handlers
 
-import config.AppConfig
+import config.AppServerConfig
 
 import javax.inject._
 import play.api._
@@ -16,16 +16,16 @@ class AppHttpErrorHandler @Inject() (
     config: Configuration,
     sourceMapper: OptionalSourceMapper,
     router: Provider[Router],
-    appConfig: AppConfig
+    appServerConfig: AppServerConfig
 ) extends DefaultHttpErrorHandler(env, config, sourceMapper, router) {
 
   override protected def onNotFound(request: RequestHeader, message: String): Future[Result] = {
-    if (request.queryString.contains(appConfig.ui.spaRedirectRouteQueryParam)) super.onNotFound(request, message)
+    if (request.queryString.contains(appServerConfig.ui.spaRedirectRouteQueryParam)) super.onNotFound(request, message)
     else
       Future.successful(
         Results.Redirect(
-          url = appConfig.ui.spaRedirectUrl,
-          queryStringParams = Map(appConfig.ui.spaRedirectRouteQueryParam -> Seq(request.uri)),
+          url = appServerConfig.ui.spaRedirectUrl,
+          queryStringParams = Map(appServerConfig.ui.spaRedirectRouteQueryParam -> Seq(request.uri)),
           status = Status.FOUND
         )
       )

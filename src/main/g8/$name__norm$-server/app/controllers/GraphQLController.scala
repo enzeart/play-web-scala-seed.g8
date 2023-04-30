@@ -2,7 +2,7 @@ package controllers
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
-import config.AppConfig
+import config.AppServerConfig
 import graphql.{GraphQLConstants, GraphQLContextFactory, _}
 import modules.GraphQLModule.QueryReducers
 import org.pac4j.core.profile.CommonProfile
@@ -23,7 +23,7 @@ import scala.util.{Failure, Success}
 @Singleton
 class GraphQLController @Inject() (
     val controllerComponents: SecurityComponents,
-    appConfig: AppConfig,
+    appServerConfig: AppServerConfig,
     environment: Environment,
     queryReducers: QueryReducers
 )(
@@ -37,16 +37,16 @@ class GraphQLController @Inject() (
     with GraphQLQueryExecution {
 
   def graphql(query: String, variables: Option[String], operation: Option[String]): Action[AnyContent] =
-    Secure(appConfig.auth.clientName).async { request =>
+    Secure(appServerConfig.auth.clientName).async { request =>
       executeQuery(request, query, variables map parseVariables, operation)
     }
 
-  def graphqlBody: Action[JsValue] = Secure(appConfig.auth.clientName).async(parse.json) { request =>
+  def graphqlBody: Action[JsValue] = Secure(appServerConfig.auth.clientName).async(parse.json) { request =>
     val (query, operation, variables) = extractQueryFields(request.body)
     executeQuery(request, query, variables, operation)
   }
 
-  def graphqlSchema: Action[AnyContent] = Secure(appConfig.auth.clientName) {
+  def graphqlSchema: Action[AnyContent] = Secure(appServerConfig.auth.clientName) {
     if (environment.isProd) {
       NotFound
     } else {
