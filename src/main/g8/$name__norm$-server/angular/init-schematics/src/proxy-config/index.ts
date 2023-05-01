@@ -14,17 +14,15 @@ import * as FilePaths from '../util/file-paths';
 
 export function proxyConfig(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
-    editWorkspaceConfiguration(tree);
+    editWorkspaceConfiguration(_options.project, tree);
     return mergeWith(applyTemplates())(tree, _context);
   };
 }
 
-const editWorkspaceConfiguration = (tree: Tree): void => {
+const editWorkspaceConfiguration = (project: string, tree: Tree): void => {
   const workspaceConfiguration = readWorkspaceConfiguration(tree);
 
-  workspaceConfiguration.projects[
-    workspaceConfiguration.defaultProject
-  ].architect.serve.options = {
+  workspaceConfiguration.projects[project].architect.serve.options = {
     proxyConfig: buildRelativePath('/', FilePaths.proxyConfiguration),
   };
 

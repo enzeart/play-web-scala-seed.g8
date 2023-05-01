@@ -81,7 +81,7 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
   }
 
   val $name;format="space,camel"$AngularUiTask = Def.taskDyn {
-    Def.sequential(ngNewTask, $name;format="space,camel"$GraphqlCodegenTask)
+    Def.sequential((Compile/compile).toTask, ngNewTask, $name;format="space,camel"$GraphqlCodegenTask)
   }
 
   val $name;format="space,camel"$AppStartTask = Def.taskDyn {

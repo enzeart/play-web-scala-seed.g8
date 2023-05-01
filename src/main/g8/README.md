@@ -13,3 +13,34 @@ sbt-codeartifact, and AWS to see if there is a more suitable solution for your n
 
 
 $endif$
+
+## sbt Tasks
+
+The $name;format="norm"$-server subproject has several custom tasks and settings defined by the project for added
+utility.
+
+### $name;format="space,camel"$AngularUi
+
+This task generates a new Angular project in the directory specified by the `$name;format="space,camel"$UiDirectory`
+setting.
+
+```bash
+sbt $name;format="norm"$-server/$name;format="space,camel"$AngularUi
+```
+
+### $name;format="space,camel"$GraphqlCodegen
+
+This task generates javascript classes and interfaces based on the GraphQL schema defined by the Play Framework
+server.
+
+```bash
+sbt $name;format="norm"$-server/$name;format="space,camel"$GraphqlCodegen
+```
+
+### $name;format="space,camel"$AppStart
+
+This task starts the Angular development server and the Play Framework server in development mode.
+
+```bash
+sbt $name;format="norm"$-server/$name;format="space,camel"$AppStart
+```

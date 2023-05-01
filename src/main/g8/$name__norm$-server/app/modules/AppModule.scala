@@ -4,7 +4,7 @@ import com.google.inject.assistedinject.FactoryModuleBuilder
 import graphql.GraphQLContextFactory
 
 import com.google.inject.{AbstractModule, Provides}
-import config.AppConfig
+import config.AppServerConfig
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import pureconfig.ConfigSource
@@ -19,6 +19,6 @@ class AppModule extends AbstractModule with ScalaModule {
   }
 
   @Provides @Singleton
-  def provideAppConfig(configuration: Configuration): AppConfig =
-    ConfigSource.fromConfig(configuration.underlying).at("app").loadOrThrow[AppConfig]
+  def provideAppServerConfig(configuration: Configuration): AppServerConfig =
+    ConfigSource.fromConfig(configuration.underlying).at("app-server").loadOrThrow[AppServerConfig]
 }

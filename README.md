@@ -25,7 +25,7 @@ sbt new enzeart/play-web-scala-seed.g8 \
 ### AWS CodeArtifact Support
 ```shell
 sbt new enzeart/play-web-scala-seed.g8 \
-  --name=play-grpc-test \
+  --name=play-web-test \
   --organization=com.example \
   --codeartifact_support_enabled=yes \
   --codeartifact_url=https://my_domain-111122223333.d.codeartifact.us-west-2.amazonaws.com/maven/my_repo/

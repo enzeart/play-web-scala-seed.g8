@@ -15,7 +15,7 @@ import {
 export function core(_options: any): Rule {
   return (tree: Tree, _context: SchematicContext) => {
     editPackageConfiguration(tree);
-    editWorkspaceConfiguration(tree);
+    editWorkspaceConfiguration(_options.project, tree);
     return mergeWith(applyTemplates())(tree, _context);
   };
 }
@@ -29,12 +29,10 @@ const editPackageConfiguration = (tree: Tree): void => {
   writePackageConfiguration(packageConfiguration, tree);
 };
 
-const editWorkspaceConfiguration = (tree: Tree): void => {
+const editWorkspaceConfiguration = (project: string, tree: Tree): void => {
   const workspaceConfiguration = readWorkspaceConfiguration(tree);
 
-  workspaceConfiguration.projects[
-    workspaceConfiguration.defaultProject
-  ].schematics['@schematics/angular:component'] = {
+  workspaceConfiguration.projects[project].schematics['@schematics/angular:component'] = {
     displayBlock: true,
   };
 

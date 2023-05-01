@@ -116,8 +116,8 @@ const editEnvironmentConfiguration = (path: string, tree: Tree): void => {
   const changes = [
     new InsertChange(
       path,
-      expression.end - 2,
-      ",\n\tredirectRouteQueryParam: 'spa-redirect-route'"
+      expression.end - 1,
+      "redirectRouteQueryParam: 'spa-redirect-route'"
     ),
   ];
 
