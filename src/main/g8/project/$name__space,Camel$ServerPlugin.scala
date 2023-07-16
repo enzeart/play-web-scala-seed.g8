@@ -19,7 +19,6 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
     val $name;format="space,camel"$GraphqlSchema  = inputKey[Unit]("Generate a GraphQL schema class from the giter8 scaffold.")
     val $name;format="space,camel"$GraphqlCodegen = inputKey[Unit]("Execute GraphQL codegen for the UI.")
     val $name;format="space,camel"$AngularUi      = inputKey[Unit]("Generate an Angular project.")
-    val $name;format="space,camel"$AppStart       = inputKey[Unit]("Start the application in development mode.")
   }
 
   import autoImport._
@@ -84,22 +83,6 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
     Def.sequential((Compile/compile).toTask, ngNewTask, $name;format="space,camel"$GraphqlCodegenTask)
   }
 
-  val $name;format="space,camel"$AppStartTask = Def.taskDyn {
-    val uiDirectory = $name;format="space,camel"$UiDirectory.value
-    val npmStart    = Process("npm" :: "run" :: "start" :: Nil, uiDirectory)
-    val sbtRun      = Process("sbt" :: "$name;format="norm"$-server/run" :: Nil)
-
-    Def.task {
-      if (uiDirectory.exists()) {
-        val playProcess = sbtRun.run
-        npmStart.!
-        playProcess.destroy()
-      } else {
-        sbtRun.!
-      }
-    }
-  }
-
   val baseProjectSettings: Seq[Def.Setting[_]] = Seq(
     $name;format="space,camel"$GraphqlCodegenSleepDuration := 30000,
     $name;format="space,camel"$UiDirectory := baseDirectory.value / "ui",
@@ -110,7 +93,6 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
     $name;format="space,camel"$GraphqlSchema := $name;format="space,camel"$GraphqlSchemaTask.evaluated,
     $name;format="space,camel"$GraphqlCodegen := $name;format="space,camel"$GraphqlCodegenTask.value,
     $name;format="space,camel"$AngularUi := $name;format="space,camel"$AngularUiTask.value,
-    $name;format="space,camel"$AppStart := $name;format="space,camel"$AppStartTask.value
   )
 
   override val trigger = noTrigger

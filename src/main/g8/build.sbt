@@ -1,6 +1,7 @@
 import play.grpc.gen.scaladsl.PlayScalaClientCodeGenerator
 import scalapb.GeneratorOption._
 import play.sbt.PlayImport.PlayKeys.devSettings
+import play.sbt.PlayImport.PlayKeys._
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
@@ -50,5 +51,8 @@ lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-
     ),
     Universal / packageName := name.value,
     topLevelDirectory := Option(packageName.value),
-    g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8"
+    g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8",
+    playRunHooks += {
+      UserInterfaceHook((Compile / playWebTest3UiDirectory).value)
+    }
   )
