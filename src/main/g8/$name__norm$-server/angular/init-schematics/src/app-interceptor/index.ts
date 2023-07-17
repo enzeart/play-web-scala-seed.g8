@@ -26,7 +26,7 @@ const editAppModule = (tree: Tree): void => {
         createSourceFile(FilePaths.appModule, tree),
         FilePaths.appModule,
         classifiedName,
-        importPath
+        importPath,
       ),
     ];
 
@@ -43,7 +43,7 @@ const editAppModule = (tree: Tree): void => {
 
   addProviders(
     ClassifiedNames.httpInterceptorProviders,
-    buildRelativePath(FilePaths.appModule, FilePaths.httpInterceptorsDirectory)
+    buildRelativePath(FilePaths.appModule, FilePaths.httpInterceptorsDirectory),
   );
   addProviders(ClassifiedNames.cookieService, ImportPaths.ngxCookieService);
 };

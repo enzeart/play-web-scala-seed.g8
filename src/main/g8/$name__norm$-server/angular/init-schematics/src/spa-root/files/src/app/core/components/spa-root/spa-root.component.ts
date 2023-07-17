@@ -8,7 +8,10 @@ import { environment } from '../../../../environments/environment';
   styleUrls: ['./spa-root.component.css'],
 })
 export class SpaRootComponent implements OnInit {
-  constructor(private activatedRoute: ActivatedRoute, private router: Router) {}
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
     this.followRedirectRoute();

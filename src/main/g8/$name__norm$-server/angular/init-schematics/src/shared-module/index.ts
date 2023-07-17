@@ -27,7 +27,7 @@ const editAppModule = (tree: Tree): void => {
       appModuleSourceFile,
       FilePaths.appModule,
       ClassifiedNames.sharedModule,
-      buildRelativePath(FilePaths.appModule, ImportPaths.sharedModule)
+      buildRelativePath(FilePaths.appModule, ImportPaths.sharedModule),
     ),
   ];
 

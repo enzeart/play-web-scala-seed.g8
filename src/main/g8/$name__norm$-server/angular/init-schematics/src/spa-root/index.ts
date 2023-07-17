@@ -35,13 +35,13 @@ const editAppRoutingModule = (tree: Tree): void => {
   const sourceFile = createSourceFile(FilePaths.appRoutingModule, tree);
   const routesVariableStatement = findNodes(
     sourceFile,
-    ts.isVariableStatement
+    ts.isVariableStatement,
   ).find((statement) =>
     statement.declarationList.declarations.some(
       (declaration) =>
         ts.isIdentifier(declaration.name) &&
-        declaration.name.escapedText === 'routes'
-    )
+        declaration.name.escapedText === 'routes',
+    ),
   );
 
   if (!routesVariableStatement)
@@ -49,7 +49,7 @@ const editAppRoutingModule = (tree: Tree): void => {
 
   const routesExpression = findNodes(
     routesVariableStatement,
-    ts.isArrayLiteralExpression
+    ts.isArrayLiteralExpression,
   )[0];
 
   if (!routesExpression)
@@ -60,7 +60,7 @@ const editAppRoutingModule = (tree: Tree): void => {
       sourceFile,
       FilePaths.appRoutingModule,
       ClassifiedNames.spaRootComponent,
-      spaRootComponentRelativePath(FilePaths.appRoutingModule)
+      spaRootComponentRelativePath(FilePaths.appRoutingModule),
     ),
     new InsertChange(
       FilePaths.appRoutingModule,
@@ -68,7 +68,7 @@ const editAppRoutingModule = (tree: Tree): void => {
       `
         { path: '', component: ${ClassifiedNames.spaRootComponent}, pathMatch: 'full' },
         { path: '**', redirectTo: '/' },
-      `
+      `,
     ),
   ];
 
@@ -88,7 +88,7 @@ const editAppModule = (tree: Tree): void => {
     createSourceFile(FilePaths.appModule, tree),
     FilePaths.appModule,
     ClassifiedNames.spaRootComponent,
-    spaRootComponentRelativePath(FilePaths.appModule)
+    spaRootComponentRelativePath(FilePaths.appModule),
   );
 
   const recorder = tree.beginUpdate(FilePaths.appModule);
@@ -105,19 +105,19 @@ const editAppModule = (tree: Tree): void => {
 const editEnvironmentConfiguration = (path: string, tree: Tree): void => {
   const expression = findNodes(
     createSourceFile(path, tree),
-    ts.isObjectLiteralExpression
+    ts.isObjectLiteralExpression,
   )[0];
 
   if (!expression)
     throw new SchematicsException(
-      'Failed to find environment object literal expression'
+      'Failed to find environment object literal expression',
     );
 
   const changes = [
     new InsertChange(
       path,
       expression.end - 1,
-      "redirectRouteQueryParam: 'spa-redirect-route'"
+      "redirectRouteQueryParam: 'spa-redirect-route'",
     ),
   ];
 

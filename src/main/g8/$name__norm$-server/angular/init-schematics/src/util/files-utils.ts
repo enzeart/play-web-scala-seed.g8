@@ -23,7 +23,7 @@ export const readWorkspaceConfiguration = (tree: Tree): any => {
 export const writeWorkspaceConfiguration = (contents: any, tree: Tree) => {
   tree.overwrite(
     FilePaths.workspaceConfiguration,
-    JSON.stringify(contents, null, 2)
+    JSON.stringify(contents, null, 2),
   );
 };
 
@@ -37,7 +37,7 @@ export const readPackageConfiguration = (tree: Tree) => {
 export const writePackageConfiguration = (contents: any, tree: Tree) => {
   tree.overwrite(
     FilePaths.packageConfiguration,
-    JSON.stringify(contents, null, 2)
+    JSON.stringify(contents, null, 2),
   );
 };
 
@@ -49,7 +49,7 @@ export const createSourceFile = (path: string, tree: Tree): ts.SourceFile => {
     path,
     buffer.toString('utf-8'),
     ts.ScriptTarget.Latest,
-    true
+    true,
   );
 };
 
@@ -58,7 +58,7 @@ export const applyTemplates = (options: any = {}): Source =>
 
 export const applyWithOverwrite = (
   source: Source,
-  rules: Rule[] = []
+  rules: Rule[] = [],
 ): Rule => {
   return (tree: Tree, _context: SchematicContext) => {
     const rule = mergeWith(
@@ -71,7 +71,7 @@ export const applyWithOverwrite = (
           }
           return fileEntry;
         }),
-      ])
+      ]),
     );
 
     return rule(tree, _context);
