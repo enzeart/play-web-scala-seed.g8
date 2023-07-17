@@ -10,7 +10,7 @@ import {
 } from '@angular-devkit/schematics';
 import { RunSchematicTask } from '@angular-devkit/schematics/tasks';
 import { JSONFile } from '@schematics/angular/utility/json-file';
-import { addProviderToModule } from '@schematics/angular/utility/ast-utils';
+import { addImportToModule, addProviderToModule } from '@schematics/angular/utility/ast-utils';
 import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { InsertChange } from '@schematics/angular/utility/change';
@@ -20,6 +20,9 @@ const httpInterceptorsDirectoryPath = '/src/app/core/http-interceptors/';
 const httpInterceptorProviders = 'httpInterceptorProviders';
 const cookieService = 'CookieService';
 const ngxCookieService = 'ngx-cookie-service';
+const sharedModule = 'SharedModule';
+const sharedModulePath = '/src/app/shared/shared.module';
+
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
@@ -44,6 +47,7 @@ export function ngAdd(_options: any): Rule {
 
     addProviderToAppModule(tree, httpInterceptorProviders, buildRelativePath(appModulePath, httpInterceptorsDirectoryPath));
     addProviderToAppModule(tree, cookieService, ngxCookieService);
+    addImportToAppModule(tree, sharedModule, buildRelativePath(appModulePath, sharedModulePath));
 
     const environmentsTaskId = _context.addTask(new RunSchematicTask("@schematics/angular", "environments", {}));
     // _context.addTask(new RunSchematicTask("core", { project: _options.project}));
@@ -52,7 +56,7 @@ export function ngAdd(_options: any): Rule {
     _context.addTask(new RunSchematicTask("spa-root", {}), [environmentsTaskId]);
     // _context.addTask(new RunSchematicTask("app-interceptor", {}));
     // _context.addTask(new RunSchematicTask("graphql", {}));
-    _context.addTask(new RunSchematicTask("shared-module", {}));
+    // _context.addTask(new RunSchematicTask("shared-module", {}));
     // _context.addTask(new RunSchematicTask("apollo-angular", "ng-add", {endpoint: "/api/graphql"}));
     return mergeWith(templateSource, MergeStrategy.Overwrite)(tree, _context);
   };
@@ -66,6 +70,15 @@ function createSourceFile(tree: Tree, path: string): ts.SourceFile {
 
 function addProviderToAppModule(tree: Tree, classifiedName: string, importPath: string): void {
   const changes = addProviderToModule(createSourceFile(tree, appModulePath), appModulePath, classifiedName, importPath);
+  const recorder = tree.beginUpdate(appModulePath);
+  for (const change of changes) {
+    if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
+  }
+  tree.commitUpdate(recorder);
+}
+
+function addImportToAppModule(tree: Tree, classifiedName: string, importPath: string): void {
+  const changes = addImportToModule(createSourceFile(tree, appModulePath), appModulePath, classifiedName, importPath);
   const recorder = tree.beginUpdate(appModulePath);
   for (const change of changes) {
     if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
