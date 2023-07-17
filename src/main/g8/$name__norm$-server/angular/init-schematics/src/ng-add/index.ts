@@ -27,10 +27,13 @@ export function ngAdd(_options: any): Rule {
     workspaceConfigurationFile.modify(['projects', _options.project, 'schematics', '@schematics/angular:component'], {
       displayBlock: true,
     });
+    workspaceConfigurationFile.modify(['projects', _options.project, 'architect', 'serve', 'options'], {
+      proxyConfig: './proxy.conf.js',
+    });
 
     const environmentsTaskId = _context.addTask(new RunSchematicTask("@schematics/angular", "environments", {}));
     // _context.addTask(new RunSchematicTask("core", { project: _options.project}));
-    _context.addTask(new RunSchematicTask("proxy-config", { project: _options.project}));
+    // _context.addTask(new RunSchematicTask("proxy-config", { project: _options.project}));
     // _context.addTask(new RunSchematicTask("app-component", {}));
     _context.addTask(new RunSchematicTask("spa-root", {}), [environmentsTaskId]);
     _context.addTask(new RunSchematicTask("app-interceptor", {}));
