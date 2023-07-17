@@ -30,6 +30,10 @@
     "shared-module": {
       "description": "A blank schematic.",
       "factory": "./shared-module/index#sharedModule"
+    },
+    "ng-add": {
+      "description": "A blank schematic.",
+      "factory": "./ng-add/index#ngAdd"
     }
   }
 }
