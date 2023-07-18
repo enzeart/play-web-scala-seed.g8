@@ -3,7 +3,8 @@ import {
   MergeStrategy,
   mergeWith,
   Rule,
-  SchematicContext, SchematicsException,
+  SchematicContext,
+  SchematicsException,
   template,
   Tree,
   url
@@ -13,21 +14,16 @@ import {
   addDeclarationToModule,
   addImportToModule,
   addProviderToModule,
-  addRouteDeclarationToModule, insertImport
+  addRouteDeclarationToModule,
+  insertImport
 } from '@schematics/angular/utility/ast-utils';
 import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
-import { InsertChange } from '@schematics/angular/utility/change';
+import { Change, InsertChange } from '@schematics/angular/utility/change';
 import * as ClassifiedNames from '../util/classified-names';
 
 const appModulePath = '/src/app/app.module.ts';
 const appRoutingModulePath = '/src/app/app-routing.module.ts';
-const httpInterceptorsDirectoryPath = '/src/app/core/http-interceptors/';
-const httpInterceptorProviders = 'httpInterceptorProviders';
-const cookieService = 'CookieService';
-const ngxCookieService = 'ngx-cookie-service';
-const sharedModule = 'SharedModule';
-const sharedModulePath = '/src/app/shared/shared.module';
 const spaRootComponent = 'SpaRootComponent';
 const spaRootComponentPath = '/src/app/core/components/spa-root/spa-root.component';
 
@@ -53,28 +49,18 @@ export function ngAdd(_options: any): Rule {
       proxyConfig: './proxy.conf.js',
     });
 
-    addProviderToAppModule(tree, httpInterceptorProviders, buildRelativePath(appModulePath, httpInterceptorsDirectoryPath));
-    addProviderToAppModule(tree, cookieService, ngxCookieService);
-    addImportToAppModule(tree, sharedModule, buildRelativePath(appModulePath, sharedModulePath));
-    addDeclarationToAppModule(tree, spaRootComponent, buildRelativePath(appModulePath, spaRootComponentPath));
-    // addImportToAppRoutingModule(tree, spaRootComponent, buildRelativePath(appRoutingModulePath, spaRootComponentPath));
-    insertImportToAppRoutingModule(tree, spaRootComponent, buildRelativePath(appRoutingModulePath, spaRootComponentPath));
-    addRouteDeclarationToAppRoutingModule(tree,
+    _addProviderToModule(tree, appModulePath, 'httpInterceptorProviders', buildRelativePath(appModulePath, '/src/app/core/http-interceptors/'));
+    _addProviderToModule(tree, appModulePath, 'CookieService', 'ngx-cookie-service');
+    _addImportToModule(tree, appModulePath, 'SharedModule', buildRelativePath(appModulePath, '/src/app/shared/shared.module'));
+    _addDeclarationToModule(tree, appModulePath, spaRootComponent, buildRelativePath(appModulePath, spaRootComponentPath));
+    _insertImport(tree, appRoutingModulePath, spaRootComponent, buildRelativePath(appRoutingModulePath, spaRootComponentPath));
+    _addRouteDeclarationToModule(tree, appRoutingModulePath,
       `
         { path: '', component: ${ClassifiedNames.spaRootComponent}, pathMatch: 'full' },
         { path: '**', redirectTo: '/' },
       `
     );
 
-    // const environmentsTaskId = _context.addTask(new RunSchematicTask("@schematics/angular", "environments", {}));
-    // _context.addTask(new RunSchematicTask("core", { project: _options.project}));
-    // _context.addTask(new RunSchematicTask("proxy-config", { project: _options.project}));
-    // _context.addTask(new RunSchematicTask("app-component", {}));
-    // _context.addTask(new RunSchematicTask("spa-root", {}), []);
-    // _context.addTask(new RunSchematicTask("app-interceptor", {}));
-    // _context.addTask(new RunSchematicTask("graphql", {}));
-    // _context.addTask(new RunSchematicTask("shared-module", {}));
-    // _context.addTask(new RunSchematicTask("apollo-angular", "ng-add", {endpoint: "/api/graphql"}));
     return mergeWith(templateSource, MergeStrategy.Overwrite)(tree, _context);
   };
 }
@@ -85,52 +71,35 @@ function createSourceFile(tree: Tree, path: string): ts.SourceFile {
   return ts.createSourceFile(path, buffer.toString(), ts.ScriptTarget.Latest, true);
 }
 
-function addProviderToAppModule(tree: Tree, classifiedName: string, importPath: string): void {
-  const changes = addProviderToModule(createSourceFile(tree, appModulePath), appModulePath, classifiedName, importPath);
-  const recorder = tree.beginUpdate(appModulePath);
+function _addProviderToModule(tree: Tree, modulePath: string, classifiedName: string, importPath: string): void {
+  const source = createSourceFile(tree, modulePath);
+  recordChanges(tree, modulePath, ...addProviderToModule(source, modulePath, classifiedName, importPath));
+}
+
+function _addImportToModule(tree: Tree, modulePath: string, classifiedName: string, importPath: string): void {
+  const source = createSourceFile(tree, modulePath);
+  recordChanges(tree, modulePath, ...addImportToModule(source, modulePath, classifiedName, importPath));
+}
+
+function _addDeclarationToModule(tree: Tree, modulePath: string, classifiedName: string, importPath: string): void {
+  const source = createSourceFile(tree, modulePath);
+  recordChanges(tree, modulePath, ...addDeclarationToModule(source, modulePath, classifiedName, importPath))
+}
+
+function _insertImport(tree: Tree, filePath: string, classifiedName: string, importPath: string): void {
+  const source = createSourceFile(tree, filePath);
+  recordChanges(tree, filePath, insertImport(source, filePath, classifiedName, importPath))
+}
+
+function _addRouteDeclarationToModule(tree: Tree, modulePath: string, routeLiteral: string): void {
+  const source = createSourceFile(tree, modulePath);
+  recordChanges(tree, modulePath, addRouteDeclarationToModule(source, modulePath, routeLiteral));
+}
+
+function recordChanges(tree: Tree, path: string, ...changes: Change[]): void {
+  const recorder = tree.beginUpdate(path);
   for (const change of changes) {
     if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
   }
-  tree.commitUpdate(recorder);
-}
-
-function addImportToAppModule(tree: Tree, classifiedName: string, importPath: string): void {
-  const changes = addImportToModule(createSourceFile(tree, appModulePath), appModulePath, classifiedName, importPath);
-  const recorder = tree.beginUpdate(appModulePath);
-  for (const change of changes) {
-    if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
-  }
-  tree.commitUpdate(recorder);
-}
-
-function addDeclarationToAppModule(tree: Tree, classifiedName: string, importPath: string): void {
-  const changes = addDeclarationToModule(createSourceFile(tree, appModulePath), appModulePath, classifiedName, importPath);
-  const recorder = tree.beginUpdate(appModulePath);
-  for (const change of changes) {
-    if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
-  }
-  tree.commitUpdate(recorder);
-}
-
-// function addImportToAppRoutingModule(tree: Tree, classifiedName: string, importPath: string): void {
-//   const changes = addImportToModule(createSourceFile(tree, appRoutingModulePath), appRoutingModulePath, classifiedName, importPath);
-//   const recorder = tree.beginUpdate(appRoutingModulePath);
-//   for (const change of changes) {
-//     if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
-//   }
-//   tree.commitUpdate(recorder);
-// }
-
-function insertImportToAppRoutingModule(tree: Tree, classifiedName: string, importPath: string): void {
-  const change = insertImport(createSourceFile(tree, appRoutingModulePath), appRoutingModulePath, classifiedName, importPath);
-  const recorder = tree.beginUpdate(appRoutingModulePath);
-  if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
-  tree.commitUpdate(recorder);
-}
-
-function addRouteDeclarationToAppRoutingModule(tree: Tree, routeLiteral: string): void {
-  const change = addRouteDeclarationToModule(createSourceFile(tree, appRoutingModulePath), appRoutingModulePath, routeLiteral);
-  const recorder = tree.beginUpdate(appRoutingModulePath);
-  if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
-  tree.commitUpdate(recorder);
+  tree.commitUpdate(recorder)
 }
