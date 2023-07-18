@@ -20,13 +20,12 @@ import {
 import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { Change, InsertChange } from '@schematics/angular/utility/change';
-import * as ClassifiedNames from '../util/classified-names';
 
 const appModulePath = '/src/app/app.module.ts';
 const appRoutingModulePath = '/src/app/app-routing.module.ts';
-const spaRootComponent = 'SpaRootComponent';
-const spaRootComponentPath =
-  '/src/app/core/components/spa-root/spa-root.component';
+const appRootComponent = 'AppRootComponent';
+const appRootComponentPath =
+  '/src/app/core/components/app-root/app-root.component';
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
@@ -90,20 +89,20 @@ export function ngAdd(_options: any): Rule {
     _addDeclarationToModule(
       tree,
       appModulePath,
-      spaRootComponent,
-      buildRelativePath(appModulePath, spaRootComponentPath),
+      appRootComponent,
+      buildRelativePath(appModulePath, appRootComponentPath),
     );
     _insertImport(
       tree,
       appRoutingModulePath,
-      spaRootComponent,
-      buildRelativePath(appRoutingModulePath, spaRootComponentPath),
+      appRootComponent,
+      buildRelativePath(appRoutingModulePath, appRootComponentPath),
     );
     _addRouteDeclarationToModule(
       tree,
       appRoutingModulePath,
       `
-        { path: '', component: ${ClassifiedNames.spaRootComponent}, pathMatch: 'full' },
+        { path: '', component: ${appRootComponent}, pathMatch: 'full' },
         { path: '**', redirectTo: '/' },
       `,
     );

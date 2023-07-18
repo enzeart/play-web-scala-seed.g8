@@ -3,11 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../../../environments/environment';
 
 @Component({
-  selector: 'app-spa-root',
-  templateUrl: './spa-root.component.html',
-  styleUrls: ['./spa-root.component.css'],
+  selector: 'app-app-root',
+  templateUrl: './app-root.component.html',
+  styleUrls: ['./app-root.component.css']
 })
-export class SpaRootComponent implements OnInit {
+export class AppRootComponent implements OnInit {
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
