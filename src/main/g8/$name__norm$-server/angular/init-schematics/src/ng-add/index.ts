@@ -7,7 +7,7 @@ import {
   SchematicsException,
   template,
   Tree,
-  url
+  url,
 } from '@angular-devkit/schematics';
 import { JSONFile } from '@schematics/angular/utility/json-file';
 import {
@@ -15,7 +15,7 @@ import {
   addImportToModule,
   addProviderToModule,
   addRouteDeclarationToModule,
-  insertImport
+  insertImport,
 } from '@schematics/angular/utility/ast-utils';
 import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
@@ -25,8 +25,8 @@ import * as ClassifiedNames from '../util/classified-names';
 const appModulePath = '/src/app/app.module.ts';
 const appRoutingModulePath = '/src/app/app-routing.module.ts';
 const spaRootComponent = 'SpaRootComponent';
-const spaRootComponentPath = '/src/app/core/components/spa-root/spa-root.component';
-
+const spaRootComponentPath =
+  '/src/app/core/components/spa-root/spa-root.component';
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
@@ -36,29 +36,76 @@ export function ngAdd(_options: any): Rule {
     const packageJsonFile = new JSONFile(tree, '/package.json');
     const workspaceConfigurationFile = new JSONFile(tree, '/angular.json');
 
-    packageJsonFile.modify(['scripts', 'build'], 'ng build --outputPath=../public');
-    packageJsonFile.modify(['scripts', 'prettier'], 'npx prettier --write "src/**/*.ts"');
+    packageJsonFile.modify(
+      ['scripts', 'build'],
+      'ng build --outputPath=../public',
+    );
+    packageJsonFile.modify(
+      ['scripts', 'prettier'],
+      'npx prettier --write "src/**/*.ts"',
+    );
 
-    workspaceConfigurationFile.modify(['projects', _options.project, 'schematics', '@schematics/angular:component'], {
-      displayBlock: true,
-    });
+    workspaceConfigurationFile.modify(
+      [
+        'projects',
+        _options.project,
+        'schematics',
+        '@schematics/angular:component',
+      ],
+      {
+        displayBlock: true,
+      },
+    );
 
-    packageJsonFile.modify(['scripts', 'gqlcodegen'], 'graphql-codegen && npm run prettier');
+    packageJsonFile.modify(
+      ['scripts', 'gqlcodegen'],
+      'graphql-codegen && npm run prettier',
+    );
 
-    workspaceConfigurationFile.modify(['projects', _options.project, 'architect', 'serve', 'options'], {
-      proxyConfig: './proxy.conf.js',
-    });
+    workspaceConfigurationFile.modify(
+      ['projects', _options.project, 'architect', 'serve', 'options'],
+      {
+        proxyConfig: './proxy.conf.js',
+      },
+    );
 
-    _addProviderToModule(tree, appModulePath, 'httpInterceptorProviders', buildRelativePath(appModulePath, '/src/app/core/http-interceptors/'));
-    _addProviderToModule(tree, appModulePath, 'CookieService', 'ngx-cookie-service');
-    _addImportToModule(tree, appModulePath, 'SharedModule', buildRelativePath(appModulePath, '/src/app/shared/shared.module'));
-    _addDeclarationToModule(tree, appModulePath, spaRootComponent, buildRelativePath(appModulePath, spaRootComponentPath));
-    _insertImport(tree, appRoutingModulePath, spaRootComponent, buildRelativePath(appRoutingModulePath, spaRootComponentPath));
-    _addRouteDeclarationToModule(tree, appRoutingModulePath,
+    _addProviderToModule(
+      tree,
+      appModulePath,
+      'httpInterceptorProviders',
+      buildRelativePath(appModulePath, '/src/app/core/http-interceptors/'),
+    );
+    _addProviderToModule(
+      tree,
+      appModulePath,
+      'CookieService',
+      'ngx-cookie-service',
+    );
+    _addImportToModule(
+      tree,
+      appModulePath,
+      'SharedModule',
+      buildRelativePath(appModulePath, '/src/app/shared/shared.module'),
+    );
+    _addDeclarationToModule(
+      tree,
+      appModulePath,
+      spaRootComponent,
+      buildRelativePath(appModulePath, spaRootComponentPath),
+    );
+    _insertImport(
+      tree,
+      appRoutingModulePath,
+      spaRootComponent,
+      buildRelativePath(appRoutingModulePath, spaRootComponentPath),
+    );
+    _addRouteDeclarationToModule(
+      tree,
+      appRoutingModulePath,
       `
         { path: '', component: ${ClassifiedNames.spaRootComponent}, pathMatch: 'full' },
         { path: '**', redirectTo: '/' },
-      `
+      `,
     );
 
     return mergeWith(templateSource, MergeStrategy.Overwrite)(tree, _context);
@@ -67,39 +114,90 @@ export function ngAdd(_options: any): Rule {
 
 function createSourceFile(tree: Tree, path: string): ts.SourceFile {
   const buffer = tree.read(path);
-  if (!buffer) throw new SchematicsException(`Failed to read file at path ${path}`);
-  return ts.createSourceFile(path, buffer.toString(), ts.ScriptTarget.Latest, true);
+  if (!buffer)
+    throw new SchematicsException(`Failed to read file at path ${path}`);
+  return ts.createSourceFile(
+    path,
+    buffer.toString(),
+    ts.ScriptTarget.Latest,
+    true,
+  );
 }
 
-function _addProviderToModule(tree: Tree, modulePath: string, classifiedName: string, importPath: string): void {
+function _addProviderToModule(
+  tree: Tree,
+  modulePath: string,
+  classifiedName: string,
+  importPath: string,
+): void {
   const source = createSourceFile(tree, modulePath);
-  recordChanges(tree, modulePath, ...addProviderToModule(source, modulePath, classifiedName, importPath));
+  recordChanges(
+    tree,
+    modulePath,
+    ...addProviderToModule(source, modulePath, classifiedName, importPath),
+  );
 }
 
-function _addImportToModule(tree: Tree, modulePath: string, classifiedName: string, importPath: string): void {
+function _addImportToModule(
+  tree: Tree,
+  modulePath: string,
+  classifiedName: string,
+  importPath: string,
+): void {
   const source = createSourceFile(tree, modulePath);
-  recordChanges(tree, modulePath, ...addImportToModule(source, modulePath, classifiedName, importPath));
+  recordChanges(
+    tree,
+    modulePath,
+    ...addImportToModule(source, modulePath, classifiedName, importPath),
+  );
 }
 
-function _addDeclarationToModule(tree: Tree, modulePath: string, classifiedName: string, importPath: string): void {
+function _addDeclarationToModule(
+  tree: Tree,
+  modulePath: string,
+  classifiedName: string,
+  importPath: string,
+): void {
   const source = createSourceFile(tree, modulePath);
-  recordChanges(tree, modulePath, ...addDeclarationToModule(source, modulePath, classifiedName, importPath))
+  recordChanges(
+    tree,
+    modulePath,
+    ...addDeclarationToModule(source, modulePath, classifiedName, importPath),
+  );
 }
 
-function _insertImport(tree: Tree, filePath: string, classifiedName: string, importPath: string): void {
+function _insertImport(
+  tree: Tree,
+  filePath: string,
+  classifiedName: string,
+  importPath: string,
+): void {
   const source = createSourceFile(tree, filePath);
-  recordChanges(tree, filePath, insertImport(source, filePath, classifiedName, importPath))
+  recordChanges(
+    tree,
+    filePath,
+    insertImport(source, filePath, classifiedName, importPath),
+  );
 }
 
-function _addRouteDeclarationToModule(tree: Tree, modulePath: string, routeLiteral: string): void {
+function _addRouteDeclarationToModule(
+  tree: Tree,
+  modulePath: string,
+  routeLiteral: string,
+): void {
   const source = createSourceFile(tree, modulePath);
-  recordChanges(tree, modulePath, addRouteDeclarationToModule(source, modulePath, routeLiteral));
+  recordChanges(
+    tree,
+    modulePath,
+    addRouteDeclarationToModule(source, modulePath, routeLiteral),
+  );
 }
 
 function recordChanges(tree: Tree, path: string, ...changes: Change[]): void {
   const recorder = tree.beginUpdate(path);
   for (const change of changes) {
-    if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
+    if (change instanceof InsertChange)
+      recorder.insertLeft(change.pos, change.toAdd);
   }
-  tree.commitUpdate(recorder)
+  tree.commitUpdate(recorder);
 }
