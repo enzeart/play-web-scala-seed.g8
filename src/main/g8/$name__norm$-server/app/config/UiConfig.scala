@@ -1,3 +1,3 @@
 package config
 
-case class UiConfig(spaRedirectRouteQueryParam: String, spaRedirectUrl: String)
+case class UiConfig(appRedirectRouteQueryParam: String, appRedirectUrl: String)

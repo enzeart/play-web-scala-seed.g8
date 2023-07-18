@@ -29,7 +29,7 @@ export function ngAdd(_options: any): Rule {
 
     packageJsonFile.modify(
       ['scripts', 'build'],
-      'ng build --outputPath=../public',
+      'ng build --output-path=../public',
     );
     packageJsonFile.modify(
       ['scripts', 'prettier'],

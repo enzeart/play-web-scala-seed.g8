@@ -42,7 +42,7 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
   }
 
   val $name;format="space,camel"$AngularUiTask = Def.taskDyn {
-    val scriptPath                = (baseDirectory.value / "angular" / "new.sh").getCanonicalPath
+    val scriptPath                = (baseDirectory.value / "angular" / "init.sh").getCanonicalPath
     val installationDirectoryName = $name;format="space,camel"$UiDirectory.value.getName
     val ngNew                     = Process(scriptPath :: installationDirectoryName :: Nil, baseDirectory.value)
     Def.task(ngNew.!)

@@ -16,7 +16,7 @@ WORKDIR /build
 COPY . .
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y curl zip openjdk-11-jdk
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && apt-get install -y nodejs
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
 
 SHELL ["/bin/bash", "-c"]
 RUN curl -s https://get.sdkman.io | bash

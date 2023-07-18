@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { environment } from '../../../../environments/environment';
+
+const appRedirectRouteQueryParam = 'app_redirect_route';
 
 @Component({
   selector: 'app-app-root',
@@ -20,7 +21,7 @@ export class AppRootComponent implements OnInit {
 
   followRedirectRoute(): void {
     const { queryParams } = this.activatedRoute.snapshot;
-    const redirectRoute = queryParams[environment.redirectRouteQueryParam];
+    const redirectRoute = queryParams[appRedirectRouteQueryParam];
     if (redirectRoute) {
       this.router.navigateByUrl(redirectRoute);
     }

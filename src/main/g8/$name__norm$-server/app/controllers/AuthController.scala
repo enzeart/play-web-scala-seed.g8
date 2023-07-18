@@ -16,12 +16,12 @@ class AuthController @Inject() (
 
   def login(): Action[AnyContent] = Secure(appServerConfig.auth.clientName) { request =>
     val queryStringParams = request
-      .getQueryString(appServerConfig.ui.spaRedirectRouteQueryParam)
-      .map(route => Map(appServerConfig.ui.spaRedirectRouteQueryParam -> Seq(route)))
+      .getQueryString(appServerConfig.ui.appRedirectRouteQueryParam)
+      .map(route => Map(appServerConfig.ui.appRedirectRouteQueryParam -> Seq(route)))
       .getOrElse(Map.empty)
 
     Results.Redirect(
-      url = appServerConfig.ui.spaRedirectUrl,
+      url = appServerConfig.ui.appRedirectUrl,
       queryStringParams = queryStringParams,
       status = FOUND
     )
