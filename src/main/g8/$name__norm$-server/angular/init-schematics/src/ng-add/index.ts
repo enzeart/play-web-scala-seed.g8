@@ -8,20 +8,28 @@ import {
   Tree,
   url
 } from '@angular-devkit/schematics';
-import { RunSchematicTask } from '@angular-devkit/schematics/tasks';
 import { JSONFile } from '@schematics/angular/utility/json-file';
-import { addImportToModule, addProviderToModule } from '@schematics/angular/utility/ast-utils';
+import {
+  addDeclarationToModule,
+  addImportToModule,
+  addProviderToModule,
+  addRouteDeclarationToModule, insertImport
+} from '@schematics/angular/utility/ast-utils';
 import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeScript/lib/typescript';
 import { buildRelativePath } from '@schematics/angular/utility/find-module';
 import { InsertChange } from '@schematics/angular/utility/change';
+import * as ClassifiedNames from '../util/classified-names';
 
 const appModulePath = '/src/app/app.module.ts';
+const appRoutingModulePath = '/src/app/app-routing.module.ts';
 const httpInterceptorsDirectoryPath = '/src/app/core/http-interceptors/';
 const httpInterceptorProviders = 'httpInterceptorProviders';
 const cookieService = 'CookieService';
 const ngxCookieService = 'ngx-cookie-service';
 const sharedModule = 'SharedModule';
 const sharedModulePath = '/src/app/shared/shared.module';
+const spaRootComponent = 'SpaRootComponent';
+const spaRootComponentPath = '/src/app/core/components/spa-root/spa-root.component';
 
 
 // You don't have to export the function as default. You can also have more than one rule factory
@@ -48,12 +56,21 @@ export function ngAdd(_options: any): Rule {
     addProviderToAppModule(tree, httpInterceptorProviders, buildRelativePath(appModulePath, httpInterceptorsDirectoryPath));
     addProviderToAppModule(tree, cookieService, ngxCookieService);
     addImportToAppModule(tree, sharedModule, buildRelativePath(appModulePath, sharedModulePath));
+    addDeclarationToAppModule(tree, spaRootComponent, buildRelativePath(appModulePath, spaRootComponentPath));
+    // addImportToAppRoutingModule(tree, spaRootComponent, buildRelativePath(appRoutingModulePath, spaRootComponentPath));
+    insertImportToAppRoutingModule(tree, spaRootComponent, buildRelativePath(appRoutingModulePath, spaRootComponentPath));
+    addRouteDeclarationToAppRoutingModule(tree,
+      `
+        { path: '', component: ${ClassifiedNames.spaRootComponent}, pathMatch: 'full' },
+        { path: '**', redirectTo: '/' },
+      `
+    );
 
-    const environmentsTaskId = _context.addTask(new RunSchematicTask("@schematics/angular", "environments", {}));
+    // const environmentsTaskId = _context.addTask(new RunSchematicTask("@schematics/angular", "environments", {}));
     // _context.addTask(new RunSchematicTask("core", { project: _options.project}));
     // _context.addTask(new RunSchematicTask("proxy-config", { project: _options.project}));
     // _context.addTask(new RunSchematicTask("app-component", {}));
-    _context.addTask(new RunSchematicTask("spa-root", {}), [environmentsTaskId]);
+    // _context.addTask(new RunSchematicTask("spa-root", {}), []);
     // _context.addTask(new RunSchematicTask("app-interceptor", {}));
     // _context.addTask(new RunSchematicTask("graphql", {}));
     // _context.addTask(new RunSchematicTask("shared-module", {}));
@@ -83,5 +100,37 @@ function addImportToAppModule(tree: Tree, classifiedName: string, importPath: st
   for (const change of changes) {
     if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
   }
+  tree.commitUpdate(recorder);
+}
+
+function addDeclarationToAppModule(tree: Tree, classifiedName: string, importPath: string): void {
+  const changes = addDeclarationToModule(createSourceFile(tree, appModulePath), appModulePath, classifiedName, importPath);
+  const recorder = tree.beginUpdate(appModulePath);
+  for (const change of changes) {
+    if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
+  }
+  tree.commitUpdate(recorder);
+}
+
+// function addImportToAppRoutingModule(tree: Tree, classifiedName: string, importPath: string): void {
+//   const changes = addImportToModule(createSourceFile(tree, appRoutingModulePath), appRoutingModulePath, classifiedName, importPath);
+//   const recorder = tree.beginUpdate(appRoutingModulePath);
+//   for (const change of changes) {
+//     if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
+//   }
+//   tree.commitUpdate(recorder);
+// }
+
+function insertImportToAppRoutingModule(tree: Tree, classifiedName: string, importPath: string): void {
+  const change = insertImport(createSourceFile(tree, appRoutingModulePath), appRoutingModulePath, classifiedName, importPath);
+  const recorder = tree.beginUpdate(appRoutingModulePath);
+  if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
+  tree.commitUpdate(recorder);
+}
+
+function addRouteDeclarationToAppRoutingModule(tree: Tree, routeLiteral: string): void {
+  const change = addRouteDeclarationToModule(createSourceFile(tree, appRoutingModulePath), appRoutingModulePath, routeLiteral);
+  const recorder = tree.beginUpdate(appRoutingModulePath);
+  if (change instanceof InsertChange) recorder.insertLeft(change.pos, change.toAdd);
   tree.commitUpdate(recorder);
 }
