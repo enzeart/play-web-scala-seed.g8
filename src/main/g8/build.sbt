@@ -53,6 +53,6 @@ lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-
     topLevelDirectory := Option(packageName.value),
     g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8",
     playRunHooks += {
-      UserInterfaceHook((Compile / playWebTest3UiDirectory).value)
+      UserInterfaceHook((Compile / appUiDirectory).value)
     }
   )
