@@ -20,12 +20,12 @@ class AppHttpErrorHandler @Inject() (
 ) extends DefaultHttpErrorHandler(env, config, sourceMapper, router) {
 
   override protected def onNotFound(request: RequestHeader, message: String): Future[Result] = {
-    if (request.queryString.contains(appServerConfig.ui.spaRedirectRouteQueryParam)) super.onNotFound(request, message)
+    if (request.queryString.contains(appServerConfig.ui.appRedirectRouteQueryParam)) super.onNotFound(request, message)
     else
       Future.successful(
         Results.Redirect(
-          url = appServerConfig.ui.spaRedirectUrl,
-          queryStringParams = Map(appServerConfig.ui.spaRedirectRouteQueryParam -> Seq(request.uri)),
+          url = appServerConfig.ui.appRedirectUrl,
+          queryStringParams = Map(appServerConfig.ui.appRedirectRouteQueryParam -> Seq(request.uri)),
           status = Status.FOUND
         )
       )

@@ -14,7 +14,7 @@ export class AppInterceptor implements HttpInterceptor {
 
   intercept(
     request: HttpRequest<unknown>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
     const modifiedRequest = request.clone({
       headers: request.headers

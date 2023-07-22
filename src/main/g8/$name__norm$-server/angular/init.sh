@@ -21,18 +21,11 @@ cd $ANGULAR_APP_DIR
 
 npm link $(realpath --relative-to=$ANGULAR_APP_DIR $SCHEMATICS_DIR)
 
-ng g environments
-ng g $SCHEMATICS_PACKAGE_NAME:core --project=$ANGULAR_APP_DIR_NAME
-ng g $SCHEMATICS_PACKAGE_NAME:proxy-config --project=$ANGULAR_APP_DIR_NAME
-ng g $SCHEMATICS_PACKAGE_NAME:app-component
-ng g $SCHEMATICS_PACKAGE_NAME:spa-root
-ng g $SCHEMATICS_PACKAGE_NAME:app-interceptor
-ng g $SCHEMATICS_PACKAGE_NAME:graphql
-ng g $SCHEMATICS_PACKAGE_NAME:shared-module
-
-npm install --save ngx-cookie-service
+ng add $SCHEMATICS_PACKAGE_NAME --project=$ANGULAR_APP_DIR_NAME
 
 ng add --skip-confirmation apollo-angular --endpoint="/api/graphql"
+
+npm install --save ngx-cookie-service
 
 npm install --save-dev @graphql-codegen/cli \
     @graphql-codegen/typescript \
