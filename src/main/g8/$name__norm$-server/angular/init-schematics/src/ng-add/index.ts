@@ -27,15 +27,22 @@ export function ngAdd(_options: any): Rule {
     const packageJsonFile = new JSONFile(tree, '/package.json');
     const workspaceConfigurationFile = new JSONFile(tree, '/angular.json');
 
+    // Add a script for building the UI
     packageJsonFile.modify(
       ['scripts', 'build'],
       'ng build --output-path=../public',
     );
+
+    // Add a script for running prettier
     packageJsonFile.modify(
       ['scripts', 'prettier'],
       'npx prettier --write "src/**/*.ts"',
     );
 
+    /**
+     * Components generated with the Angular CLI will
+     * have a default CSS rule to make them display as block-level elements.
+     */
     workspaceConfigurationFile.modify(
       [
         'projects',
@@ -48,11 +55,13 @@ export function ngAdd(_options: any): Rule {
       },
     );
 
+    // Add utility script to run GraphQL code generation and prettier
     packageJsonFile.modify(
       ['scripts', 'gqlcodegen'],
       'graphql-codegen && npm run prettier',
     );
 
+    // Add proxy configurations to the workspace configurations
     workspaceConfigurationFile.modify(
       ['projects', _options.project, 'architect', 'serve', 'options'],
       {
@@ -60,6 +69,7 @@ export function ngAdd(_options: any): Rule {
       },
     );
 
+    // Add HTTP Interceptor providers to AppModule along with their dependencies
     _addProviderToModule(
       tree,
       FilePaths.AppModule,
@@ -72,12 +82,16 @@ export function ngAdd(_options: any): Rule {
       'CookieService',
       'ngx-cookie-service',
     );
+
+    // Import SharedModule into AppModule
     _addImportToModule(
       tree,
       FilePaths.AppModule,
       'SharedModule',
       buildRelativePath(FilePaths.AppModule, '/src/app/shared/shared.module'),
     );
+
+    // Configure routing for AppRootComponent, and set the default route.
     _addDeclarationToModule(
       tree,
       FilePaths.AppModule,
