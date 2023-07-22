@@ -23,7 +23,7 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
 
   val optionalDirectoryNameParser = (Space ~> token(StringBasic).examples("<directoryName>")).?
 
-  val optionalSubPackageNameParser = (Space ~> token(StringBasic).examples("<subPackageName")).?
+  val optionalSubPackageNameParser = (Space ~> token(StringBasic).examples("<subPackageName>")).?
 
   val appControllerTask = Def.inputTaskDyn {
     g8Scaffold.toTask(s" controller --base_name=\${baseNameParser.parsed}")
