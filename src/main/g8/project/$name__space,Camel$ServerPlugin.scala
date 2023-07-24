@@ -9,35 +9,31 @@ import scala.sys.process.Process
 object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
 
   object autoImport {
-    val appUiDirectory    = settingKey[File]("The directory that holds the UI resources.")
-    val appController     = inputKey[Unit]("Generate a controller class from the giter8 scaffold.")
-    val appModule         = inputKey[Unit]("Generate a guice module from the giter8 scaffold.")
-    val appExtension      = inputKey[Unit]("Generate an actor system extension from the giter8 scaffold.")
-    val appGraphqlSchema  = inputKey[Unit]("Generate a GraphQL schema class from the giter8 scaffold.")
-    val appAngularInit  = inputKey[Unit]("Initialize an Angular project.")
+    val appUiDirectory = settingKey[File]("The directory containing UI assets.")
+    val appControllerScaffold = inputKey[Unit]("Generate a controller class from the giter8 scaffold.")
+    val appModuleScaffold = inputKey[Unit]("Generate a guice module from the giter8 scaffold.")
+    val appExtensionScaffold = inputKey[Unit]("Generate an actor system extension from the giter8 scaffold.")
+    val appGraphqlSchemaScaffold = inputKey[Unit]("Generate a GraphQL schema class from the giter8 scaffold.")
+    val appAngularInit = inputKey[Unit]("Initialize an Angular project.")
   }
 
   import autoImport._
 
   val baseNameParser = Space ~> token(StringBasic).examples("<base_name>")
 
-  val optionalDirectoryNameParser = (Space ~> token(StringBasic).examples("<directoryName>")).?
-
-  val optionalSubPackageNameParser = (Space ~> token(StringBasic).examples("<subPackageName>")).?
-
-  val appControllerTask = Def.inputTaskDyn {
+  val appControllerScaffoldTask = Def.inputTaskDyn {
     g8Scaffold.toTask(s" controller --base_name=\${baseNameParser.parsed}")
   }
 
-  val appModuleTask = Def.inputTaskDyn {
+  val appModuleScaffoldTask = Def.inputTaskDyn {
     g8Scaffold.toTask(s" module --base_name=\${baseNameParser.parsed}")
   }
 
-  val appExtensionTask = Def.inputTaskDyn {
+  val appExtensionScaffoldTask = Def.inputTaskDyn {
     g8Scaffold.toTask(s" extension --base_name=\${baseNameParser.parsed}")
   }
 
-  val appGraphqlSchemaTask = Def.inputTaskDyn {
+  val appGraphqlSchemaScaffoldTask = Def.inputTaskDyn {
     g8Scaffold.toTask(s" graphqlSchema --base_name=\${baseNameParser.parsed}")
   }
 
@@ -50,10 +46,10 @@ object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
 
   val baseProjectSettings: Seq[Def.Setting[_]] = Seq(
     appUiDirectory := baseDirectory.value / "ui",
-    appController := appControllerTask.evaluated,
-    appModule := appModuleTask.evaluated,
-    appExtension := appExtensionTask.evaluated,
-    appGraphqlSchema := appGraphqlSchemaTask.evaluated,
+    appControllerScaffold := appControllerScaffoldTask.evaluated,
+    appModuleScaffold := appModuleScaffoldTask.evaluated,
+    appExtensionScaffold := appExtensionScaffoldTask.evaluated,
+    appGraphqlSchemaScaffold := appGraphqlSchemaScaffoldTask.evaluated,
     appAngularInit := appAngularInitTask.value,
   )
 
