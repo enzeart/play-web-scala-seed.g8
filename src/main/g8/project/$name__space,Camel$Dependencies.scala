@@ -36,11 +36,6 @@ object $name;format="space,Camel"$Dependencies {
 
   val scalapbRuntime: ModuleID = "com.thesamet.scalapb" %% "scalapb-runtime" % "$scalapb_runtime_version$"
 
-  val scalapbValidateCore: ModuleID =
-    "com.thesamet.scalapb" %% "scalapb-validate-core" % scalapb.validate.compiler.BuildInfo.version
-
-  val scalapbValidateCoreProtobuf: ModuleID = scalapbValidateCore % "protobuf"
-
   // Akka
   val akkaActorTestkitTyped: ModuleID =
     "com.typesafe.akka" %% "akka-actor-testkit-typed" % PlayVersion.akkaVersion % Test
@@ -58,9 +53,7 @@ object $name;format="space,Camel"$Dependencies {
   val akkaStreamTestkit: ModuleID = "com.typesafe.akka" %% "akka-stream-testkit" % PlayVersion.akkaVersion % Test
 
   val protobufDependencies: Seq[ModuleID] = Seq(
-    playGrpcRuntime,
-    scalapbValidateCore,
-    scalapbValidateCoreProtobuf,
+    playGrpcRuntime
   )
 
   val protobufDependencyOverrides: Seq[ModuleID] = Seq(

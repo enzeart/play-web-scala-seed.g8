@@ -36,9 +36,7 @@ lazy val `$name;format="norm"$-core` = (project in file("$name;format="norm"$-co
     dependencyOverrides ++= $name;format="space,Camel"$Dependencies.protobufDependencyOverrides,
     akkaGrpcExtraGenerators ++= Seq(PlayScalaClientCodeGenerator),
     akkaGrpcGeneratedSources := Seq(AkkaGrpc.Client),
-    g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8",
-    Compile / PB.targets += scalapb.validate
-      .gen(FlatPackage) -> (Compile / akkaGrpcCodeGeneratorSettings / target).value
+    g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8"
   )
 
 lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-server"))
