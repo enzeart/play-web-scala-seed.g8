@@ -13,8 +13,7 @@ addSbtPlugin("com.thesamet"            % "sbt-protoc"    % "$sbt_protoc_version$
 
 libraryDependencies ++= Seq(
   "com.lightbend.play"   %% "play-grpc-generators"     % "$play_grpc_generators_version$",
-  "com.thesamet.scalapb" %% "compilerplugin"           % "$scalapb_compilerplugin_version$",
-  "com.thesamet.scalapb" %% "scalapb-validate-codegen" % "$scalapb_validate_codegen_version$"
+  "com.thesamet.scalapb" %% "compilerplugin"           % "$scalapb_compilerplugin_version$"
 )
 
 $if(codeartifact_support_enabled.truthy)$
