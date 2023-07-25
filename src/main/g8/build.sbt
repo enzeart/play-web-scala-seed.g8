@@ -1,3 +1,4 @@
+import $name;format="space,Camel"$Keys._
 import play.grpc.gen.scaladsl.PlayScalaClientCodeGenerator
 import scalapb.GeneratorOption._
 import play.sbt.PlayImport.PlayKeys.devSettings

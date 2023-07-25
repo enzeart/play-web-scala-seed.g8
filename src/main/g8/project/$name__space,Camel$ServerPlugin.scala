@@ -1,3 +1,4 @@
+import $name;format="space,Camel"$Keys._
 import giter8.ScaffoldPlugin
 import giter8.ScaffoldPlugin.autoImport.g8Scaffold
 import sbt.{AutoPlugin, Def, _}
@@ -7,17 +8,6 @@ import sbt.Keys._
 import scala.sys.process.Process
 
 object $name;format="space,Camel"$ServerPlugin extends AutoPlugin {
-
-  object autoImport {
-    val appUiDirectory = settingKey[File]("The directory containing UI assets.")
-    val appControllerScaffold = inputKey[Unit]("Generate a controller class from the giter8 scaffold.")
-    val appModuleScaffold = inputKey[Unit]("Generate a guice module from the giter8 scaffold.")
-    val appExtensionScaffold = inputKey[Unit]("Generate an actor system extension from the giter8 scaffold.")
-    val appGraphqlSchemaScaffold = inputKey[Unit]("Generate a GraphQL schema class from the giter8 scaffold.")
-    val appAngularInit = inputKey[Unit]("Initialize an Angular project.")
-  }
-
-  import autoImport._
 
   val baseNameParser = Space ~> token(StringBasic).examples("<base_name>")
 
