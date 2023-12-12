@@ -16,6 +16,11 @@ libraryDependencies ++= Seq(
   "com.thesamet.scalapb" %% "compilerplugin"           % "$scalapb_compilerplugin_version$"
 )
 
+// Git
+libraryDependencies ++= Seq(
+  "org.eclipse.jgit" % "org.eclipse.jgit" % "6.8.0.202311291450-r"
+)
+
 $if(codeartifact_support_enabled.truthy)$
 // AWS CodeArtifact Support
 addSbtPlugin("io.github.bbstilson" % "sbt-codeartifact" % "$sbt_codeartifact_version$")

@@ -14,33 +14,28 @@ sbt-codeartifact, and AWS to see if there is a more suitable solution for your n
 
 $endif$
 
-## sbt Tasks
+## Multi-Project Development
 
-The $name;format="norm"$-server subproject has several custom tasks and settings defined by the project for added
-utility.
+The development server can be configured to execute commands in external projects that are included
+as Git submodules. For example:
 
-### $name;format="space,camel"$AngularUi
-
-This task generates a new Angular project in the directory specified by the `$name;format="space,camel"$UiDirectory`
-setting.
-
-```bash
-sbt $name;format="norm"$-server/$name;format="space,camel"$AngularUi
+```scala
+playRunHooks += GitSubmoduleServiceHook(
+  repositoryRoot = baseDirectory.value.getParentFile,
+  submoduleName = "modules/example-service",
+  command = "sbt" :: "example-service-server/run" :: Nil
+)
 ```
 
-### $name;format="space,camel"$GraphqlCodegen
+The above configuration will execute the command `sbt example-service-server/run` at the
+file path registered in the `.gitmodules` configuration file for the submodule named
+`modules/example-service` after the development server has been started.
 
-This task generates javascript classes and interfaces based on the GraphQL schema defined by the Play Framework
-server.
-
-```bash
-sbt $name;format="norm"$-server/$name;format="space,camel"$GraphqlCodegen
-```
-
-### $name;format="space,camel"$AppStart
-
-This task starts the Angular development server and the Play Framework server in development mode.
+You must manage everything else about the submodules yourself. Here are some useful commands
+to help ensure that the project is up-to-date with all remote changes.
 
 ```bash
-sbt $name;format="norm"$-server/$name;format="space,camel"$AppStart
+git submodule sync --recursive
+git submodule update --init --recursive --remote
 ```
+
