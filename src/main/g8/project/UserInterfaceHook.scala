@@ -16,7 +16,7 @@ private class UserInterfaceHook(command: Seq[String], directory: File, log: Logg
 
   override def afterStarted(): Unit = {
     if (directory.exists()) processHook.afterStarted()
-    else log.warn(s"UI directory ($directory) not found. Skipping command execution.")
+    else log.warn(s"UI directory (\$directory) not found. Skipping command execution.")
   }
 
   override def afterStopped(): Unit = processHook.afterStopped()
