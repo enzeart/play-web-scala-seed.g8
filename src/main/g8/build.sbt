@@ -52,6 +52,10 @@ lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-
     topLevelDirectory := Option(packageName.value),
     g8ScaffoldTemplatesDirectory := baseDirectory.value / ".." / ".g8",
     playRunHooks += {
-      UserInterfaceHook((Compile / appUiDirectory).value)
+      UserInterfaceHook(
+        command = "npm" :: "run" :: "start" :: Nil,
+        directory = (Compile / appUiDirectory).value,
+        log = streams.value.log
+      )
     }
   )
