@@ -20,24 +20,27 @@ The development server can be configured to execute commands in external project
 as Git submodules. For example:
 
 ```scala
-    playInteractionMode := AppInteractionMode.Default,
-    playRunHooks ++= {
-      implicit val sharedContext: SharedContext = {
-        playInteractionMode.value match {
-          case mode: AppInteractionMode =>
-            SharedContext(extraEnv = Seq(mode.environmentVariable -> ""), logger = streams.value.log)
-          case _ => SharedContext(logger = streams.value.log)
-        }
-      }
-
-      Seq(
-        GitSubmoduleServiceHook(
-          repositoryRoot = baseDirectory.value.getParentFile,
-          submoduleName = "modules/play-grpc-test",
-          command = "sbt" :: "play-grpc-test-server/run" :: Nil
+playInteractionMode := AppInteractionMode.Default,
+playRunHooks ++= {
+  implicit val sharedContext: SharedContext = {
+    playInteractionMode.value match {
+      case mode: AppInteractionMode =>
+        SharedContext(
+          extraEnv = Seq(mode.environmentVariable -> ""),
+          logger = streams.value.log
         )
-      )
+      case _ => SharedContext(logger = streams.value.log)
     }
+  }
+
+  Seq(
+    GitSubmoduleServiceHook(
+      repositoryRoot = baseDirectory.value.getParentFile,
+      submoduleName = "modules/example-service",
+      command = "sbt" :: "example-service-server/run" :: Nil
+    )
+  )
+}
 ```
 
 The above configuration will execute the command `sbt example-service-server/run` at the
