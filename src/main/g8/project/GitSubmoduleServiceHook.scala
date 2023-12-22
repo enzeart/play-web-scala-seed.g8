@@ -1,56 +1,54 @@
-import GitSubmoduleServiceHook.{ServiceContext, ServiceTerminationHook}
+import GitSubmoduleServiceHook.SharedContext
+import ProcessHook.ExitValue
 import org.eclipse.jgit.storage.file.FileBasedConfig
 import org.eclipse.jgit.util.FS
 import play.sbt.PlayRunHook
-import sbt.File
+import sbt.{File, Logger}
 
-import java.io.OutputStream
-import java.util.concurrent.atomic.AtomicReference
-import scala.sys.process.{BasicIO, Process}
+import scala.sys.process.Process
 
 object GitSubmoduleServiceHook {
 
-  type ServiceTerminationHook = ServiceContext => Unit
-
-  val PlayConsoleInteractionModeTerminationHook: ServiceTerminationHook = (s: ServiceContext) =>
-    s.stdin.foreach(in => { in.write(13); in.write(13); in.flush() })
-
-  final case class ServiceContext(process: Option[Process] = None, stdin: Option[OutputStream] = None)
+  case class SharedContext(extraEnv: Seq[(String, String)] = Seq.empty, logger: Logger)
 
   def apply(
       repositoryRoot: File,
       submoduleName: String,
       command: Seq[String],
-      terminationHook: ServiceTerminationHook = PlayConsoleInteractionModeTerminationHook
-  ): PlayRunHook = {
-    new GitSubmoduleServiceHook(repositoryRoot, submoduleName, command, terminationHook)
+      extraEnv: Seq[(String, String)] = Seq.empty
+  )(implicit ctx: SharedContext): PlayRunHook = {
+    new GitSubmoduleServiceHook(repositoryRoot, submoduleName, command, extraEnv)
   }
 }
 
-private final class GitSubmoduleServiceHook(
+final private class GitSubmoduleServiceHook(
     repositoryRoot: File,
     submoduleName: String,
     command: Seq[String],
-    terminationHook: ServiceTerminationHook
-) extends PlayRunHook {
+    extraEnv: Seq[(String, String)]
+)(implicit ctx: SharedContext)
+    extends PlayRunHook {
 
-  private val serviceContext: AtomicReference[ServiceContext] = new AtomicReference(ServiceContext())
-
-  override def afterStarted(): Unit = {
+  private val config = {
     val config = new FileBasedConfig(new File(repositoryRoot, ".gitmodules"), FS.detect())
     config.load()
-    val directory = Option(config.getString("submodule", submoduleName, "path")).map(new File(_).getCanonicalFile)
-
-    directory.foreach { d =>
-      val processBuilder = Process(command, Option(d))
-      val process = processBuilder.run(BasicIO.standard(in => serviceContext.updateAndGet(_.copy(stdin = Option(in)))))
-      serviceContext.updateAndGet(_.copy(process = Option(process)))
-    }
+    config
   }
 
-  override def afterStopped(): Unit = {
-    val s = serviceContext.get()
-    terminationHook(s)
-    s.process.foreach(p => p.exitValue())
+  private val directory = Option(config.getString("submodule", submoduleName, "path")).map(new File(_).getCanonicalFile)
+
+  private val submoduleGitFile = directory.map(new File(_, ".git"))
+
+  private val processHook =
+    directory.map(d => new ProcessHook(Process(command, d, extraEnv ++ ctx.extraEnv: _*).run(), ExitValue))
+
+  override def afterStarted(): Unit = {
+    if (submoduleGitFile.exists(_.exists)) processHook.foreach(_.afterStarted())
+    else
+      ctx.logger.warn(
+        s"Submodule '$submoduleName' is not initialized (.git file not found). Skipping command execution."
+      )
   }
+
+  override def afterStopped(): Unit = processHook.foreach(_.afterStopped())
 }
