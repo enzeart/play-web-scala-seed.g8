@@ -58,4 +58,5 @@ lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-
         log = streams.value.log
       )
     }
+    playInteractionMode := AppInteractionMode.Default,
   )
