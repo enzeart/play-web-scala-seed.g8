@@ -57,6 +57,6 @@ lazy val `$name;format="norm"$-server` = (project in file("$name;format="norm"$-
         directory = (Compile / appUiDirectory).value,
         log = streams.value.log
       )
-    }
+    },
     playInteractionMode := AppInteractionMode.Default,
   )
