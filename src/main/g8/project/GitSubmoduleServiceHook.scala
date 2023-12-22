@@ -46,7 +46,7 @@ final private class GitSubmoduleServiceHook(
     if (submoduleGitFile.exists(_.exists)) processHook.foreach(_.afterStarted())
     else
       ctx.logger.warn(
-        s"Submodule '$submoduleName' is not initialized (.git file not found). Skipping command execution."
+        s"Submodule '\$submoduleName' is not initialized (.git file not found). Skipping command execution."
       )
   }
 
