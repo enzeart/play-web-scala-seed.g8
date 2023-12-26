@@ -46,7 +46,37 @@ You must manage everything else about the submodules yourself. Here are some use
 to help ensure that the project is up-to-date with all remote changes.
 
 ```bash
+# There is a special situation that can happen when pulling superproject updates:
+# it could be that the upstream repository has changed the URL of the submodule in the .gitmodules file
+# in one of the commits you pull. This can happen for example if the submodule project changes its hosting platform.
+# In that case, it is possible for git pull --recurse-submodules, or git submodule update, to fail if the superproject
+# references a submodule commit that is not found in the submodule remote locally configured in your repository.
+# In order to remedy this situation, the git submodule sync command is required.
 git submodule sync --recursive
+
+# Recursively initialize the working tree of all submodules that don't already exist. Also, fetch and update
+# the contents of each submodule based on the state of the relevant remote tracking branch.
 git submodule update --init --recursive --remote
 ```
 
+### Excluding Duplicate Services
+
+It is possible for a service to occur more than once in your application's service graph.
+This can cause failures when starting the development servers due to port collisions, etc.
+You can configure git to exclude the working tree of submodules using the
+following commands.
+
+```bash
+# This will recursively initialize the working tree of all submodules included in the project.
+# Most importantly, it will cause git to populate the .git/modules directory hierarchy where
+# we can configure the submodules we want to exclude.
+git submodule update --init --recursive
+
+# This will clear out the working tree of all submodules while preserving all of the repository
+# information and configurations stored in .git/modules.
+git submodule deinit --all
+
+# This will effectively configure the repository to prevent the submodule update command from populating the
+# specified submodule's working tree.
+git config -f .git/modules/<path_to_parent_of_submodule_to_exclude>/config submodule.<submodule_name>.update none
+```
