@@ -2,12 +2,28 @@ import GitSubmoduleServiceHook.SharedContext
 import ProcessHook.ExitValue
 import org.eclipse.jgit.storage.file.FileBasedConfig
 import org.eclipse.jgit.util.FS
-import play.sbt.PlayRunHook
+import play.sbt.{PlayInteractionMode, PlayRunHook}
 import sbt.{File, Logger}
 
 import scala.sys.process.Process
 
 object GitSubmoduleServiceHook {
+
+  object SharedContext {
+
+    def forInteractionMode(
+        interactionMode: PlayInteractionMode = AppInteractionMode.Default,
+        extraEnv: Seq[(String, String)] = Seq.empty,
+        logger: Logger
+    ): SharedContext = {
+      interactionMode match {
+        case app: AppInteractionMode =>
+          val env = extraEnv :+ (app.terminatorVariable, app.terminatorFile.toString)
+          SharedContext(extraEnv = env, logger = logger)
+        case _ => SharedContext(extraEnv = extraEnv, logger = logger)
+      }
+    }
+  }
 
   case class SharedContext(extraEnv: Seq[(String, String)] = Seq.empty, logger: Logger)
 
