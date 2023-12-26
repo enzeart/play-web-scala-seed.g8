@@ -12,7 +12,7 @@ object GitSubmoduleServiceHook {
   object SharedContext {
 
     def forInteractionMode(
-        interactionMode: PlayInteractionMode = AppInteractionMode.Default,
+        interactionMode: PlayInteractionMode,
         extraEnv: Seq[(String, String)] = Seq.empty,
         logger: Logger
     ): SharedContext = {

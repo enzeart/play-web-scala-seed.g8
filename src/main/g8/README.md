@@ -22,16 +22,11 @@ as Git submodules. For example:
 ```scala
 playInteractionMode := AppInteractionMode.Default,
 playRunHooks ++= {
-  implicit val sharedContext: SharedContext = {
-    playInteractionMode.value match {
-      case mode: AppInteractionMode =>
-        SharedContext(
-          extraEnv = Seq(mode.environmentVariable -> ""),
-          logger = streams.value.log
-        )
-      case _ => SharedContext(logger = streams.value.log)
-    }
-  }
+  implicit val sharedContext: SharedContext =
+    SharedContext.forInteractionMode(
+      interactionMode = playInteractionMode.value,
+      logger = streams.value.log
+    )
 
   Seq(
     GitSubmoduleServiceHook(
