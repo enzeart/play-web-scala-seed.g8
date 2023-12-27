@@ -31,7 +31,7 @@ FROM ubuntu:latest AS app
 
 WORKDIR /app
 COPY --from=builder /tmp/$name;format="norm"$-server/ ./
-RUN apt-get update && apt-get install -y openjdk-8-jre
+RUN apt-get update && apt-get install -y openjdk-11-jre
 EXPOSE 9000/tcp
 
 CMD ["/app/bin/$name;format="norm"$-server", "-J-Xms4096M", "-J-Xmx4096M", "-J-server"]
