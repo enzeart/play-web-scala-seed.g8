@@ -1,9 +1,5 @@
 variables:
   AWS_ACCESS_KEY_ID: \$AWS_ACCESS_KEY_ID
-  $if(codeartifact_support_enabled.truthy)$
-  AWS_CODEARTIFACT_DOMAIN: \$AWS_CODEARTIFACT_DOMAIN
-  AWS_CODEARTIFACT_DOMAIN_OWNER: \$AWS_CODEARTIFACT_DOMAIN_OWNER
-  $endif$
   AWS_REGION: \$AWS_REGION
   AWS_SECRET_ACCESS_KEY: \$AWS_SECRET_ACCESS_KEY
   DOCKER_HOST: tcp://docker:2375
@@ -20,7 +16,7 @@ build-docker-image:
     name: amazon/aws-cli
     entrypoint: [""]
   services:
-    - name: docker:dind
+    - name: docker:20.10.24-dind
       alias: docker
   before_script:
     - amazon-linux-extras install docker
