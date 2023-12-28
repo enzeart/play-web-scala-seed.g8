@@ -1,5 +1,6 @@
 import {
   apply,
+  chain,
   MergeStrategy,
   mergeWith,
   Rule,
@@ -15,9 +16,13 @@ import {
   _addImportToModule,
   _addProviderToModule,
   _addRouteDeclarationToModule,
-  _insertImport, ClassifiedNames, FilePaths
+  _insertImport,
+  ClassifiedNames,
+  FilePaths,
 } from '../util';
-
+import { getPackageJsonDependency } from '@schematics/angular/utility/dependencies';
+import minVersion from 'semver/ranges/min-version';
+import { addDependency } from '@schematics/angular/utility/dependency';
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
@@ -26,6 +31,14 @@ export function ngAdd(_options: any): Rule {
     const templateSource = apply(url('./files'), [template({})]);
     const packageJsonFile = new JSONFile(tree, '/package.json');
     const workspaceConfigurationFile = new JSONFile(tree, '/angular.json');
+    const rules = [mergeWith(templateSource, MergeStrategy.Overwrite)];
+    const angularCoreDependency = getPackageJsonDependency(
+      tree,
+      '@angular/core',
+    );
+    const angularCoreSemver = angularCoreDependency
+      ? minVersion(angularCoreDependency.version)
+      : null;
 
     // Add a script for building the UI
     packageJsonFile.modify(
@@ -74,7 +87,10 @@ export function ngAdd(_options: any): Rule {
       tree,
       FilePaths.AppModule,
       'httpInterceptorProviders',
-      buildRelativePath(FilePaths.AppModule, '/src/app/core/http-interceptors/'),
+      buildRelativePath(
+        FilePaths.AppModule,
+        '/src/app/core/http-interceptors/',
+      ),
     );
     _addProviderToModule(
       tree,
@@ -82,6 +98,11 @@ export function ngAdd(_options: any): Rule {
       'CookieService',
       'ngx-cookie-service',
     );
+
+    if (angularCoreSemver)
+      rules.push(
+        addDependency('ngx-cookie-service', `^${angularCoreSemver.major}`),
+      );
 
     // Import SharedModule into AppModule
     _addImportToModule(
@@ -113,6 +134,6 @@ export function ngAdd(_options: any): Rule {
       `,
     );
 
-    return mergeWith(templateSource, MergeStrategy.Overwrite)(tree, _context);
+    return chain(rules)(tree, _context);
   };
 }

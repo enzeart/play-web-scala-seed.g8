@@ -25,8 +25,6 @@ ng add $SCHEMATICS_PACKAGE_NAME --project=$ANGULAR_APP_DIR_NAME
 
 ng add --skip-confirmation apollo-angular --endpoint="/api/graphql"
 
-npm install --save ngx-cookie-service
-
 npm install --save-dev @graphql-codegen/cli \
     @graphql-codegen/typescript \
     @graphql-codegen/typescript-apollo-angular \

@@ -3,19 +3,20 @@ import * as ts from '@schematics/angular/third_party/github.com/Microsoft/TypeSc
 import {
   addDeclarationToModule,
   addImportToModule,
-  addProviderToModule, addRouteDeclarationToModule,
-  insertImport
+  addProviderToModule,
+  addRouteDeclarationToModule,
+  insertImport,
 } from '@schematics/angular/utility/ast-utils';
 import { Change, InsertChange } from '@schematics/angular/utility/change';
 
 export enum FilePaths {
   AppModule = '/src/app/app.module.ts',
   AppRoutingModule = '/src/app/app-routing.module.ts',
-  AppRootComponent = '/src/app/core/components/app-root/app-root.component'
+  AppRootComponent = '/src/app/core/components/app-root/app-root.component',
 }
 
 export enum ClassifiedNames {
-  AppRootComponent = 'AppRootComponent'
+  AppRootComponent = 'AppRootComponent',
 }
 
 export function createSourceFile(tree: Tree, path: string): ts.SourceFile {
@@ -99,7 +100,11 @@ export function _addRouteDeclarationToModule(
   );
 }
 
-export function recordChanges(tree: Tree, path: string, ...changes: Change[]): void {
+export function recordChanges(
+  tree: Tree,
+  path: string,
+  ...changes: Change[]
+): void {
   const recorder = tree.beginUpdate(path);
   for (const change of changes) {
     if (change instanceof InsertChange)
