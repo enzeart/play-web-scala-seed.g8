@@ -26,11 +26,11 @@ stages:
   script:
     - docker build -t \$DOCKER_REPOSITORY_URI:\$CI_COMMIT_TAG
     $if(codeartifact_support_enabled.truthy)$
-    --build-arg AWS_ACCESS_KEY_ID=\$AWS_ACCESS_KEY_ID
-    --build-arg AWS_SECRET_ACCESS_KEY=\$AWS_SECRET_ACCESS_KEY
-    --build-arg AWS_REGION=\$AWS_REGION
+      --build-arg AWS_ACCESS_KEY_ID=\$AWS_ACCESS_KEY_ID
+      --build-arg AWS_SECRET_ACCESS_KEY=\$AWS_SECRET_ACCESS_KEY
+      --build-arg AWS_REGION=\$AWS_REGION
     $endif$
-    -f ./\$SUBPROJECT/Dockerfile .
+      -f ./\$SUBPROJECT/Dockerfile .
     - aws ecr get-login-password | docker login --username AWS --password-stdin \$DOCKER_REGISTRY
     - docker push \$DOCKER_REPOSITORY_URI:\$CI_COMMIT_TAG
 build-server-image:
