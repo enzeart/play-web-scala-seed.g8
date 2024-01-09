@@ -1,51 +1,54 @@
 package controllers
 
 import akka.stream.scaladsl.Flow
-import org.pac4j.core.profile.{CommonProfile, ProfileManager}
-import org.pac4j.play.PlayWebContext
+import org.pac4j.core.profile.UserProfile
+import org.pac4j.play.context.PlayFrameworkParameters
+import org.pac4j.play.java.{SecureAction => SecureJavaAction}
+import org.pac4j.play.result.PlayWebContextResultHolder
 import org.pac4j.play.scala.{AuthenticatedRequest, SecureAction, Security}
 import play.api.mvc.WebSocket.MessageFlowTransformer
 import play.api.mvc.{AnyContent, AnyContentAsEmpty, Result, WebSocket}
-import org.pac4j.play.java.{SecureAction => SecureJavaAction}
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
 import scala.jdk.FutureConverters._
 
-import scala.concurrent.{ExecutionContext, Future}
+/** This class implements security for WebSocket endpoints based on the logic in
+  * [[org.pac4j.play.scala.SecureAction.invokeBlock]]
+  */
+trait WebSocketSecurity[P <: UserProfile] { self: Security[P] =>
 
-trait WebSocketSecurity[P <: CommonProfile] { self: Security[P] =>
-
-  implicit class SecureWebSocket(secureAction: SecureAction[P, AnyContent, AuthenticatedRequest])(
-      implicit ec: ExecutionContext
+  implicit class SecureWebSocket(secureAction: SecureAction[P, AnyContent, AuthenticatedRequest])(implicit
+      ec: ExecutionContext
   ) {
 
-    def webSocket[In, Out](
+    def websocket[In, Out](
         f: AuthenticatedRequest[AnyContent] => Future[Either[Result, Flow[In, Out, _]]]
     )(implicit transformer: MessageFlowTransformer[In, Out]): WebSocket =
       WebSocket.acceptOrResult[In, Out] { request =>
-        val webContext       = new PlayWebContext(request, playSessionStore)
-        val secureJavaAction = new SecureJavaAction(config, playSessionStore)
+        val secureJavaAction = new SecureJavaAction(config)
+        val parameters = new PlayFrameworkParameters(request)
         secureJavaAction
-          .call(
-            webContext,
-            secureAction.clients,
-            secureAction.authorizers,
-            secureAction.matchers,
-            secureAction.multiProfile
-          )
+          .call(parameters, secureAction.clients, secureAction.authorizers, secureAction.matchers)
           .asScala
-          .map(Option(_))
           .flatMap {
-            case Some(r) => Future successful Left(r.asScala)
-            case None =>
-              val profileManager = new ProfileManager[P](webContext)
-              val profiles       = profileManager.getAllLikeDefaultSecurityLogic(true)
-              f(
-                AuthenticatedRequest(
-                  profiles.asScala.toList,
-                  webContext.supplementRequest(request.asJava).asScala.withBody(AnyContentAsEmpty)
-                )
-              )
+            case holder: PlayWebContextResultHolder =>
+              val webContext = holder.getPlayWebContext
+              val sessionStore = config.getSessionStoreFactory.newSessionStore(parameters)
+              val profileManager = config.getProfileManagerFactory.apply(webContext, sessionStore)
+              val profiles = profileManager.getProfiles
+              val sProfiles = profiles.asScala.toList.asInstanceOf[List[P]]
+              val sRequest = webContext.supplementRequest(request.asJava).asScala.withBody(AnyContentAsEmpty)
+              f(AuthenticatedRequest(sProfiles, sRequest))
+            case r =>
+              Future.successful(Left(r.asScala))
           }
       }
+
+    def webSocketAccept[In, Out](
+        f: AuthenticatedRequest[AnyContent] => Flow[In, Out, _]
+    )(implicit transformer: MessageFlowTransformer[In, Out]): WebSocket = {
+      websocket(request => Future(Right(f(request))))
+    }
   }
 }
