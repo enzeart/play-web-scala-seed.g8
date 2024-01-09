@@ -11,8 +11,48 @@ access your repository. The easiest option is to configure the default profiles 
 and ~/.aws/credentials files. If you'd prefer to take a different approach, consult the documentation for your IDE,
 sbt-codeartifact, and AWS to see if there is a more suitable solution for your needs.
 
-
 $endif$
+
+## Secure WebSockets
+The project includes a custom solution for securing WebSocket endpoints with Pac4j.
+Please see the below example of its usage.
+
+```scala
+package controllers
+
+import akka.stream.scaladsl.Flow
+import config.AppServerConfig
+import org.pac4j.core.profile.CommonProfile
+import org.pac4j.play.scala.{Security, SecurityComponents}
+import play.api.mvc.{BaseController, WebSocket}
+import play.api.mvc.WebSocket.MessageFlowTransformer._
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class WebSocketController @Inject() (val controllerComponents: SecurityComponents, appServerConfig: AppServerConfig)(
+    implicit ec: ExecutionContext
+) extends BaseController
+    with Security[CommonProfile]
+    with WebSocketSecurity[CommonProfile] {
+
+  def uppercase: WebSocket = Secure(appServerConfig.auth.clientName).websocket { _ =>
+    Future(Right(Flow[String].map(s => s.toUpperCase)))
+  }
+
+  def lowercase: WebSocket = Secure(appServerConfig.auth.clientName).webSocketAccept { _ =>
+    Flow[String].map(s => s.toLowerCase)
+  }
+}
+```
+
+```
+# routes configuration
+
+GET     /api/uppercase                                          controllers.WebSocketController.uppercase
+GET     /api/lowercase                                          controllers.WebSocketController.lowercase
+```
 
 ## Multi-Project Development
 
