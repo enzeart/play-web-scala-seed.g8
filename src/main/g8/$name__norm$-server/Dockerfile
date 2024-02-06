@@ -15,7 +15,7 @@ $endif$
 WORKDIR /build
 COPY . .
 
-RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y curl zip openjdk-11-jdk
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y curl zip openjdk-17-jdk
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
 
 SHELL ["/bin/bash", "-c"]
@@ -31,7 +31,7 @@ FROM ubuntu:latest AS app
 
 WORKDIR /app
 COPY --from=builder /tmp/$name;format="norm"$-server/ ./
-RUN apt-get update && apt-get install -y openjdk-11-jre
+RUN apt-get update && apt-get install -y openjdk-17-jre
 EXPOSE 9000/tcp
 
 CMD ["/app/bin/$name;format="norm"$-server", "-J-Xms4096M", "-J-Xmx4096M", "-J-server"]
